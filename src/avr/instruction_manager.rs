@@ -9,6 +9,7 @@ use crate::avr::operations::bclr::Bclr;
 use crate::avr::operations::brbc::Brbc;
 use crate::avr::operations::brbs::Brbs;
 use crate::avr::operations::bset::Bset;
+use crate::avr::operations::bst::Bst;
 
 pub struct InstructionManager {}
 
@@ -66,6 +67,11 @@ impl InstructionManager {
     let is_bset = opcode & 0b1111_1111_1000_1111 == 0b1001_0100_0000_1000;
     if is_bset {
       return Box::new(Bset::new(opcode));
+    }
+
+    let is_bst = opcode & 0b1111_1110_0000_1000 == 0b1111_1010_0000_0000;
+    if is_bst {
+      return Box::new(Bst::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
