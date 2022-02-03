@@ -15,7 +15,7 @@ impl Asr {
 }
 
 impl Operation for Asr {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers) {
+  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, pc: &u16) -> Option<u16> {
     let rd = registers.get(self.d);
 
     let result = rd >> 1 | (rd & 0x80);
@@ -36,6 +36,8 @@ impl Operation for Asr {
     status_register.set_negative(negative);
     status_register.set_zero(zero);
     status_register.set_sign(sign);
+
+    None
   }
 }
 
@@ -50,7 +52,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0b11000000);
   }
@@ -62,7 +64,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_zero(), 1);
     assert_eq!(status_register.get_carry(), 0);
@@ -78,7 +80,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_carry(), 1);
   }
@@ -90,7 +92,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_negative(), 1);
   }
@@ -102,7 +104,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_overflow(), 1);
   }
@@ -114,7 +116,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_sign(), 1);
   }

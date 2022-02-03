@@ -22,7 +22,7 @@ impl Adiw {
 }
 
 impl Operation for Adiw {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers) {
+  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, pc: &u16) -> Option<u16> {
     let rd = registers.get(self.d) as u16 | ((registers.get(self.d + 1) as u16) << 8);
     let result = rd as u32 + self.k as u32;
     registers.set(self.d, (result & 0x00ff) as u8);
@@ -42,6 +42,8 @@ impl Operation for Adiw {
     status_register.set_zero(zero);
     status_register.set_carry(carry);
     status_register.set_sign(sign);
+
+    None
   }
 }
 
@@ -57,7 +59,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers);
+    adiw.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(24), 0x00);
     assert_eq!(registers.get(25), 0x02);
@@ -76,7 +78,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers);
+    adiw.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_carry(), 1);
   }
@@ -89,7 +91,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers);
+    adiw.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_zero(), 1);
   }
@@ -102,7 +104,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers);
+    adiw.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_negative(), 1);
   }
@@ -115,7 +117,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers);
+    adiw.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_overflow(), 1);
   }
@@ -128,7 +130,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers);
+    adiw.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_sign(), 1);
   }

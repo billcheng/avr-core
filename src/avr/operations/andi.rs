@@ -17,7 +17,7 @@ impl Andi {
 }
 
 impl Operation for Andi {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers) {
+  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, pc: &u16) -> Option<u16> {
     let rd = registers.get(self.d);
     let result = rd & self.k;
     registers.set(self.d, result);
@@ -33,6 +33,8 @@ impl Operation for Andi {
     status_register.set_negative(negative);
     status_register.set_zero(zero);
     status_register.set_sign(sign);
+
+    None
   }
 }
 
@@ -47,7 +49,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0x00);
   }
@@ -59,7 +61,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_zero(), 1);
   }
@@ -71,7 +73,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Andi::new(0b0111_1111_0000_1111);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_negative(), 1);
   }
@@ -83,7 +85,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_overflow(), 0);
   }
@@ -95,7 +97,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::Andi::new(0b0111_1111_0000_1111);
-    and.execute(&mut status_register, &mut registers);
+    and.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_sign(), 1);
   }

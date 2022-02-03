@@ -23,7 +23,7 @@ impl Adc {
 }
 
 impl Operation for Adc {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers) {
+  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, _pc: &u16) -> Option<u16> {
     let rr = registers.get(self.r);
     let rd = registers.get(self.d);
     let result = rd as u16 + rr as u16 + status_register.get_carry() as u16;
@@ -50,6 +50,8 @@ impl Operation for Adc {
     status_register.set_zero(zero);
     status_register.set_carry(carry);
     status_register.set_sign(sign);
+
+    None
   }
 }
 
@@ -65,7 +67,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(&mut status_register, &mut registers);
+    adc.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0x03);
     assert_eq!(status_register.get_carry(), 0);
@@ -84,7 +86,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(&mut status_register, &mut registers);
+    adc.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0x81);
     assert_eq!(status_register.get_carry(), 0);
@@ -103,7 +105,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(&mut status_register, &mut registers);
+    adc.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0xfe);
     assert_eq!(status_register.get_carry(), 1);
@@ -122,7 +124,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(&mut status_register, &mut registers);
+    adc.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0x00);
     assert_eq!(status_register.get_carry(), 1);
@@ -142,7 +144,7 @@ mod test {
     status_register.set_carry(true);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(&mut status_register, &mut registers);
+    adc.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0x04);
     assert_eq!(status_register.get_carry(), 0);

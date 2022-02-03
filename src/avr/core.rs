@@ -38,6 +38,6 @@ impl Core {
     self.program_counter += 1;
 
     let operation = self.instruction.get(opcode);
-    operation.execute(&mut self.status_register, &mut self.registers);
+    operation.execute(&mut self.status_register, &mut self.registers, &self.program_counter);
   }
 }

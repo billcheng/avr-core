@@ -23,7 +23,7 @@ impl Add {
 }
 
 impl Operation for Add {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers) {
+  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, pc: &u16) -> Option<u16> {
     let rr = registers.get(self.r);
     let rd = registers.get(self.d);
     let result = rd as u16 + rr as u16;
@@ -50,6 +50,8 @@ impl Operation for Add {
     status_register.set_zero(zero);
     status_register.set_carry(carry);
     status_register.set_sign(sign);
+
+    None
   }
 }
 
@@ -65,7 +67,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let add = super::Add::new(0b0001_1100_0000_0001);
-    add.execute(&mut status_register, &mut registers);
+    add.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0x03);
     assert_eq!(status_register.get_carry(), 0);
@@ -84,7 +86,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let add = super::Add::new(0b0001_1100_0000_0001);
-    add.execute(&mut status_register, &mut registers);
+    add.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0x81);
     assert_eq!(status_register.get_carry(), 0);
@@ -103,7 +105,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let add = super::Add::new(0b0001_1100_0000_0001);
-    add.execute(&mut status_register, &mut registers);
+    add.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0xfe);
     assert_eq!(status_register.get_carry(), 1);
@@ -122,7 +124,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let add = super::Add::new(0b0001_1100_0000_0001);
-    add.execute(&mut status_register, &mut registers);
+    add.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0x00);
     assert_eq!(status_register.get_carry(), 1);

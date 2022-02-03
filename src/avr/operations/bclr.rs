@@ -15,7 +15,7 @@ impl Bclr {
 }
 
 impl Operation for Bclr {
-  fn execute(&self, status_register: &mut StatusRegister, _registers: &mut Registers) {
+  fn execute(&self, status_register: &mut StatusRegister, _registers: &mut Registers, pc: &u16) -> Option<u16> {
     match self.s {
       0 => status_register.set_carry(false),
       1 => status_register.set_zero(false),
@@ -26,7 +26,9 @@ impl Operation for Bclr {
       6 => status_register.set_transfer(false),
       7 => status_register.set_interrupt(false),
       _ => panic!("Unknown status bit: {}", self.s),
-    }
+    };
+
+    None
   }
 }
 
@@ -41,7 +43,7 @@ mod test {
     status_register.set_carry(true);
 
     let op = super::Bclr::new(0b1001_0100_1000_1000);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_carry(), 0);
   }
@@ -53,7 +55,7 @@ mod test {
     status_register.set_zero(true);
 
     let op = super::Bclr::new(0b1001_0100_1001_1000);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_zero(), 0);
   }
@@ -65,7 +67,7 @@ mod test {
     status_register.set_negative(true);
 
     let op = super::Bclr::new(0b1001_0100_1010_1000);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_negative(), 0);
   }
@@ -77,7 +79,7 @@ mod test {
     status_register.set_overflow(true);
 
     let op = super::Bclr::new(0b1001_0100_1011_1000);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_overflow(), 0);
   }
@@ -89,7 +91,7 @@ mod test {
     status_register.set_sign(true);
 
     let op = super::Bclr::new(0b1001_0100_1100_1000);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_sign(), 0);
   }
@@ -101,7 +103,7 @@ mod test {
     status_register.set_half_carry(true);
 
     let op = super::Bclr::new(0b1001_0100_1101_1000);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_half_carry(), 0);
   }
@@ -113,7 +115,7 @@ mod test {
     status_register.set_transfer(true);
 
     let op = super::Bclr::new(0b1001_0100_1110_1000);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_transfer(), 0);
   }
@@ -125,7 +127,7 @@ mod test {
     status_register.set_interrupt(true);
 
     let op = super::Bclr::new(0b1001_0100_1111_1000);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(status_register.get_interrupt(), 0);
   }

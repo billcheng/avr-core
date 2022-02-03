@@ -20,7 +20,7 @@ impl Bld {
 }
 
 impl Operation for Bld {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers) {
+  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, pc: &u16) -> Option<u16> {
     let rd = registers.get(self.d);
     let t = status_register.get_transfer();
 
@@ -32,6 +32,8 @@ impl Operation for Bld {
     };
 
     registers.set(self.d, result);
+
+    None
   }
 }
 
@@ -47,7 +49,7 @@ mod test {
     status_register.set_transfer(false);
 
     let op = super::Bld::new(0b1111_1000_0000_0000);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0b1111_1110);
   }
@@ -60,7 +62,7 @@ mod test {
     status_register.set_transfer(false);
 
     let op = super::Bld::new(0b1111_1000_0000_0001);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0b1111_1101);
   }
@@ -73,7 +75,7 @@ mod test {
     status_register.set_transfer(false);
 
     let op = super::Bld::new(0b1111_1000_0000_0010);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0b1111_1011);
   }
@@ -86,7 +88,7 @@ mod test {
     status_register.set_transfer(false);
 
     let op = super::Bld::new(0b1111_1000_0000_0011);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0b1111_0111);
   }
@@ -99,7 +101,7 @@ mod test {
     status_register.set_transfer(false);
 
     let op = super::Bld::new(0b1111_1000_0000_0111);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0b0111_1111);
   }
@@ -112,7 +114,7 @@ mod test {
     status_register.set_transfer(true);
 
     let op = super::Bld::new(0b1111_1000_0000_0000);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0b0000_0001);
   }
@@ -125,7 +127,7 @@ mod test {
     status_register.set_transfer(true);
 
     let op = super::Bld::new(0b1111_1000_0000_0001);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0b0000_0010);
   }
@@ -138,7 +140,7 @@ mod test {
     status_register.set_transfer(true);
 
     let op = super::Bld::new(0b1111_1000_0000_0111);
-    op.execute(&mut status_register, &mut registers);
+    op.execute(&mut status_register, &mut registers, &0x0000);
 
     assert_eq!(registers.get(0), 0b1000_0000);
   }
