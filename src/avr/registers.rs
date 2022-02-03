@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct Registers {
   reg: Vec<u8>,
 }
