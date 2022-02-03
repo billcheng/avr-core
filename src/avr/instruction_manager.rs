@@ -1,3 +1,4 @@
+use crate::avr::operations::bclr::Bclr;
 use crate::avr::operations::asr::Asr;
 use crate::avr::operation::Operation;
 use crate::avr::operations::adc::Adc;
@@ -41,6 +42,11 @@ impl InstructionManager {
     let is_asr = opcode & 0b1111_1110_0000_1111==0b1001_0100_0000_0101;
     if is_asr {
       return Box::new(Asr::new(opcode));
+    }
+
+    let is_bclr = opcode & 0b1111_1111_1000_1111==0b1001_0100_1000_1000;
+    if is_bclr {
+      return Box::new(Bclr::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);

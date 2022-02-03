@@ -47,6 +47,14 @@ impl StatusRegister {
     get_flag(self.sign)
   }
 
+  pub fn get_transfer(&self) -> u8 {
+    get_flag(self.transfer)
+  }
+
+  pub fn get_interrupt(&self) -> u8 {
+    get_flag(self.interrupt)
+  }
+
   pub fn set_half_carry(&mut self, value: bool) {
     self.half_carry = value;
   }
@@ -69,6 +77,14 @@ impl StatusRegister {
 
   pub fn set_sign(&mut self, value: bool) {
     self.sign = value;
+  }
+
+  pub fn set_transfer(&mut self, value: bool) {
+    self.transfer = value;
+  }
+
+  pub fn set_interrupt(&mut self, value: bool) {
+    self.interrupt = value;
   }
 }
 
