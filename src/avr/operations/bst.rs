@@ -24,8 +24,8 @@ impl Operation for Bst {
     &self,
     status_register: &mut StatusRegister,
     registers: &mut Registers,
-    pc: &u16,
-  ) -> Option<u16> {
+    _pc: u32,
+  ) -> Option<u32> {
     let rd = registers.get(self.d);
     let mask = 1 << self.b;
 
@@ -48,7 +48,7 @@ mod test {
     status_register.set_transfer(false);
 
     let op = super::Bst::new(0b1111_1010_0000_0011);
-    op.execute(&mut status_register, &mut registers, &0x0001);
+    op.execute(&mut status_register, &mut registers, 0x0001);
 
     assert_eq!(status_register.get_transfer(), 1);
   }
@@ -61,7 +61,7 @@ mod test {
     status_register.set_transfer(false);
 
     let op = super::Bst::new(0b1111_1010_0000_0111);
-    op.execute(&mut status_register, &mut registers, &0x0001);
+    op.execute(&mut status_register, &mut registers, 0x0001);
 
     assert_eq!(status_register.get_transfer(), 0);
   }

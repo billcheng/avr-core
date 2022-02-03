@@ -1,7 +1,7 @@
-use crate::avr::registers::Registers;
 use crate::avr::code_memory::CodeMemory;
 use crate::avr::instruction_manager::InstructionManager;
 use crate::avr::read_only_memory::ReadOnlyMemory;
+use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -9,7 +9,7 @@ use std::rc::Rc;
 pub struct Core {
   code_memory: Rc<RefCell<CodeMemory>>,
   status_register: StatusRegister,
-  program_counter: u16,
+  program_counter: u32,
   instruction: InstructionManager,
   registers: Registers,
 }
@@ -36,8 +36,13 @@ impl Core {
     let code_memory = self.code_memory.borrow();
     let opcode = code_memory.read(self.program_counter);
     self.program_counter += 1;
+    let next_opcode = code_memory.read(self.program_counter);
 
-    let operation = self.instruction.get(opcode);
-    operation.execute(&mut self.status_register, &mut self.registers, &self.program_counter);
+    let operation = self.instruction.get(opcode, next_opcode);
+    operation.execute(
+      &mut self.status_register,
+      &mut self.registers,
+      self.program_counter,
+    );
   }
 }

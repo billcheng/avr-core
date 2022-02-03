@@ -20,7 +20,7 @@ impl CodeMemory {
 }
 
 impl ReadOnlyMemory for CodeMemory {
-  fn read(&self, address: u16) -> u16 {
+  fn read(&self, address: u32) -> u16 {
     self.memory[address as usize]
   }
 }

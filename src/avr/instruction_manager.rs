@@ -10,6 +10,7 @@ use crate::avr::operations::brbc::Brbc;
 use crate::avr::operations::brbs::Brbs;
 use crate::avr::operations::bset::Bset;
 use crate::avr::operations::bst::Bst;
+use crate::avr::operations::call::Call;
 
 pub struct InstructionManager {}
 
@@ -18,7 +19,7 @@ impl InstructionManager {
     Self {}
   }
 
-  pub fn get(&self, opcode: u16) -> Box<dyn Operation> {
+  pub fn get(&self, opcode: u16, next_opcode: u16) -> Box<dyn Operation> {
     let is_adc = opcode & 0b1111_1100_0000_0000 == 0b0001_1100_0000_0000;
     if is_adc {
       return Box::new(Adc::new(opcode));
@@ -72,6 +73,11 @@ impl InstructionManager {
     let is_bst = opcode & 0b1111_1110_0000_1000 == 0b1111_1010_0000_0000;
     if is_bst {
       return Box::new(Bst::new(opcode));
+    }
+
+    let is_call = opcode & 0b1111_1110_0000_1110 == 0b1001_010_0000_1110;
+    if is_call {
+      return Box::new(Call::new(opcode, next_opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);

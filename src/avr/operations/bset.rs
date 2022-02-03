@@ -21,8 +21,8 @@ impl Operation for Bset {
     &self,
     status_register: &mut StatusRegister,
     _registers: &mut Registers,
-    pc: &u16,
-  ) -> Option<u16> {
+    _pc: u32,
+  ) -> Option<u32> {
     status_register.set(self.s, true);
 
     None
@@ -40,7 +40,7 @@ mod test {
     status_register.set_carry(false);
 
     let op = super::Bset::new(0b1001_0100_0000_1000);
-    op.execute(&mut status_register, &mut registers, &0x0001);
+    op.execute(&mut status_register, &mut registers, 0x0001);
 
     assert_eq!(status_register.get_carry(), 1);
   }
@@ -52,7 +52,7 @@ mod test {
     status_register.set_interrupt(false);
 
     let op = super::Bset::new(0b1001_0100_0111_1000);
-    op.execute(&mut status_register, &mut registers, &0x0001);
+    op.execute(&mut status_register, &mut registers, 0x0001);
 
     assert_eq!(status_register.get_interrupt(), 1);
   }

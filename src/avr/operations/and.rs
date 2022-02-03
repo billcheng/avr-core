@@ -23,7 +23,7 @@ impl And {
 }
 
 impl Operation for And {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, pc: &u16) -> Option<u16> {
+  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, _pc: u32) -> Option<u32> {
     let rd = registers.get(self.d);
     let rr = registers.get(self.r);
     let result = rd & rr;
@@ -57,7 +57,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::And::new(0b0010_0000_0000_0001);
-    and.execute(&mut status_register, &mut registers, &0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000);
 
     assert_eq!(registers.get(0), 0x00);
   }
@@ -70,7 +70,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::And::new(0b0010_0000_0000_0001);
-    and.execute(&mut status_register, &mut registers, &0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000);
 
     assert_eq!(status_register.get_zero(), 1);
   }
@@ -83,7 +83,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::And::new(0b0010_0000_0000_0001);
-    and.execute(&mut status_register, &mut registers, &0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000);
 
     assert_eq!(status_register.get_negative(), 1);
   }
@@ -96,7 +96,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::And::new(0b0010_0000_0000_0001);
-    and.execute(&mut status_register, &mut registers, &0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000);
 
     assert_eq!(status_register.get_overflow(), 0);
   }
@@ -109,7 +109,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
 
     let and = super::And::new(0b0010_0000_0000_0001);
-    and.execute(&mut status_register, &mut registers, &0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000);
 
     assert_eq!(status_register.get_sign(), 1);
   }
