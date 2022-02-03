@@ -46,7 +46,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
     status_register.set_carry(true);
 
-    let op = super::Brbs::new(0b1111_0111_1111_1000);
+    let op = super::Brbs::new(0b1111_0011_1111_1000);
     let result = op.execute(&mut status_register, &mut registers, &0x0001);
 
     assert_eq!(result, Some(0));

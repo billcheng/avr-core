@@ -58,7 +58,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
     status_register.set_carry(false);
 
-    let op = super::Brbc::new(0b1111_0000_0000_1000);
+    let op = super::Brbc::new(0b1111_0100_0000_1000);
     let result = op.execute(&mut status_register, &mut registers, &0x0001);
 
     assert_eq!(result, Some(2));
@@ -70,7 +70,7 @@ mod test {
     let mut status_register = super::StatusRegister::new();
     status_register.set_carry(true);
 
-    let op = super::Brbc::new(0b1111_0000_0000_1000);
+    let op = super::Brbc::new(0b1111_0100_0000_1000);
     let result = op.execute(&mut status_register, &mut registers, &0x0001);
 
     assert_eq!(result, None);
