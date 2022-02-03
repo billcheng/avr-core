@@ -1,3 +1,4 @@
+use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::operation::Operation;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -22,7 +23,13 @@ impl Adiw {
 }
 
 impl Operation for Adiw {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, _pc: u32) -> Option<u32> {
+  fn execute(
+    &self,
+    status_register: &mut StatusRegister,
+    registers: &mut Registers,
+    _pc: u32,
+    _data_memory: &DataMemoryPtr,
+  ) -> Option<u32> {
     let rd = registers.get(self.d) as u16 | ((registers.get(self.d + 1) as u16) << 8);
     let result = rd as u32 + self.k as u32;
     registers.set(self.d, (result & 0x00ff) as u8);
@@ -49,6 +56,7 @@ impl Operation for Adiw {
 
 #[cfg(test)]
 mod test {
+  use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
 
   #[test]
@@ -57,9 +65,10 @@ mod test {
     registers.set(24, 0xff);
     registers.set(25, 0x01);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000);
+    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(registers.get(24), 0x00);
     assert_eq!(registers.get(25), 0x02);
@@ -76,9 +85,10 @@ mod test {
     registers.set(24, 0xff);
     registers.set(25, 0xff);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000);
+    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_carry(), 1);
   }
@@ -89,9 +99,10 @@ mod test {
     registers.set(24, 0xff);
     registers.set(25, 0xff);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000);
+    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_zero(), 1);
   }
@@ -102,9 +113,10 @@ mod test {
     registers.set(24, 0xff);
     registers.set(25, 0xef);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000);
+    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_negative(), 1);
   }
@@ -115,9 +127,10 @@ mod test {
     registers.set(24, 0xff);
     registers.set(25, 0x7f);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000);
+    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_overflow(), 1);
   }
@@ -128,9 +141,10 @@ mod test {
     registers.set(24, 0xff);
     registers.set(25, 0xef);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000);
+    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_sign(), 1);
   }

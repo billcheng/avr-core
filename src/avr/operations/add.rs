@@ -1,3 +1,4 @@
+use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::operation::Operation;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -23,7 +24,13 @@ impl Add {
 }
 
 impl Operation for Add {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, _pc: u32) -> Option<u32> {
+  fn execute(
+    &self,
+    status_register: &mut StatusRegister,
+    registers: &mut Registers,
+    _pc: u32,
+    _data_memory: &DataMemoryPtr,
+  ) -> Option<u32> {
     let rr = registers.get(self.r);
     let rd = registers.get(self.d);
     let result = rd as u16 + rr as u16;
@@ -57,6 +64,7 @@ impl Operation for Add {
 
 #[cfg(test)]
 mod test {
+  use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
 
   #[test]
@@ -65,9 +73,10 @@ mod test {
     registers.set(0, 0x01);
     registers.set(1, 0x02);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
-    add.execute(&mut status_register, &mut registers, 0x0000);
+    add.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(registers.get(0), 0x03);
     assert_eq!(status_register.get_carry(), 0);
@@ -84,9 +93,10 @@ mod test {
     registers.set(0, 0x39);
     registers.set(1, 0x48);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
-    add.execute(&mut status_register, &mut registers, 0x0000);
+    add.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(registers.get(0), 0x81);
     assert_eq!(status_register.get_carry(), 0);
@@ -103,9 +113,10 @@ mod test {
     registers.set(0, 0xff);
     registers.set(1, 0xff);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
-    add.execute(&mut status_register, &mut registers, 0x0000);
+    add.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(registers.get(0), 0xfe);
     assert_eq!(status_register.get_carry(), 1);
@@ -122,9 +133,10 @@ mod test {
     registers.set(0, 0xff);
     registers.set(1, 0x01);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
-    add.execute(&mut status_register, &mut registers, 0x0000);
+    add.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(registers.get(0), 0x00);
     assert_eq!(status_register.get_carry(), 1);

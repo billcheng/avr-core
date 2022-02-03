@@ -1,3 +1,4 @@
+use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::operation::Operation;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -15,7 +16,13 @@ impl Asr {
 }
 
 impl Operation for Asr {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, _pc: u32) -> Option<u32> {
+  fn execute(
+    &self,
+    status_register: &mut StatusRegister,
+    registers: &mut Registers,
+    _pc: u32,
+    _data_memory: &DataMemoryPtr,
+  ) -> Option<u32> {
     let rd = registers.get(self.d);
 
     let result = rd >> 1 | (rd & 0x80);
@@ -43,6 +50,7 @@ impl Operation for Asr {
 
 #[cfg(test)]
 mod test {
+  use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
 
   #[test]
@@ -50,9 +58,10 @@ mod test {
     let mut registers = super::Registers::new();
     registers.set(0, 0x80);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers, 0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(registers.get(0), 0b11000000);
   }
@@ -62,9 +71,10 @@ mod test {
     let mut registers = super::Registers::new();
     registers.set(0, 0x00);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers, 0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_zero(), 1);
     assert_eq!(status_register.get_carry(), 0);
@@ -78,9 +88,10 @@ mod test {
     let mut registers = super::Registers::new();
     registers.set(0, 0x01);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers, 0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_carry(), 1);
   }
@@ -90,9 +101,10 @@ mod test {
     let mut registers = super::Registers::new();
     registers.set(0, 0x80);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers, 0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_negative(), 1);
   }
@@ -102,9 +114,10 @@ mod test {
     let mut registers = super::Registers::new();
     registers.set(0, 0x01);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers, 0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_overflow(), 1);
   }
@@ -114,9 +127,10 @@ mod test {
     let mut registers = super::Registers::new();
     registers.set(0, 0x01);
     let mut status_register = super::StatusRegister::new();
+    let data_memory = create_data_memory_ptr(10);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(&mut status_register, &mut registers, 0x0000);
+    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_sign(), 1);
   }

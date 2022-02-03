@@ -1,3 +1,4 @@
+use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::operation::Operation;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -15,7 +16,13 @@ impl Bclr {
 }
 
 impl Operation for Bclr {
-  fn execute(&self, status_register: &mut StatusRegister, _registers: &mut Registers, _pc: u32) -> Option<u32> {
+  fn execute(
+    &self,
+    status_register: &mut StatusRegister,
+    _registers: &mut Registers,
+    _pc: u32,
+    _data_memory: &DataMemoryPtr,
+  ) -> Option<u32> {
     status_register.set(self.s, false);
 
     None
@@ -24,6 +31,7 @@ impl Operation for Bclr {
 
 #[cfg(test)]
 mod test {
+  use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
 
   #[test]
@@ -31,9 +39,10 @@ mod test {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
     status_register.set_carry(true);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bclr::new(0b1001_0100_1000_1000);
-    op.execute(&mut status_register, &mut registers, 0x0000);
+    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_carry(), 0);
   }
@@ -43,9 +52,10 @@ mod test {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
     status_register.set_zero(true);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bclr::new(0b1001_0100_1001_1000);
-    op.execute(&mut status_register, &mut registers, 0x0000);
+    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_zero(), 0);
   }
@@ -55,9 +65,10 @@ mod test {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
     status_register.set_negative(true);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bclr::new(0b1001_0100_1010_1000);
-    op.execute(&mut status_register, &mut registers, 0x0000);
+    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_negative(), 0);
   }
@@ -67,9 +78,10 @@ mod test {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
     status_register.set_overflow(true);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bclr::new(0b1001_0100_1011_1000);
-    op.execute(&mut status_register, &mut registers, 0x0000);
+    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_overflow(), 0);
   }
@@ -79,9 +91,10 @@ mod test {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
     status_register.set_sign(true);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bclr::new(0b1001_0100_1100_1000);
-    op.execute(&mut status_register, &mut registers, 0x0000);
+    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_sign(), 0);
   }
@@ -91,9 +104,10 @@ mod test {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
     status_register.set_half_carry(true);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bclr::new(0b1001_0100_1101_1000);
-    op.execute(&mut status_register, &mut registers, 0x0000);
+    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_half_carry(), 0);
   }
@@ -103,9 +117,10 @@ mod test {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
     status_register.set_transfer(true);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bclr::new(0b1001_0100_1110_1000);
-    op.execute(&mut status_register, &mut registers, 0x0000);
+    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_transfer(), 0);
   }
@@ -115,9 +130,10 @@ mod test {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
     status_register.set_interrupt(true);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bclr::new(0b1001_0100_1111_1000);
-    op.execute(&mut status_register, &mut registers, 0x0000);
+    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
 
     assert_eq!(status_register.get_interrupt(), 0);
   }

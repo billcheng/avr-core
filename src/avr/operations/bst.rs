@@ -1,3 +1,4 @@
+use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::operation::Operation;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -25,6 +26,7 @@ impl Operation for Bst {
     status_register: &mut StatusRegister,
     registers: &mut Registers,
     _pc: u32,
+    _data_memory: &DataMemoryPtr,
   ) -> Option<u32> {
     let rd = registers.get(self.d);
     let mask = 1 << self.b;
@@ -38,7 +40,8 @@ impl Operation for Bst {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use crate::avr::data_memory::create_data_memory_ptr;
+use crate::avr::operation::Operation;
 
   #[test]
   fn bst_r0_returns_t() {
@@ -46,9 +49,10 @@ mod test {
     registers.set(0, 0b0000_1000);
     let mut status_register = super::StatusRegister::new();
     status_register.set_transfer(false);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bst::new(0b1111_1010_0000_0011);
-    op.execute(&mut status_register, &mut registers, 0x0001);
+    op.execute(&mut status_register, &mut registers, 0x0001, &data_memory);
 
     assert_eq!(status_register.get_transfer(), 1);
   }
@@ -59,9 +63,10 @@ mod test {
     registers.set(0, 0b0000_1000);
     let mut status_register = super::StatusRegister::new();
     status_register.set_transfer(false);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bst::new(0b1111_1010_0000_0111);
-    op.execute(&mut status_register, &mut registers, 0x0001);
+    op.execute(&mut status_register, &mut registers, 0x0001, &data_memory);
 
     assert_eq!(status_register.get_transfer(), 0);
   }

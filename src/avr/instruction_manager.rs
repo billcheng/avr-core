@@ -1,3 +1,4 @@
+use crate::avr::core_type::CoreType;
 use crate::avr::operation::Operation;
 use crate::avr::operations::adc::Adc;
 use crate::avr::operations::add::Add;
@@ -19,7 +20,7 @@ impl InstructionManager {
     Self {}
   }
 
-  pub fn get(&self, opcode: u16, next_opcode: u16) -> Box<dyn Operation> {
+  pub fn get(&self, core_type: &CoreType, opcode: u16, next_opcode: u16) -> Box<dyn Operation> {
     let is_adc = opcode & 0b1111_1100_0000_0000 == 0b0001_1100_0000_0000;
     if is_adc {
       return Box::new(Adc::new(opcode));
@@ -77,7 +78,7 @@ impl InstructionManager {
 
     let is_call = opcode & 0b1111_1110_0000_1110 == 0b1001_010_0000_1110;
     if is_call {
-      return Box::new(Call::new(opcode, next_opcode));
+      return Box::new(Call::new(core_type, opcode, next_opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);

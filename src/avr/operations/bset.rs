@@ -1,3 +1,4 @@
+use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::operation::Operation;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -22,6 +23,7 @@ impl Operation for Bset {
     status_register: &mut StatusRegister,
     _registers: &mut Registers,
     _pc: u32,
+    _data_memory: &DataMemoryPtr,
   ) -> Option<u32> {
     status_register.set(self.s, true);
 
@@ -31,16 +33,18 @@ impl Operation for Bset {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use crate::avr::data_memory::create_data_memory_ptr;
+use crate::avr::operation::Operation;
 
   #[test]
   fn bset_nc_returns_c() {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
     status_register.set_carry(false);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bset::new(0b1001_0100_0000_1000);
-    op.execute(&mut status_register, &mut registers, 0x0001);
+    op.execute(&mut status_register, &mut registers, 0x0001, &data_memory);
 
     assert_eq!(status_register.get_carry(), 1);
   }
@@ -50,9 +54,10 @@ mod test {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
     status_register.set_interrupt(false);
+    let data_memory = create_data_memory_ptr(10);
 
     let op = super::Bset::new(0b1001_0100_0111_1000);
-    op.execute(&mut status_register, &mut registers, 0x0001);
+    op.execute(&mut status_register, &mut registers, 0x0001, &data_memory);
 
     assert_eq!(status_register.get_interrupt(), 1);
   }

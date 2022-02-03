@@ -6,3 +6,6 @@ pub mod instruction_manager;
 pub mod operation;
 pub mod operations;
 pub mod registers;
+pub mod data_memory;
+pub mod random_access_memory;
+pub mod core_type;
