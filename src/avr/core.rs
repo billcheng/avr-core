@@ -9,9 +9,7 @@ use std::rc::Rc;
 pub struct Core {
   code_memory: Rc<RefCell<CodeMemory>>,
   status_register: StatusRegister,
-  code_address: u16,
-  code_read: bool,
-  code_memory_observer: Vec<Rc<RefCell<dyn ReadOnlyMemory>>>,
+  program_counter: u16,
   instruction: InstructionManager,
   registers: Registers,
 }
@@ -21,11 +19,9 @@ impl Core {
     let code_memory = Rc::new(RefCell::new(CodeMemory::new(code_size)));
 
     Self {
-      code_address: 0,
-      code_read: false,
-      code_memory: code_memory.clone(),
+      program_counter: 0,
+      code_memory: code_memory,
       status_register: StatusRegister::new(),
-      code_memory_observer: vec![code_memory],
       instruction: InstructionManager::new(),
       registers: Registers::new(),
     }
@@ -38,8 +34,8 @@ impl Core {
 
   pub fn single_step(&mut self) {
     let code_memory = self.code_memory.borrow();
-    let opcode = code_memory.read(self.code_address);
-    self.code_address += 1;
+    let opcode = code_memory.read(self.program_counter);
+    self.program_counter += 1;
 
     let operation = self.instruction.get(opcode);
     operation.execute(&mut self.status_register, &mut self.registers);
