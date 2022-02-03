@@ -16,17 +16,7 @@ impl Bclr {
 
 impl Operation for Bclr {
   fn execute(&self, status_register: &mut StatusRegister, _registers: &mut Registers, pc: &u16) -> Option<u16> {
-    match self.s {
-      0 => status_register.set_carry(false),
-      1 => status_register.set_zero(false),
-      2 => status_register.set_negative(false),
-      3 => status_register.set_overflow(false),
-      4 => status_register.set_sign(false),
-      5 => status_register.set_half_carry(false),
-      6 => status_register.set_transfer(false),
-      7 => status_register.set_interrupt(false),
-      _ => panic!("Unknown status bit: {}", self.s),
-    };
+    status_register.set(self.s, false);
 
     None
   }

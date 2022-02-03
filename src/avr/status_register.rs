@@ -55,6 +55,34 @@ impl StatusRegister {
     get_flag(self.interrupt)
   }
 
+  pub fn get(&self, bit: usize) -> u8 {
+    match bit {
+      0 => self.get_carry(),
+      1 => self.get_zero(),
+      2 => self.get_negative(),
+      3 => self.get_overflow(),
+      4 => self.get_sign(),
+      5 => self.get_half_carry(),
+      6 => self.get_transfer(),
+      7 => self.get_interrupt(),
+      _ => panic!("Unknown status bit: {}", bit),
+    }
+  }
+
+  pub fn set(&mut self, bit: usize, value: bool) {
+    match bit {
+      0 => self.set_carry(value),
+      1 => self.set_zero(value),
+      2 => self.set_negative(value),
+      3 => self.set_overflow(value),
+      4 => self.set_sign(value),
+      5 => self.set_half_carry(value),
+      6 => self.set_transfer(value),
+      7 => self.set_interrupt(value),
+      _ => panic!("Unknown status bit: {}", bit),
+    };
+  }
+
   pub fn set_half_carry(&mut self, value: bool) {
     self.half_carry = value;
   }
