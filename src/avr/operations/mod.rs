@@ -7,3 +7,4 @@ pub mod asr;
 pub mod bclr;
 pub mod bld;
 pub mod brbc;
+pub mod brbs;

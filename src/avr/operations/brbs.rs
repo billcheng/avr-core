@@ -2,12 +2,12 @@ use crate::avr::operation::Operation;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
 
-pub struct Brbc {
+pub struct Brbs {
   k: i8,
   s: usize,
 }
 
-impl Brbc {
+impl Brbs {
   pub fn new(opcode: u16) -> Self {
     let k = (opcode & 0b0000_0011_1111_1000) >> 2;
     let s = opcode & 0b0000_0000_0000_0111;
@@ -19,7 +19,7 @@ impl Brbc {
   }
 }
 
-impl Operation for Brbc {
+impl Operation for Brbs {
   fn execute(
     &self,
     status_register: &mut StatusRegister,
@@ -30,7 +30,7 @@ impl Operation for Brbc {
     let k = self.k as i8;
 
     match flag {
-      0 => Some(((*pc as i32) + (k as i32)) as u16),
+      1 => Some(((*pc as i32) + (k as i32)) as u16),
       _ => None,
     }
   }
@@ -41,36 +41,36 @@ mod test {
   use crate::avr::operation::Operation;
 
   #[test]
-  fn brbc_nc_0x0001_returns0x0000() {
+  fn brbs_c_0x0001_returns0x0000() {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
-    status_register.set_carry(false);
+    status_register.set_carry(true);
 
-    let op = super::Brbc::new(0b1111_0111_1111_1000);
+    let op = super::Brbs::new(0b1111_0111_1111_1000);
     let result = op.execute(&mut status_register, &mut registers, &0x0001);
 
     assert_eq!(result, Some(0));
   }
 
   #[test]
-  fn brbc_nc_0x0001_returns0x0002() {
+  fn brbs_c_0x0001_returns0x0002() {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
-    status_register.set_carry(false);
+    status_register.set_carry(true);
 
-    let op = super::Brbc::new(0b1111_0000_0000_1000);
+    let op = super::Brbs::new(0b1111_0000_0000_1000);
     let result = op.execute(&mut status_register, &mut registers, &0x0001);
 
     assert_eq!(result, Some(2));
   }
 
   #[test]
-  fn brbc_c_0x0001_returns_none() {
+  fn brbs_nc_0x0001_returns_none() {
     let mut registers = super::Registers::new();
     let mut status_register = super::StatusRegister::new();
-    status_register.set_carry(true);
+    status_register.set_carry(false);
 
-    let op = super::Brbc::new(0b1111_0000_0000_1000);
+    let op = super::Brbs::new(0b1111_0000_0000_1000);
     let result = op.execute(&mut status_register, &mut registers, &0x0001);
 
     assert_eq!(result, None);
