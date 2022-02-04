@@ -17,15 +17,37 @@ impl Cbi {
 
 impl Operation for Cbi {
   fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+    let mut io = execution_data.io.borrow_mut();
+
+    io.clear_bit(self.a, self.b);
+
     None
   }
 }
 
-// #[cfg(test)]
-// mod test {
-//   use crate::avr::core_type::CoreType;
-//   use crate::avr::data_memory::create_data_memory_ptr;
-//   use crate::avr::operation::Operation;
-//   use crate::avr::random_access_memory::RandomAccessMemory;
+#[cfg(test)]
+mod test {
+  use crate::avr::operation::Operation;
+  use crate::avr::test::test_init::init;
 
-// }
+  #[test]
+  fn cbi_clear_io5_bit7() {
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    {
+      let mut io = io.borrow_mut();
+      io.set(5, 0xff);
+    }
+
+    let op = super::Cbi::new(0b1001_1000_0010_1111);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr,
+      status_register: status_register_ptr,
+      pc: 0x0000,
+      data_memory,
+      io: io.clone(),
+    });
+
+    let io = io.borrow();
+    assert_eq!(io.get(5), 0b0111_1111);
+  }
+}
