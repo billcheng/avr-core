@@ -31,8 +31,9 @@ impl Operation for Cpc {
     let r7 = (result >> 7 & 1) != 0;
     let rr7 = (rr >> 7 & 1) != 0;
     let rd7 = (rd >> 7 & 1) != 0;
+
     let half_carry = !rd3 & rr3 | rr3 & r3 | r3 & !rd3;
-    let overflow = rd7 & !rr7 | !rd7 & rr7 & r7;
+    let overflow = rd7 & !rr7 & !r7 | !rd7 & rr7 & r7;
     let negative = r7;
     let sign = negative ^ overflow;
     let zero = result == 0;
@@ -159,7 +160,7 @@ mod test {
   }
 
   #[test]
-  fn cp_r1_r2_nc_return_o() {
+  fn cp_r1_r2_nc_return_s() {
     let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0xff), (2, 0x01)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
@@ -177,8 +178,8 @@ mod test {
 
     let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_zero(), 0);
-    assert_eq!(status_register.get_sign(), 0);
-    assert_eq!(status_register.get_overflow(), 1);
+    assert_eq!(status_register.get_sign(), 1);
+    assert_eq!(status_register.get_overflow(), 0);
     assert_eq!(status_register.get_negative(), 1);
     assert_eq!(status_register.get_half_carry(), 0);
     assert_eq!(status_register.get_carry(), 0);
@@ -207,6 +208,58 @@ mod test {
     assert_eq!(status_register.get_overflow(), 0);
     assert_eq!(status_register.get_negative(), 0);
     assert_eq!(status_register.get_half_carry(), 0);
+    assert_eq!(status_register.get_carry(), 0);
+  }
+
+  #[test]
+  fn cp_r1_r2_nc_return_o() {
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x80), (2, 0x01)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_carry(false);
+    }
+
+    let op = super::Cpc::new(0b0001_0100_0001_0010);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr,
+      status_register: status_register_ptr.clone(),
+      pc: 0x0000,
+      data_memory,
+      io: io,
+    });
+
+    let status_register = status_register_ptr.borrow();
+    assert_eq!(status_register.get_zero(), 0);
+    assert_eq!(status_register.get_sign(), 1);
+    assert_eq!(status_register.get_overflow(), 1);
+    assert_eq!(status_register.get_negative(), 0);
+    assert_eq!(status_register.get_half_carry(), 1);
+    assert_eq!(status_register.get_carry(), 0);
+  }
+
+  #[test]
+  fn cp_r1_r2_c_return_0() {
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x80), (2, 0x00)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_carry(true);
+    }
+
+    let op = super::Cpc::new(0b0001_0100_0001_0010);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr,
+      status_register: status_register_ptr.clone(),
+      pc: 0x0000,
+      data_memory,
+      io: io,
+    });
+
+    let status_register = status_register_ptr.borrow();
+    assert_eq!(status_register.get_zero(), 0);
+    assert_eq!(status_register.get_sign(), 1);
+    assert_eq!(status_register.get_overflow(), 1);
+    assert_eq!(status_register.get_negative(), 0);
+    assert_eq!(status_register.get_half_carry(), 1);
     assert_eq!(status_register.get_carry(), 0);
   }
 }

@@ -15,3 +15,4 @@ pub mod cbi;
 pub mod com;
 pub mod cp;
 pub mod cpc;
+pub mod cpi;

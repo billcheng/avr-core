@@ -1,41 +1,41 @@
 use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
 
-pub struct Cp {
-  r: usize,
+pub struct Cpi {
+  k: u8,
   d: usize,
 }
 
-impl Cp {
+impl Cpi {
   pub fn new(opcode: u16) -> Self {
-    let d = ((opcode & 0b0000_0001_1111_0000) >> 4) as usize;
-    let r = ((opcode & 0b0000_0000_0000_1111) | ((opcode & 0b0000_0010_0000_0000) >> 5)) as usize;
+    let d = ((opcode & 0b0000_0000_1111_0000) >> 4) as usize;
+    let k = ((opcode & 0b0000_0000_0000_1111) | ((opcode & 0b0000_1111_0000_0000) >> 4)) as u8;
 
-    Self { d, r }
+    Self { d, k }
   }
 }
 
-impl Operation for Cp {
+impl Operation for Cpi {
   fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
     let registers = execution_data.registers.borrow();
 
     let rd = registers.get(self.d) as i16;
-    let rr = registers.get(self.r) as i16;
-    let result = rd - rr;
+    let k = self.k as i16;
+    let result = rd - k;
 
     let rd3 = (rd >> 3) & 1 != 0;
-    let rr3 = (rr >> 3) & 1 != 0;
+    let k3 = (k >> 3) & 1 != 0;
     let r3 = (result >> 3) & 1 != 0;
     let r7 = (result >> 7 & 1) != 0;
-    let rr7 = (rr >> 7 & 1) != 0;
+    let k7 = (k >> 7 & 1) != 0;
     let rd7 = (rd >> 7 & 1) != 0;
 
-    let half_carry = !rd3 & rr3 | rr3 & r3 | r3 & !rd3;
-    let overflow = rd7 & !rr7 & !r7 | !rd7 & rr7 & r7;
+    let half_carry = !rd3 & k3 | k3 & r3 | r3 & !rd3;
+    let overflow = rd7 & !k7 & !r7 | !rd7 & k7 & r7;
     let negative = r7;
     let sign = negative ^ overflow;
     let zero = result == 0;
-    let carry = !rd7 & rr7 | rr7 & r7 | r7 & !rd7;
+    let carry = !rd7 & k7 | k7 & r7 | r7 & !rd7;
 
     let mut status_register = execution_data.status_register.borrow_mut();
     status_register.set_half_carry(half_carry);
@@ -55,10 +55,10 @@ mod test {
   use crate::avr::test::test_init::init;
 
   #[test]
-  fn cp_r1_r2_return_z() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0xcc), (2, 0xcc)]);
+  fn cpi_r1_0xcc_return_z() {
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0xcc)]);
 
-    let op = super::Cp::new(0b0001_0100_0001_0010);
+    let op = super::Cpi::new(0b0011_1100_0001_1100);
     op.execute(super::ExecutionData {
       registers: registers_ptr,
       status_register: status_register_ptr.clone(),
@@ -77,10 +77,10 @@ mod test {
   }
 
   #[test]
-  fn cp_r1_r2_return_hc() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x00), (2, 0x04)]);
+  fn cp_r1_0x04_return_hc() {
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x00)]);
 
-    let op = super::Cp::new(0b0001_0100_0001_0010);
+    let op = super::Cpi::new(0b0011_0000_0001_0100);
     op.execute(super::ExecutionData {
       registers: registers_ptr,
       status_register: status_register_ptr.clone(),
@@ -99,10 +99,10 @@ mod test {
   }
 
   #[test]
-  fn cp_r1_r2_return_s() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0xff), (2, 0x01)]);
+  fn cp_r1_0x01_return_s() {
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0xff)]);
 
-    let op = super::Cp::new(0b0001_0100_0001_0010);
+    let op = super::Cpi::new(0b0011_0000_0001_0001);
     op.execute(super::ExecutionData {
       registers: registers_ptr,
       status_register: status_register_ptr.clone(),
@@ -121,10 +121,10 @@ mod test {
   }
 
   #[test]
-  fn cp_r1_r2_return_nc() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x3), (2, 0x01)]);
+  fn cp_r1_0x01_return_nc() {
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x3)]);
 
-    let op = super::Cp::new(0b0001_0100_0001_0010);
+    let op = super::Cpi::new(0b0011_0000_0001_0001);
     op.execute(super::ExecutionData {
       registers: registers_ptr,
       status_register: status_register_ptr.clone(),
@@ -143,10 +143,10 @@ mod test {
   }
 
   #[test]
-  fn cp_r1_r2_return_o() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x80), (2, 0x01)]);
+  fn cp_r1_0x01_return_o() {
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x80)]);
 
-    let op = super::Cp::new(0b0001_0100_0001_0010);
+    let op = super::Cpi::new(0b0011_0000_0001_0001);
     op.execute(super::ExecutionData {
       registers: registers_ptr,
       status_register: status_register_ptr.clone(),
