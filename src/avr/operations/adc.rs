@@ -65,7 +65,7 @@ mod test {
 
   #[test]
   fn adc_0x01_x02_returns0x03_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x01), (1, 0x02)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x01), (1, 0x02)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
     adc.execute(ExecutionData {
@@ -73,6 +73,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let registers = registers_ptr.borrow();
@@ -88,7 +89,7 @@ mod test {
 
   #[test]
   fn adc_0x39_x48_returns0x81_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x39), (1, 0x48)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x39), (1, 0x48)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
     adc.execute(ExecutionData {
@@ -96,6 +97,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let registers = registers_ptr.borrow();
@@ -111,7 +113,7 @@ mod test {
 
   #[test]
   fn adc_0xff_xff_returns0xfe_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff), (1, 0xff)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff), (1, 0xff)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
     adc.execute(ExecutionData {
@@ -119,6 +121,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let registers = registers_ptr.borrow();
@@ -134,7 +137,7 @@ mod test {
 
   #[test]
   fn adc_0xff_0x01_returns0x00_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff), (1, 0x01)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff), (1, 0x01)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
     adc.execute(ExecutionData {
@@ -142,6 +145,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let registers = registers_ptr.borrow();
@@ -157,7 +161,7 @@ mod test {
 
   #[test]
   fn adc_0x01_0x02_carry_returns0x04_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x01), (1, 0x02)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x01), (1, 0x02)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_carry(true);
@@ -169,6 +173,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let registers = registers_ptr.borrow();

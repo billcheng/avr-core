@@ -41,13 +41,12 @@ impl Operation for Bld {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
   use crate::avr::test::test_init::init;
 
   #[test]
   fn bld_t0_0xff_0_returns_0b11111110() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(false);
@@ -59,6 +58,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -67,7 +67,7 @@ mod test {
 
   #[test]
   fn bld_t0_0xff_1_returns_0b11111101() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(false);
@@ -79,6 +79,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -87,7 +88,7 @@ mod test {
 
   #[test]
   fn bld_t0_0xff_2_returns_0b11111011() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(false);
@@ -99,6 +100,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -107,7 +109,7 @@ mod test {
 
   #[test]
   fn bld_t0_0xff_3_returns_0b11110111() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(false);
@@ -119,6 +121,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -127,7 +130,7 @@ mod test {
 
   #[test]
   fn bld_t0_0xff_7_returns_0b01111111() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(false);
@@ -138,6 +141,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -146,7 +150,7 @@ mod test {
 
   #[test]
   fn bld_t1_0x00_0_returns_0b00000001() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x00)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x00)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(true);
@@ -158,6 +162,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -166,7 +171,7 @@ mod test {
 
   #[test]
   fn bld_t1_0x00_1_returns_0b00000010() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x00)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x00)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(true);
@@ -178,6 +183,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -186,7 +192,7 @@ mod test {
 
   #[test]
   fn bld_t1_0x00_7_returns_0b10000000() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x00)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x00)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(true);
@@ -198,6 +204,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();

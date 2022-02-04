@@ -39,7 +39,7 @@ mod test {
 
   #[test]
   fn brbs_c_0x0001_returns0x0001() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_carry(true);
@@ -51,6 +51,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0001,
       data_memory,
+      io,
     });
 
     assert_eq!(result, Some(1));
@@ -58,7 +59,7 @@ mod test {
 
   #[test]
   fn brbs_c_0x0001_returns0x0003() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_carry(true);
@@ -70,6 +71,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0001,
       data_memory,
+      io,
     });
 
     assert_eq!(result, Some(3));
@@ -77,7 +79,7 @@ mod test {
 
   #[test]
   fn brbs_nc_0x0001_returns_none() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_carry(false);
@@ -89,6 +91,7 @@ mod test {
       status_register: status_register_ptr,
       pc: 0x0001,
       data_memory,
+      io,
     });
 
     assert_eq!(result, None);

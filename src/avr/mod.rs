@@ -9,6 +9,7 @@ pub mod random_access_memory;
 pub mod read_only_memory;
 pub mod registers;
 pub mod status_register;
+pub mod io;
 
 #[cfg(test)]
 pub mod test;

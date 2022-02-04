@@ -45,15 +45,14 @@ impl Operation for Call {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::test::test_init::init;
-use crate::avr::core_type::CoreType;
-  use crate::avr::data_memory::create_data_memory_ptr;
+  use crate::avr::core_type::CoreType;
   use crate::avr::operation::Operation;
   use crate::avr::random_access_memory::RandomAccessMemory;
+  use crate::avr::test::test_init::init;
 
   #[test]
   fn call_0x345678_returns_0x345678() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut registers = registers_ptr.borrow_mut();
       registers.set_stack_pointer(9);
@@ -65,6 +64,7 @@ use crate::avr::core_type::CoreType;
       status_register: status_register_ptr,
       pc: 0x0001,
       data_memory,
+      io,
     });
 
     assert_eq!(result, Some(0x345678));
@@ -72,7 +72,7 @@ use crate::avr::core_type::CoreType;
 
   #[test]
   fn call_16_bits_returns_stack_pointer_7() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut registers = registers_ptr.borrow_mut();
       registers.set_stack_pointer(9);
@@ -84,6 +84,7 @@ use crate::avr::core_type::CoreType;
       status_register: status_register_ptr,
       pc: 0x0001,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -92,7 +93,7 @@ use crate::avr::core_type::CoreType;
 
   #[test]
   fn call_22_bits_returns_stack_pointer_6() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut registers = registers_ptr.borrow_mut();
       registers.set_stack_pointer(9);
@@ -104,6 +105,7 @@ use crate::avr::core_type::CoreType;
       status_register: status_register_ptr,
       pc: 0x0001,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -112,20 +114,20 @@ use crate::avr::core_type::CoreType;
 
   #[test]
   fn call_0x345678_returns_stack_data() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut registers = registers_ptr.borrow_mut();
       registers.set_stack_pointer(9);
     }
 
     let op = super::Call::new(&CoreType::Bits16, 0b1001_010_1101_0_111_0, 0x5678);
-    op.execute(
-      super::ExecutionData {
-        registers: registers_ptr.clone(),
-        status_register: status_register_ptr,
-        pc: 0x12345,
-        data_memory: data_memory.clone(),
-      });
+    op.execute(super::ExecutionData {
+      registers: registers_ptr.clone(),
+      status_register: status_register_ptr,
+      pc: 0x12345,
+      data_memory: data_memory.clone(),
+      io,
+    });
 
     let stack = data_memory.borrow();
     assert_eq!(stack.read(9), 0x47);

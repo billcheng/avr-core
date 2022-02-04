@@ -1,8 +1,5 @@
-use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
-use crate::avr::registers::Registers;
-use crate::avr::status_register::StatusRegister;
 
 pub struct Bst {
   d: usize,
@@ -39,13 +36,12 @@ impl Operation for Bst {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
   use crate::avr::test::test_init::init;
 
   #[test]
   fn bst_r0_returns_t() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0b0000_1000)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0b0000_1000)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(false);
@@ -57,6 +53,7 @@ mod test {
       status_register: status_register_ptr.clone(),
       pc: 0x0001,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -65,7 +62,7 @@ mod test {
 
   #[test]
   fn bst_r0_returns_nt() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0b0000_1000)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0b0000_1000)]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(false);
@@ -77,6 +74,7 @@ mod test {
       status_register: status_register_ptr.clone(),
       pc: 0x0001,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();

@@ -11,3 +11,4 @@ pub mod brbs;
 pub mod bset;
 pub mod bst;
 pub mod call;
+pub mod cbi;

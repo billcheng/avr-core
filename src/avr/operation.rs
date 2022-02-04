@@ -1,4 +1,5 @@
 use crate::avr::data_memory::DataMemoryPtr;
+use crate::avr::io::IoPtr;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
 use core::cell::RefCell;
@@ -9,6 +10,7 @@ pub struct ExecutionData {
   pub registers: Rc<RefCell<Registers>>,
   pub pc: u32,
   pub data_memory: DataMemoryPtr,
+  pub io: IoPtr,
 }
 
 pub trait Operation {

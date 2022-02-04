@@ -62,7 +62,7 @@ mod test {
 
   #[test]
   fn adc_0x01_x02_returns0x03_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x01), (1, 0x02)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x01), (1, 0x02)]);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
     add.execute(ExecutionData {
@@ -70,6 +70,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let registers = registers_ptr.borrow();
@@ -85,7 +86,7 @@ mod test {
 
   #[test]
   fn add_0x39_x48_returns0x81_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x39), (1, 0x48)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x39), (1, 0x48)]);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
     add.execute(ExecutionData {
@@ -93,6 +94,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let registers = registers_ptr.borrow();
@@ -108,7 +110,7 @@ mod test {
 
   #[test]
   fn add_0xff_xff_returns0xfe_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff), (1, 0xff)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff), (1, 0xff)]);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
     add.execute(ExecutionData {
@@ -116,6 +118,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let registers = registers_ptr.borrow();
@@ -131,7 +134,7 @@ mod test {
 
   #[test]
   fn add_0xff_0x01_returns0x00_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff), (1, 0x01)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff), (1, 0x01)]);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
     add.execute(ExecutionData {
@@ -139,6 +142,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let registers = registers_ptr.borrow();

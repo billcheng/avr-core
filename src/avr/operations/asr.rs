@@ -44,15 +44,12 @@ impl Operation for Asr {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::test::test_init::init;
-use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
-  use crate::avr::registers::Registers;
-  use crate::avr::status_register::StatusRegister;
+  use crate::avr::test::test_init::init;
 
   #[test]
   fn asr_0x80_returns_0b11000000() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x80)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x80)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
@@ -60,6 +57,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -68,7 +66,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
 
   #[test]
   fn asr_0x01_returns_zero() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x00)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x00)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
@@ -76,6 +74,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -88,7 +87,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
 
   #[test]
   fn asr_0x01_returns_carry() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x01)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x01)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
@@ -96,6 +95,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -104,7 +104,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
 
   #[test]
   fn asr_0x80_returns_negative() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x80)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x80)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
@@ -112,6 +112,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -120,7 +121,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
 
   #[test]
   fn asr_0x01_returns_overflow() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x01)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x01)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
@@ -128,6 +129,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -136,7 +138,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
 
   #[test]
   fn asr_0x01_returns_sign() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x01)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x01)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
@@ -144,6 +146,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();

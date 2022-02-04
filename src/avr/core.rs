@@ -3,6 +3,8 @@ use crate::avr::core_type::CoreType;
 use crate::avr::data_memory::create_data_memory_ptr;
 use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::instruction_manager::InstructionManager;
+use crate::avr::io::Io;
+use crate::avr::io::IoPtr;
 use crate::avr::operation::ExecutionData;
 use crate::avr::read_only_memory::ReadOnlyMemory;
 use crate::avr::registers::Registers;
@@ -18,12 +20,14 @@ pub struct Core {
   instruction: InstructionManager,
   registers: Rc<RefCell<Registers>>,
   data_memory: DataMemoryPtr,
+  io: IoPtr,
 }
 
 impl Core {
   pub fn new(core_type: CoreType, code_size: usize, data_size: usize) -> Self {
     let code_memory = Rc::new(RefCell::new(CodeMemory::new(code_size)));
     let data_memory = create_data_memory_ptr(data_size);
+    let io = Rc::new(RefCell::new(Io::new()));
 
     Self {
       core_type,
@@ -33,6 +37,7 @@ impl Core {
       instruction: InstructionManager::new(),
       registers: Rc::new(RefCell::new(Registers::new())),
       data_memory,
+      io,
     }
   }
 
@@ -51,6 +56,7 @@ impl Core {
       registers: self.registers.clone(),
       pc: self.program_counter,
       data_memory: self.data_memory.clone(),
+      io: self.io.clone(),
     });
     self.program_counter = match result {
       None => self.program_counter + 1,

@@ -47,7 +47,7 @@ mod test {
 
   #[test]
   fn andi_r0_0x55_returns_0x00() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xaa)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xaa)]);
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
     and.execute(super::ExecutionData {
@@ -55,6 +55,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let registers = registers_ptr.borrow();
@@ -63,7 +64,7 @@ mod test {
 
   #[test]
   fn andi_r0_0x55_returns_zero() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xaa)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xaa)]);
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
     and.execute(super::ExecutionData {
@@ -71,6 +72,7 @@ mod test {
       registers: registers_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -79,7 +81,7 @@ mod test {
 
   #[test]
   fn andi_r0_0x55_returns_negative() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xaa)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xaa)]);
 
     let and = super::Andi::new(0b0111_1111_0000_1111);
     and.execute(super::ExecutionData {
@@ -87,6 +89,7 @@ mod test {
       registers: registers_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -95,7 +98,7 @@ mod test {
 
   #[test]
   fn andi_r0_0x55_returns_overflow() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xaa)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xaa)]);
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
     and.execute(super::ExecutionData {
@@ -103,6 +106,7 @@ mod test {
       registers: registers_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -111,7 +115,7 @@ mod test {
 
   #[test]
   fn andi_r0_0xff_returns_sign() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xaa)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xaa)]);
 
     let and = super::Andi::new(0b0111_1111_0000_1111);
     and.execute(super::ExecutionData {
@@ -119,6 +123,7 @@ mod test {
       registers: registers_ptr,
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();

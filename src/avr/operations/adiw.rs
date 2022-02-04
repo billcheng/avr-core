@@ -57,7 +57,7 @@ mod test {
 
   #[test]
   fn adiw_r24_0x01_returns0x0200_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0x01)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0x01)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
@@ -65,6 +65,7 @@ mod test {
       registers: registers_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let registers = registers_ptr.borrow();
@@ -80,7 +81,7 @@ mod test {
 
   #[test]
   fn adiw_r24_0x01_returns_carry() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0xff)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0xff)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
@@ -88,6 +89,7 @@ mod test {
       registers: registers_ptr,
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let status_register = status_register_ptr.borrow();
@@ -96,7 +98,7 @@ mod test {
 
   #[test]
   fn adiw_r24_0x01_returns_zero() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0xff)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0xff)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
@@ -104,6 +106,7 @@ mod test {
       registers: registers_ptr,
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let status_register = status_register_ptr.borrow();
@@ -112,7 +115,7 @@ mod test {
 
   #[test]
   fn adiw_r24_0x01_returns_negative() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0xef)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0xef)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
@@ -120,6 +123,7 @@ mod test {
       registers: registers_ptr,
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let status_register = status_register_ptr.borrow();
@@ -128,7 +132,7 @@ mod test {
 
   #[test]
   fn adiw_r24_0x01_returns_overflow() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0x7f)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0x7f)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
@@ -136,6 +140,7 @@ mod test {
       registers: registers_ptr,
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let status_register = status_register_ptr.borrow();
@@ -144,7 +149,7 @@ mod test {
 
   #[test]
   fn adiw_r24_0x01_returns_sign() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0xef)]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0xef)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
@@ -152,6 +157,7 @@ mod test {
       registers: registers_ptr,
       pc: 0x0000,
       data_memory,
+      io
     });
 
     let status_register = status_register_ptr.borrow();

@@ -24,15 +24,12 @@ impl Operation for Bclr {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
-  use crate::avr::registers::Registers;
-  use crate::avr::status_register::StatusRegister;
   use crate::avr::test::test_init::init;
 
   #[test]
   fn bclr_0_clears_carry() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_carry(true);
@@ -44,6 +41,7 @@ mod test {
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -52,7 +50,7 @@ mod test {
 
   #[test]
   fn bclr_1_clears_zero() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_zero(true);
@@ -64,6 +62,7 @@ mod test {
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -72,7 +71,7 @@ mod test {
 
   #[test]
   fn bclr_2_clears_negative() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_negative(true);
@@ -84,6 +83,7 @@ mod test {
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -92,7 +92,7 @@ mod test {
 
   #[test]
   fn bclr_3_clears_overflow() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_overflow(true);
@@ -104,6 +104,7 @@ mod test {
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -112,7 +113,7 @@ mod test {
 
   #[test]
   fn bclr_4_clears_sign() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_sign(true);
@@ -124,6 +125,7 @@ mod test {
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -132,7 +134,7 @@ mod test {
 
   #[test]
   fn bclr_5_clears_half_carry() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_half_carry(true);
@@ -144,6 +146,7 @@ mod test {
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -152,7 +155,7 @@ mod test {
 
   #[test]
   fn bclr_6_clears_transfer() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_transfer(true);
@@ -164,6 +167,7 @@ mod test {
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -172,7 +176,7 @@ mod test {
 
   #[test]
   fn bclr_7_clears_interrupt() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_interrupt(true);
@@ -184,6 +188,7 @@ mod test {
       status_register: status_register_ptr.clone(),
       pc: 0x0000,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();

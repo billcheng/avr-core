@@ -24,13 +24,12 @@ impl Operation for Bset {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::test::test_init::init;
-use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
+  use crate::avr::test::test_init::init;
 
   #[test]
   fn bset_nc_returns_c() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_carry(false);
@@ -42,6 +41,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
       status_register: status_register_ptr.clone(),
       pc: 0x0001,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
@@ -50,7 +50,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
 
   #[test]
   fn bset_ni_returns_i() {
-    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut status_register = status_register_ptr.borrow_mut();
       status_register.set_interrupt(false);
@@ -62,6 +62,7 @@ use crate::avr::data_memory::create_data_memory_ptr;
       status_register: status_register_ptr.clone(),
       pc: 0x0001,
       data_memory,
+      io,
     });
 
     let status_register = status_register_ptr.borrow();
