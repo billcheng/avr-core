@@ -2,6 +2,7 @@
 pub struct Registers {
   reg: Vec<u8>,
   stack_pointer: u32,
+  z: u16,
 }
 
 impl Registers {
@@ -9,6 +10,7 @@ impl Registers {
     Self {
       reg: vec![0; 32],
       stack_pointer: 0,
+      z: 0,
     }
   }
 
@@ -31,5 +33,13 @@ impl Registers {
   pub fn add_stack_pointer(&mut self, value: i32) {
     let result = self.stack_pointer as i32 + value;
     self.stack_pointer = result as u32;
+  }
+
+  pub fn get_z(&self) -> u16 {
+    self.z
+  }
+
+  pub fn set_z(&mut self, value: u16) {
+    self.z = value;
   }
 }

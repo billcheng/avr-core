@@ -22,3 +22,4 @@ pub mod eor;
 pub mod fmul;
 pub mod fmuls;
 pub mod fmulsu;
+pub mod icall;
