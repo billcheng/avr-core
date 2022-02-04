@@ -10,6 +10,7 @@ pub mod read_only_memory;
 pub mod registers;
 pub mod status_register;
 pub mod io;
+pub mod util;
 
 #[cfg(test)]
 pub mod test;

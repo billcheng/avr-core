@@ -18,12 +18,19 @@ use crate::avr::operations::com::Com;
 use crate::avr::operations::cp::Cp;
 use crate::avr::operations::cpc::Cpc;
 use crate::avr::operations::cpi::Cpi;
+use crate::avr::operations::cpse::Cpse;
+use crate::avr::util::opcode_size::Opcode;
+use std::rc::Rc;
 
-pub struct InstructionManager {}
+pub struct InstructionManager {
+  opcode: Rc<Opcode>,
+}
 
 impl InstructionManager {
   pub fn new() -> Self {
-    Self {}
+    Self {
+      opcode: Rc::new(Opcode::new()),
+    }
   }
 
   pub fn get(&self, core_type: &CoreType, opcode: u16, next_opcode: u16) -> Box<dyn Operation> {
@@ -115,6 +122,11 @@ impl InstructionManager {
     let is_cpi = opcode & 0b1111_0000_0000_0000 == 0b0011_0000_0000_0000;
     if is_cpi {
       return Box::new(Cpi::new(opcode));
+    }
+
+    let is_cpse = opcode & 0b1111_1100_0000_0000 == 0b0001_0000_0000_0000;
+    if is_cpse {
+      return Box::new(Cpse::new(opcode, next_opcode, &self.opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
