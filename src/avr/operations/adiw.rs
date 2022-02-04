@@ -1,7 +1,5 @@
-use crate::avr::data_memory::DataMemoryPtr;
+use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
-use crate::avr::registers::Registers;
-use crate::avr::status_register::StatusRegister;
 
 pub struct Adiw {
   d: usize,
@@ -23,13 +21,9 @@ impl Adiw {
 }
 
 impl Operation for Adiw {
-  fn execute(
-    &self,
-    status_register: &mut StatusRegister,
-    registers: &mut Registers,
-    _pc: u32,
-    _data_memory: &DataMemoryPtr,
-  ) -> Option<u32> {
+  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+    let mut registers = execution_data.registers.borrow_mut();
+
     let rd = registers.get(self.d) as u16 | ((registers.get(self.d + 1) as u16) << 8);
     let result = rd as u32 + self.k as u32;
     registers.set(self.d, (result & 0x00ff) as u8);
@@ -44,6 +38,7 @@ impl Operation for Adiw {
     let carry = rdh7 & !r15;
     let sign = negative ^ overflow;
 
+    let mut status_register = execution_data.status_register.borrow_mut();
     status_register.set_overflow(overflow);
     status_register.set_negative(negative);
     status_register.set_zero(zero);
@@ -56,20 +51,24 @@ impl Operation for Adiw {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
+  use crate::avr::operations::adiw::ExecutionData;
+  use crate::avr::test::test_init::init;
 
   #[test]
   fn adiw_r24_0x01_returns0x0200_with_status_registers() {
-    let mut registers = super::Registers::new();
-    registers.set(24, 0xff);
-    registers.set(25, 0x01);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0x01)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adiw.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr.clone(),
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
+    let status_register = status_register_ptr.borrow();
     assert_eq!(registers.get(24), 0x00);
     assert_eq!(registers.get(25), 0x02);
     assert_eq!(status_register.get_carry(), 0);
@@ -81,71 +80,81 @@ mod test {
 
   #[test]
   fn adiw_r24_0x01_returns_carry() {
-    let mut registers = super::Registers::new();
-    registers.set(24, 0xff);
-    registers.set(25, 0xff);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0xff)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adiw.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_carry(), 1);
   }
 
   #[test]
   fn adiw_r24_0x01_returns_zero() {
-    let mut registers = super::Registers::new();
-    registers.set(24, 0xff);
-    registers.set(25, 0xff);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0xff)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adiw.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_zero(), 1);
   }
 
   #[test]
   fn adiw_r24_0x01_returns_negative() {
-    let mut registers = super::Registers::new();
-    registers.set(24, 0xff);
-    registers.set(25, 0xef);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0xef)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adiw.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_negative(), 1);
   }
 
   #[test]
   fn adiw_r24_0x01_returns_overflow() {
-    let mut registers = super::Registers::new();
-    registers.set(24, 0xff);
-    registers.set(25, 0x7f);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0x7f)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adiw.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_overflow(), 1);
   }
 
   #[test]
   fn adiw_r24_0x01_returns_sign() {
-    let mut registers = super::Registers::new();
-    registers.set(24, 0xff);
-    registers.set(25, 0xef);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(24, 0xff), (25, 0xef)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adiw.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_sign(), 1);
   }
 }

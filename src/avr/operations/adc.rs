@@ -1,7 +1,5 @@
-use crate::avr::data_memory::DataMemoryPtr;
+use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
-use crate::avr::registers::Registers;
-use crate::avr::status_register::StatusRegister;
 
 pub struct Adc {
   r: usize,
@@ -24,13 +22,10 @@ impl Adc {
 }
 
 impl Operation for Adc {
-  fn execute(
-    &self,
-    status_register: &mut StatusRegister,
-    registers: &mut Registers,
-    _pc: u32,
-    _data_memory: &DataMemoryPtr,
-  ) -> Option<u32> {
+  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+    let mut registers = execution_data.registers.borrow_mut();
+    let mut status_register = execution_data.status_register.borrow_mut();
+
     let rr = registers.get(self.r);
     let rd = registers.get(self.d);
     let result = rd as u16 + rr as u16 + status_register.get_carry() as u16;
@@ -64,20 +59,24 @@ impl Operation for Adc {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
+  use crate::avr::operations::adc::ExecutionData;
+  use crate::avr::test::test_init::init;
 
   #[test]
   fn adc_0x01_x02_returns0x03_with_status_registers() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0x01);
-    registers.set(1, 0x02);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x01), (1, 0x02)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adc.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr.clone(),
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
+    let status_register = status_register_ptr.borrow();
     assert_eq!(registers.get(0), 0x03);
     assert_eq!(status_register.get_carry(), 0);
     assert_eq!(status_register.get_half_carry(), 0);
@@ -89,15 +88,18 @@ mod test {
 
   #[test]
   fn adc_0x39_x48_returns0x81_with_status_registers() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0x39);
-    registers.set(1, 0x48);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x39), (1, 0x48)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adc.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr.clone(),
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
+    let status_register = status_register_ptr.borrow();
     assert_eq!(registers.get(0), 0x81);
     assert_eq!(status_register.get_carry(), 0);
     assert_eq!(status_register.get_half_carry(), 1);
@@ -109,15 +111,18 @@ mod test {
 
   #[test]
   fn adc_0xff_xff_returns0xfe_with_status_registers() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xff);
-    registers.set(1, 0xff);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff), (1, 0xff)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adc.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr.clone(),
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
+    let status_register = status_register_ptr.borrow();
     assert_eq!(registers.get(0), 0xfe);
     assert_eq!(status_register.get_carry(), 1);
     assert_eq!(status_register.get_half_carry(), 1);
@@ -129,15 +134,18 @@ mod test {
 
   #[test]
   fn adc_0xff_0x01_returns0x00_with_status_registers() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xff);
-    registers.set(1, 0x01);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff), (1, 0x01)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adc.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr.clone(),
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
+    let status_register = status_register_ptr.borrow();
     assert_eq!(registers.get(0), 0x00);
     assert_eq!(status_register.get_carry(), 1);
     assert_eq!(status_register.get_half_carry(), 1);
@@ -149,16 +157,22 @@ mod test {
 
   #[test]
   fn adc_0x01_0x02_carry_returns0x04_with_status_registers() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0x01);
-    registers.set(1, 0x02);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_carry(true);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x01), (1, 0x02)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_carry(true);
+    }
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    adc.execute(ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr.clone(),
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
+    let status_register = status_register_ptr.borrow();
     assert_eq!(registers.get(0), 0x04);
     assert_eq!(status_register.get_carry(), 0);
     assert_eq!(status_register.get_half_carry(), 0);

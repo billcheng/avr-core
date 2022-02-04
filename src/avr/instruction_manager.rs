@@ -7,6 +7,7 @@ use crate::avr::operations::and::And;
 use crate::avr::operations::andi::Andi;
 use crate::avr::operations::asr::Asr;
 use crate::avr::operations::bclr::Bclr;
+use crate::avr::operations::bld::Bld;
 use crate::avr::operations::brbc::Brbc;
 use crate::avr::operations::brbs::Brbs;
 use crate::avr::operations::bset::Bset;
@@ -54,6 +55,11 @@ impl InstructionManager {
     let is_bclr = opcode & 0b1111_1111_1000_1111 == 0b1001_0100_1000_1000;
     if is_bclr {
       return Box::new(Bclr::new(opcode));
+    }
+
+    let is_bld = opcode & 0b1111_1111_1000_1111 == 0b1001_0100_1000_1000;
+    if is_bld {
+      return Box::new(Bld::new(opcode));
     }
 
     let is_brbc = opcode & 0b1111_1100_0000_0000 == 0b1111_0100_0000_0000;

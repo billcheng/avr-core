@@ -1,7 +1,5 @@
-use crate::avr::data_memory::DataMemoryPtr;
+use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
-use crate::avr::registers::Registers;
-use crate::avr::status_register::StatusRegister;
 
 pub struct Andi {
   d: usize,
@@ -18,13 +16,9 @@ impl Andi {
 }
 
 impl Operation for Andi {
-  fn execute(
-    &self,
-    status_register: &mut StatusRegister,
-    registers: &mut Registers,
-    _pc: u32,
-    _data_memory: &DataMemoryPtr,
-  ) -> Option<u32> {
+  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+    let mut registers = execution_data.registers.borrow_mut();
+
     let rd = registers.get(self.d);
     let result = rd & self.k;
     registers.set(self.d, result);
@@ -36,6 +30,7 @@ impl Operation for Andi {
     let zero = result == 0;
     let sign = negative ^ overflow;
 
+    let mut status_register = execution_data.status_register.borrow_mut();
     status_register.set_overflow(overflow);
     status_register.set_negative(negative);
     status_register.set_zero(zero);
@@ -47,71 +42,86 @@ impl Operation for Andi {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
+  use crate::avr::test::test_init::init;
 
   #[test]
   fn andi_r0_0x55_returns_0x00() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xaa);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xaa)]);
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
-    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    and.execute(super::ExecutionData {
+      status_register: status_register_ptr,
+      registers: registers_ptr.clone(),
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
     assert_eq!(registers.get(0), 0x00);
   }
 
   #[test]
   fn andi_r0_0x55_returns_zero() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xaa);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xaa)]);
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
-    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    and.execute(super::ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_zero(), 1);
   }
 
   #[test]
   fn andi_r0_0x55_returns_negative() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xaa);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xaa)]);
 
     let and = super::Andi::new(0b0111_1111_0000_1111);
-    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    and.execute(super::ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_negative(), 1);
   }
 
   #[test]
   fn andi_r0_0x55_returns_overflow() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xaa);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xaa)]);
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
-    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    and.execute(super::ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_overflow(), 0);
   }
 
   #[test]
   fn andi_r0_0xff_returns_sign() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xaa);
-    let mut status_register = super::StatusRegister::new();
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xaa)]);
 
     let and = super::Andi::new(0b0111_1111_0000_1111);
-    and.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    and.execute(super::ExecutionData {
+      status_register: status_register_ptr.clone(),
+      registers: registers_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_sign(), 1);
   }
 }

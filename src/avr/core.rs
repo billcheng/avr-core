@@ -1,8 +1,9 @@
 use crate::avr::code_memory::CodeMemory;
 use crate::avr::core_type::CoreType;
-use crate::avr::data_memory::DataMemory;
+use crate::avr::data_memory::create_data_memory_ptr;
 use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::instruction_manager::InstructionManager;
+use crate::avr::operation::ExecutionData;
 use crate::avr::read_only_memory::ReadOnlyMemory;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -12,25 +13,25 @@ use std::rc::Rc;
 pub struct Core {
   core_type: CoreType,
   code_memory: Rc<RefCell<CodeMemory>>,
-  status_register: StatusRegister,
+  status_register: Rc<RefCell<StatusRegister>>,
   program_counter: u32,
   instruction: InstructionManager,
-  registers: Registers,
+  registers: Rc<RefCell<Registers>>,
   data_memory: DataMemoryPtr,
 }
 
 impl Core {
   pub fn new(core_type: CoreType, code_size: usize, data_size: usize) -> Self {
     let code_memory = Rc::new(RefCell::new(CodeMemory::new(code_size)));
-    let data_memory = Rc::new(RefCell::new(DataMemory::new(data_size)));
+    let data_memory = create_data_memory_ptr(data_size);
 
     Self {
       core_type,
       program_counter: 0,
       code_memory,
-      status_register: StatusRegister::new(),
+      status_register: Rc::new(RefCell::new(StatusRegister::new())),
       instruction: InstructionManager::new(),
-      registers: Registers::new(),
+      registers: Rc::new(RefCell::new(Registers::new())),
       data_memory,
     }
   }
@@ -45,12 +46,12 @@ impl Core {
     let opcode = code_memory.read(self.program_counter);
     let next_opcode = code_memory.read(self.program_counter + 1);
     let operation = self.instruction.get(&self.core_type, opcode, next_opcode);
-    let result = operation.execute(
-      &mut self.status_register,
-      &mut self.registers,
-      self.program_counter,
-      &self.data_memory,
-    );
+    let result = operation.execute(ExecutionData {
+      status_register: self.status_register.clone(),
+      registers: self.registers.clone(),
+      pc: self.program_counter,
+      data_memory: self.data_memory.clone(),
+    });
     self.program_counter = match result {
       None => self.program_counter + 1,
       Some(next_pc) => next_pc,

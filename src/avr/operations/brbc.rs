@@ -1,4 +1,5 @@
 use crate::avr::data_memory::DataMemoryPtr;
+use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -21,18 +22,14 @@ impl Brbc {
 }
 
 impl Operation for Brbc {
-  fn execute(
-    &self,
-    status_register: &mut StatusRegister,
-    _registers: &mut Registers,
-    pc: u32,
-    _data_memory: &DataMemoryPtr,
-  ) -> Option<u32> {
+  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+    let status_register = execution_data.status_register.borrow();
+
     let flag = status_register.get(self.s);
     let k = self.k as i8;
 
     match flag {
-      0 => Some(((pc as i64) + (k as i64) + 1) as u32),
+      0 => Some(((execution_data.pc as i64) + (k as i64) + 1) as u32),
       _ => None,
     }
   }
@@ -42,42 +39,61 @@ impl Operation for Brbc {
 mod test {
   use crate::avr::data_memory::create_data_memory_ptr;
   use crate::avr::operation::Operation;
+  use crate::avr::test::test_init::init;
 
   #[test]
   fn brbc_nc_0x0001_returns0x0001() {
-    let mut registers = super::Registers::new();
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_carry(false);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_carry(false);
+    }
 
     let op = super::Brbc::new(0b1111_0111_1111_1000);
-    let result = op.execute(&mut status_register, &mut registers, 0x0001, &data_memory);
+    let result = op.execute(super::ExecutionData {
+      registers: registers_ptr,
+      status_register: status_register_ptr,
+      pc: 0x0001,
+      data_memory,
+    });
 
     assert_eq!(result, Some(1));
   }
 
   #[test]
   fn brbc_nc_0x0001_returns0x0003() {
-    let mut registers = super::Registers::new();
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_carry(false);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_carry(false);
+    }
 
     let op = super::Brbc::new(0b1111_0100_0000_1000);
-    let result = op.execute(&mut status_register, &mut registers, 0x0001, &data_memory);
+    let result = op.execute(super::ExecutionData {
+      registers: registers_ptr,
+      status_register: status_register_ptr,
+      pc: 0x0001,
+      data_memory,
+    });
 
     assert_eq!(result, Some(3));
   }
 
   #[test]
   fn brbc_c_0x0001_returns_none() {
-    let mut registers = super::Registers::new();
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_carry(true);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_carry(true);
+    }
 
     let op = super::Brbc::new(0b1111_0100_0000_1000);
-    let result = op.execute(&mut status_register, &mut registers, 0x0001, &data_memory);
+    let result = op.execute(super::ExecutionData {
+      registers: registers_ptr,
+      status_register: status_register_ptr,
+      pc: 0x0001,
+      data_memory,
+    });
 
     assert_eq!(result, None);
   }

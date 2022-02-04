@@ -1,4 +1,5 @@
 use crate::avr::data_memory::DataMemoryPtr;
+use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -21,17 +22,15 @@ impl Bst {
 }
 
 impl Operation for Bst {
-  fn execute(
-    &self,
-    status_register: &mut StatusRegister,
-    registers: &mut Registers,
-    _pc: u32,
-    _data_memory: &DataMemoryPtr,
-  ) -> Option<u32> {
+  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+    let registers = execution_data.registers.borrow();
+
     let rd = registers.get(self.d);
     let mask = 1 << self.b;
 
-    let bit = rd & mask!=0;
+    let bit = rd & mask != 0;
+
+    let mut status_register = execution_data.status_register.borrow_mut();
     status_register.set_transfer(bit);
 
     None
@@ -41,33 +40,46 @@ impl Operation for Bst {
 #[cfg(test)]
 mod test {
   use crate::avr::data_memory::create_data_memory_ptr;
-use crate::avr::operation::Operation;
+  use crate::avr::operation::Operation;
+  use crate::avr::test::test_init::init;
 
   #[test]
   fn bst_r0_returns_t() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0b0000_1000);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_transfer(false);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0b0000_1000)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_transfer(false);
+    }
 
     let op = super::Bst::new(0b1111_1010_0000_0011);
-    op.execute(&mut status_register, &mut registers, 0x0001, &data_memory);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr,
+      status_register: status_register_ptr.clone(),
+      pc: 0x0001,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_transfer(), 1);
   }
 
   #[test]
   fn bst_r0_returns_nt() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0b0000_1000);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_transfer(false);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0b0000_1000)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_transfer(false);
+    }
 
     let op = super::Bst::new(0b1111_1010_0000_0111);
-    op.execute(&mut status_register, &mut registers, 0x0001, &data_memory);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr,
+      status_register: status_register_ptr.clone(),
+      pc: 0x0001,
+      data_memory,
+    });
 
+    let status_register = status_register_ptr.borrow();
     assert_eq!(status_register.get_transfer(), 0);
   }
 }

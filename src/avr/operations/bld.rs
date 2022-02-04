@@ -1,7 +1,5 @@
-use crate::avr::data_memory::DataMemoryPtr;
+use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
-use crate::avr::registers::Registers;
-use crate::avr::status_register::StatusRegister;
 
 pub struct Bld {
   d: usize,
@@ -21,7 +19,10 @@ impl Bld {
 }
 
 impl Operation for Bld {
-  fn execute(&self, status_register: &mut StatusRegister, registers: &mut Registers, _pc: u32, _data_memory: &DataMemoryPtr) -> Option<u32> {
+  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+    let mut registers = execution_data.registers.borrow_mut();
+    let status_register = execution_data.status_register.borrow();
+
     let rd = registers.get(self.d);
     let t = status_register.get_transfer();
 
@@ -41,117 +42,165 @@ impl Operation for Bld {
 #[cfg(test)]
 mod test {
   use crate::avr::data_memory::create_data_memory_ptr;
-use crate::avr::operation::Operation;
+  use crate::avr::operation::Operation;
+  use crate::avr::test::test_init::init;
 
   #[test]
   fn bld_t0_0xff_0_returns_0b11111110() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xff);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_transfer(false);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_transfer(false);
+    }
 
     let op = super::Bld::new(0b1111_1000_0000_0000);
-    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr.clone(),
+      status_register: status_register_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
     assert_eq!(registers.get(0), 0b1111_1110);
   }
 
   #[test]
   fn bld_t0_0xff_1_returns_0b11111101() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xff);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_transfer(false);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_transfer(false);
+    }
 
     let op = super::Bld::new(0b1111_1000_0000_0001);
-    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr.clone(),
+      status_register: status_register_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
     assert_eq!(registers.get(0), 0b1111_1101);
   }
 
   #[test]
   fn bld_t0_0xff_2_returns_0b11111011() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xff);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_transfer(false);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_transfer(false);
+    }
 
     let op = super::Bld::new(0b1111_1000_0000_0010);
-    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr.clone(),
+      status_register: status_register_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
     assert_eq!(registers.get(0), 0b1111_1011);
   }
 
   #[test]
   fn bld_t0_0xff_3_returns_0b11110111() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xff);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_transfer(false);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_transfer(false);
+    }
 
     let op = super::Bld::new(0b1111_1000_0000_0011);
-    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr.clone(),
+      status_register: status_register_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
     assert_eq!(registers.get(0), 0b1111_0111);
   }
 
   #[test]
   fn bld_t0_0xff_7_returns_0b01111111() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0xff);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_transfer(false);
-    let data_memory = create_data_memory_ptr(10);
-
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0xff)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_transfer(false);
+    }
     let op = super::Bld::new(0b1111_1000_0000_0111);
-    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr.clone(),
+      status_register: status_register_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
     assert_eq!(registers.get(0), 0b0111_1111);
   }
 
   #[test]
   fn bld_t1_0x00_0_returns_0b00000001() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0x00);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_transfer(true);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x00)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_transfer(true);
+    }
 
     let op = super::Bld::new(0b1111_1000_0000_0000);
-    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr.clone(),
+      status_register: status_register_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
     assert_eq!(registers.get(0), 0b0000_0001);
   }
 
   #[test]
   fn bld_t1_0x00_1_returns_0b00000010() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0x00);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_transfer(true);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x00)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_transfer(true);
+    }
 
     let op = super::Bld::new(0b1111_1000_0000_0001);
-    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr.clone(),
+      status_register: status_register_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
     assert_eq!(registers.get(0), 0b0000_0010);
   }
 
   #[test]
   fn bld_t1_0x00_7_returns_0b10000000() {
-    let mut registers = super::Registers::new();
-    registers.set(0, 0x00);
-    let mut status_register = super::StatusRegister::new();
-    status_register.set_transfer(true);
-    let data_memory = create_data_memory_ptr(10);
+    let (registers_ptr, status_register_ptr, data_memory) = init(vec![(0, 0x00)]);
+    {
+      let mut status_register = status_register_ptr.borrow_mut();
+      status_register.set_transfer(true);
+    }
 
     let op = super::Bld::new(0b1111_1000_0000_0111);
-    op.execute(&mut status_register, &mut registers, 0x0000, &data_memory);
+    op.execute(super::ExecutionData {
+      registers: registers_ptr.clone(),
+      status_register: status_register_ptr,
+      pc: 0x0000,
+      data_memory,
+    });
 
+    let registers = registers_ptr.borrow();
     assert_eq!(registers.get(0), 0b1000_0000);
   }
 }
