@@ -19,3 +19,4 @@ pub mod cpi;
 pub mod cpse;
 pub mod dec;
 pub mod eor;
+pub mod fmul;
