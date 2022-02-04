@@ -18,3 +18,4 @@ pub mod cpc;
 pub mod cpi;
 pub mod cpse;
 pub mod dec;
+pub mod eor;
