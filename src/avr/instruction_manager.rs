@@ -22,6 +22,7 @@ use crate::avr::operations::cpse::Cpse;
 use crate::avr::operations::dec::Dec;
 use crate::avr::operations::eor::Eor;
 use crate::avr::operations::fmul::Fmul;
+use crate::avr::operations::fmuls::Fmuls;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -145,6 +146,11 @@ impl InstructionManager {
     let is_fmul = opcode & 0b1111_1111_1000_1000 == 0b0000_0011_0000_1000;
     if is_fmul {
       return Box::new(Fmul::new(opcode));
+    }
+
+    let is_fmuls = opcode & 0b1111_1111_1000_1000 == 0b0000_0011_1000_0000;
+    if is_fmuls {
+      return Box::new(Fmuls::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
