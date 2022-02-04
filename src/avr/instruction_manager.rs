@@ -16,6 +16,7 @@ use crate::avr::operations::call::Call;
 use crate::avr::operations::cbi::Cbi;
 use crate::avr::operations::com::Com;
 use crate::avr::operations::cp::Cp;
+use crate::avr::operations::cpc::Cpc;
 
 pub struct InstructionManager {}
 
@@ -103,6 +104,11 @@ impl InstructionManager {
     let is_cp = opcode & 0b1111_1100_0000_0000 == 0b0001_0100_0000_0000;
     if is_cp {
       return Box::new(Cp::new(opcode));
+    }
+
+    let is_cpc = opcode & 0b1111_1100_0000_0000 == 0b0000_0100_0000_0000;
+    if is_cpc {
+      return Box::new(Cpc::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
