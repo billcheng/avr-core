@@ -1,8 +1,5 @@
-use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
-use crate::avr::registers::Registers;
-use crate::avr::status_register::StatusRegister;
 
 pub struct Brbc {
   k: i8,
