@@ -19,6 +19,7 @@ use crate::avr::operations::cp::Cp;
 use crate::avr::operations::cpc::Cpc;
 use crate::avr::operations::cpi::Cpi;
 use crate::avr::operations::cpse::Cpse;
+use crate::avr::operations::dec::Dec;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -127,6 +128,11 @@ impl InstructionManager {
     let is_cpse = opcode & 0b1111_1100_0000_0000 == 0b0001_0000_0000_0000;
     if is_cpse {
       return Box::new(Cpse::new(opcode, next_opcode, &self.opcode));
+    }
+
+    let is_dec = opcode & 0b1111_1110_0000_1111 == 0b1001_0100_0000_1010;
+    if is_dec {
+      return Box::new(Dec::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
