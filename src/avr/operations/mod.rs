@@ -28,3 +28,4 @@ pub mod in_io;
 pub mod inc;
 pub mod jmp;
 pub mod lac;
+pub mod las;

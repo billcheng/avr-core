@@ -1,3 +1,4 @@
+use crate::avr::operations::las::Las;
 use crate::avr::core_type::CoreType;
 use crate::avr::operation::Operation;
 use crate::avr::operations::adc::Adc;
@@ -193,6 +194,11 @@ impl InstructionManager {
     let is_lac = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_0110;
     if is_lac {
       return Box::new(Lac::new(opcode));
+    }
+
+    let is_las = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_0101;
+    if is_las {
+      return Box::new(Las::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
