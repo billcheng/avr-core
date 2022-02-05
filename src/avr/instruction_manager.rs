@@ -1,4 +1,3 @@
-use crate::avr::operations::jmp::Jmp;
 use crate::avr::core_type::CoreType;
 use crate::avr::operation::Operation;
 use crate::avr::operations::adc::Adc;
@@ -29,6 +28,8 @@ use crate::avr::operations::icall::Icall;
 use crate::avr::operations::ijmp::Ijmp;
 use crate::avr::operations::in_io::In;
 use crate::avr::operations::inc::Inc;
+use crate::avr::operations::jmp::Jmp;
+use crate::avr::operations::lac::Lac;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -184,9 +185,14 @@ impl InstructionManager {
       return Box::new(Inc::new(opcode));
     }
 
-    let is_jmp = opcode & 0b1111_1110_0000_1110==0b1001_0100_0000_1100;
+    let is_jmp = opcode & 0b1111_1110_0000_1110 == 0b1001_0100_0000_1100;
     if is_jmp {
       return Box::new(Jmp::new(opcode, next_opcode));
+    }
+
+    let is_lac = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_0110;
+    if is_lac {
+      return Box::new(Lac::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
