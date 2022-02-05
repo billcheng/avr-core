@@ -25,6 +25,7 @@ use crate::avr::operations::fmul::Fmul;
 use crate::avr::operations::fmuls::Fmuls;
 use crate::avr::operations::fmulsu::Fmulsu;
 use crate::avr::operations::icall::Icall;
+use crate::avr::operations::ijmp::Ijmp;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -163,6 +164,11 @@ impl InstructionManager {
     let is_icall = opcode == 0b1001_0101_0000_1001;
     if is_icall {
       return Box::new(Icall::new(core_type));
+    }
+
+    let is_ijmp = opcode == 0b1001_0100_0000_1001;
+    if is_ijmp {
+      return Box::new(Ijmp::new());
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
