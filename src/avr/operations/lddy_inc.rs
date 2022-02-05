@@ -2,11 +2,11 @@ use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
-pub struct Ldd {
+pub struct LddyInc {
   d: usize,
 }
 
-impl Ldd {
+impl LddyInc {
   pub fn new(opcode: u16) -> Self {
     let d = ((opcode & 0b0000_0001_1111_0000) >> 4) as usize;
 
@@ -14,7 +14,7 @@ impl Ldd {
   }
 }
 
-impl Operation for Ldd {
+impl Operation for LddyInc {
   fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     let y = registers.get_y();
@@ -23,6 +23,7 @@ impl Operation for Ldd {
     let ds = data_memory.read(y as u32);
 
     registers.set(self.d, ds);
+    registers.set_y((y as u32 + 1) as u16);
 
     None
   }
@@ -35,7 +36,7 @@ mod test {
   use crate::avr::test::test_init::init;
 
   #[test]
-  fn ldd_r5_0x0007_returns_0xfe() {
+  fn lddyinc_r5_0x0007_returns_0xfe() {
     let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
     {
       let mut registers = registers_ptr.borrow_mut();
@@ -45,7 +46,7 @@ mod test {
       mem.write(7, 0xfe)
     }
 
-    let op = super::Ldd::new(0b1000_0000_0101_1000);
+    let op = super::LddyInc::new(0b1001_0000_0101_1001);
     op.execute(super::ExecutionData {
       registers: registers_ptr.clone(),
       status_register: status_register_ptr,
@@ -56,5 +57,6 @@ mod test {
 
     let registers = registers_ptr.borrow();
     assert_eq!(registers.get(5), 0xfe);
+    assert_eq!(registers.get_y(), 8);
   }
 }
