@@ -37,7 +37,7 @@ mod test {
   use crate::avr::test::test_init::init;
 
   #[test]
-  fn las_0x01_return_0x00() {
+  fn las_rd_0xfe_mem_0x01_return_0x01_0xff() {
     let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(7, 0xfe)]);
     {
       let mut registers = registers_ptr.borrow_mut();
