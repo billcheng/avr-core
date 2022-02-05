@@ -37,3 +37,8 @@ pub mod lddy;
 pub mod lddy_inc;
 pub mod lddy_dec;
 pub mod lddyq;
+pub mod lddz;
+pub mod lddz_inc;
+pub mod lddz_dec;
+pub mod lddzq;
+pub mod ldi;

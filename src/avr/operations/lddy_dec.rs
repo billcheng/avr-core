@@ -19,7 +19,7 @@ impl Operation for LddyDec {
     let mut registers = execution_data.registers.borrow_mut();
     let y = (registers.get_y() as i32 - 1) as u16;
 
-    let data_memory = execution_data.data_memory.borrow_mut();
+    let data_memory = execution_data.data_memory.borrow();
     let ds = data_memory.read(y as u32);
 
     registers.set(self.d, ds);

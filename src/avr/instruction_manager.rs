@@ -39,6 +39,10 @@ use crate::avr::operations::lddy::Lddy;
 use crate::avr::operations::lddy_dec::LddyDec;
 use crate::avr::operations::lddy_inc::LddyInc;
 use crate::avr::operations::lddyq::Lddyq;
+use crate::avr::operations::lddz::Lddz;
+use crate::avr::operations::lddz_dec::LddzDec;
+use crate::avr::operations::lddz_inc::LddzInc;
+use crate::avr::operations::ldi::Ldi;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -247,6 +251,31 @@ impl InstructionManager {
     let is_lddq = opcode & 0b1101_0010_0000_1000 == 0b1000_0000_0000_1000;
     if is_lddq {
       return Box::new(Lddyq::new(opcode));
+    }
+
+    let is_lddz = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_0000;
+    if is_lddz {
+      return Box::new(Lddz::new(opcode));
+    }
+
+    let is_lddzinc = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_0001;
+    if is_lddzinc {
+      return Box::new(LddzInc::new(opcode));
+    }
+
+    let is_lddzinc = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_0010;
+    if is_lddzinc {
+      return Box::new(LddzDec::new(opcode));
+    }
+
+    let is_lddzq = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_0000;
+    if is_lddzq {
+      return Box::new(LddzDec::new(opcode));
+    }
+
+    let is_ldi = opcode & 0b1111_0000_0000_0000 == 0b1110_0000_0000_0000;
+    if is_ldi {
+      return Box::new(Ldi::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
