@@ -2,11 +2,11 @@ use crate::avr::operation::ExecutionData;
 use crate::avr::operation::Operation;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
-pub struct Lac {
+pub struct Lat {
   d: usize,
 }
 
-impl Lac {
+impl Lat {
   pub fn new(opcode: u16) -> Self {
     let d = ((opcode & 0b0000_0001_1111_0000) >> 4) as usize;
 
@@ -14,7 +14,7 @@ impl Lac {
   }
 }
 
-impl Operation for Lac {
+impl Operation for Lat {
   fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     let rd = registers.get(self.d);
@@ -24,7 +24,7 @@ impl Operation for Lac {
     let ds = data_memory.read(z as u32);
 
     registers.set(self.d, ds);
-    data_memory.write(z as u32, (0xff - rd) & ds);
+    data_memory.write(z as u32, rd ^ ds);
 
     None
   }
@@ -37,7 +37,7 @@ mod test {
   use crate::avr::test::test_init::init;
 
   #[test]
-  fn lac_rd_0xfe_mem_0xff_return_0xff_0x01() {
+  fn lat_rd_0xfe_mem_0xff_returns_0xff_0x01() {
     let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(7, 0xfe)]);
     {
       let mut registers = registers_ptr.borrow_mut();
@@ -47,7 +47,7 @@ mod test {
       mem.write(9, 0xff)
     }
 
-    let op = super::Lac::new(0b1001_0010_0111_0110);
+    let op = super::Lat::new(0b1001_0010_0111_0111);
     op.execute(super::ExecutionData {
       registers: registers_ptr.clone(),
       status_register: status_register_ptr,

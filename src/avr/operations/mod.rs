@@ -29,3 +29,4 @@ pub mod inc;
 pub mod jmp;
 pub mod lac;
 pub mod las;
+pub mod lat;
