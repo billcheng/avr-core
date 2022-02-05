@@ -26,3 +26,4 @@ pub mod icall;
 pub mod ijmp;
 pub mod in_io;
 pub mod inc;
+pub mod jmp;

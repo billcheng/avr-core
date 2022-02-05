@@ -1,3 +1,4 @@
+use crate::avr::operations::jmp::Jmp;
 use crate::avr::core_type::CoreType;
 use crate::avr::operation::Operation;
 use crate::avr::operations::adc::Adc;
@@ -181,6 +182,11 @@ impl InstructionManager {
     let is_inc = opcode & 0b1111_1110_0000_1111 == 0b1001_0100_0000_0011;
     if is_inc {
       return Box::new(Inc::new(opcode));
+    }
+
+    let is_jmp = opcode & 0b1111_1110_0000_1110==0b1001_0100_0000_1100;
+    if is_jmp {
+      return Box::new(Jmp::new(opcode, next_opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
