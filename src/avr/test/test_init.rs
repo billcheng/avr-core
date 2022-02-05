@@ -27,7 +27,7 @@ pub fn init(
   let status_register = StatusRegister::new();
   status_register_ptr = Rc::new(RefCell::new(status_register));
 
-  let data_memory = create_data_memory_ptr(10);
+  let data_memory = create_data_memory_ptr(256);
   let io = Rc::new(RefCell::new(Io::new()));
 
   (registers_ptr, status_register_ptr, data_memory, io)

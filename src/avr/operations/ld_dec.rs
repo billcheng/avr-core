@@ -17,7 +17,7 @@ impl LdDec {
 impl Operation for LdDec {
   fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
-    let x = (registers.get_x() as u32 - 1) as u16;
+    let x = (registers.get_x() as i32 - 1) as u16;
 
     let data_memory = execution_data.data_memory.borrow_mut();
     let ds = data_memory.read(x as u32);
