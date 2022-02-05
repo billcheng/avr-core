@@ -36,6 +36,7 @@ use crate::avr::operations::ld::Ld;
 use crate::avr::operations::ld_dec::LdDec;
 use crate::avr::operations::ld_inc::LdInc;
 use crate::avr::operations::ldd::Ldd;
+use crate::avr::operations::ldd_inc::Lddinc;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -230,6 +231,21 @@ impl InstructionManager {
     if is_ldd {
       return Box::new(Ldd::new(opcode));
     }
+
+    let is_lddinc = opcode & 0b1111_1110_0000_1111 == 0b1001_0000_0000_1001;
+    if is_lddinc {
+      return Box::new(Lddinc::new(opcode));
+    }
+
+    // let is_ldddec = opcode & 0b1111_1110_0000_1111 == 0b1001_0000_0000_1010;
+    // if is_ldddec {
+    //   return Box::new(Ldddec::new(opcode));
+    // }
+
+    // let is_lddq = opcode & 0b1101_0010_0000_1000==0b1000_0000_0000_1000;
+    // if is_lddq {
+    //   return Box::new(Lddq::new(opcode));
+    // }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
   }

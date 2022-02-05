@@ -34,3 +34,4 @@ pub mod ld;
 pub mod ld_inc;
 pub mod ld_dec;
 pub mod ldd;
+pub mod ldd_inc;
