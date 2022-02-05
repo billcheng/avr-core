@@ -9,7 +9,7 @@ pub struct Io {
 
 impl Io {
   pub fn new() -> Self {
-    Self { data: vec![0; 32] }
+    Self { data: vec![0; 64] }
   }
 
   pub fn get(&self, index: usize) -> u8 {
