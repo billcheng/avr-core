@@ -1,5 +1,3 @@
-use crate::avr::operations::ld_dec::LdDec;
-use crate::avr::operations::ld_inc::LdInc;
 use crate::avr::core_type::CoreType;
 use crate::avr::operation::Operation;
 use crate::avr::operations::adc::Adc;
@@ -35,6 +33,9 @@ use crate::avr::operations::lac::Lac;
 use crate::avr::operations::las::Las;
 use crate::avr::operations::lat::Lat;
 use crate::avr::operations::ld::Ld;
+use crate::avr::operations::ld_dec::LdDec;
+use crate::avr::operations::ld_inc::LdInc;
+use crate::avr::operations::ldd::Ldd;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -223,6 +224,11 @@ impl InstructionManager {
     let is_ld_dec = opcode & 0b1111_1110_0000_1111 == 0b1001_0000_0000_1110;
     if is_ld_dec {
       return Box::new(LdDec::new(opcode));
+    }
+
+    let is_ldd = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_1000;
+    if is_ldd {
+      return Box::new(Ldd::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);

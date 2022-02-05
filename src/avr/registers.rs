@@ -33,21 +33,36 @@ impl Registers {
     self.stack_pointer = result as u32;
   }
 
-  pub fn get_z(&self) -> u16 {
-    (self.get(30) as u16) | ((self.get(31) as u16) << 8)
-  }
-
-  pub fn set_z(&mut self, value: u16) {
-    self.set(30, (value & 0xff) as u8);
-    self.set(31, (value >> 8) as u8);
+  fn get_word(&self, index: usize) -> u16 {
+    (self.get(index) as u16) | ((self.get(index + 1) as u16) << 8)
   }
 
   pub fn get_x(&self) -> u16 {
-    (self.get(26) as u16) | ((self.get(27) as u16) << 8)
+    self.get_word(26)
+  }
+
+  pub fn get_y(&self) -> u16 {
+    self.get_word(28)
+  }
+
+  pub fn get_z(&self) -> u16 {
+    self.get_word(30)
+  }
+
+  fn set_word(&mut self, index: usize, value: u16) {
+    self.set(index, (value & 0xff) as u8);
+    self.set(index + 1, (value >> 8) as u8);
   }
 
   pub fn set_x(&mut self, value: u16) {
-    self.set(26, (value & 0xff) as u8);
-    self.set(27, (value >> 8) as u8);
+    self.set_word(26, value);
+  }
+
+  pub fn set_y(&mut self, value: u16) {
+    self.set_word(28, value);
+  }
+
+  pub fn set_z(&mut self, value: u16) {
+    self.set_word(30, value);
   }
 }
