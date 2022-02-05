@@ -2,7 +2,6 @@
 pub struct Registers {
   reg: Vec<u8>,
   stack_pointer: u32,
-  z: u16,
 }
 
 impl Registers {
@@ -10,7 +9,6 @@ impl Registers {
     Self {
       reg: vec![0; 32],
       stack_pointer: 0,
-      z: 0,
     }
   }
 
@@ -36,10 +34,20 @@ impl Registers {
   }
 
   pub fn get_z(&self) -> u16 {
-    self.z
+    (self.get(30) as u16) | ((self.get(31) as u16) << 8)
   }
 
   pub fn set_z(&mut self, value: u16) {
-    self.z = value;
+    self.set(30, (value & 0xff) as u8);
+    self.set(31, (value >> 8) as u8);
+  }
+
+  pub fn get_x(&self) -> u16 {
+    (self.get(26) as u16) | ((self.get(27) as u16) << 8)
+  }
+
+  pub fn set_x(&mut self, value: u16) {
+    self.set(26, (value & 0xff) as u8);
+    self.set(27, (value >> 8) as u8);
   }
 }
