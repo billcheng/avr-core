@@ -24,4 +24,5 @@ pub mod fmuls;
 pub mod fmulsu;
 pub mod icall;
 pub mod ijmp;
-pub mod io_in;
+pub mod in_io;
+pub mod inc;

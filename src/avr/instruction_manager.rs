@@ -26,7 +26,8 @@ use crate::avr::operations::fmuls::Fmuls;
 use crate::avr::operations::fmulsu::Fmulsu;
 use crate::avr::operations::icall::Icall;
 use crate::avr::operations::ijmp::Ijmp;
-use crate::avr::operations::io_in::In;
+use crate::avr::operations::in_io::In;
+use crate::avr::operations::inc::Inc;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -175,6 +176,11 @@ impl InstructionManager {
     let is_io = opcode & 0b1111_1000_0000_0000 == 0b1011_0000_0000_0000;
     if is_io {
       return Box::new(In::new(opcode));
+    }
+
+    let is_inc = opcode & 0b1111_1110_0000_1111 == 0b1001_0100_0000_0011;
+    if is_inc {
+      return Box::new(Inc::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
