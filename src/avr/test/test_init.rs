@@ -1,19 +1,10 @@
 use crate::avr::data_memory::create_data_memory_ptr;
 use crate::avr::operation::ExecutionData;
-// use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::io::Io;
-// use crate::avr::io::IoPtr;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
 use std::cell::RefCell;
 use std::rc::Rc;
-
-// pub struct TestBed {
-//   pub registers_ptr: Rc<RefCell<Registers>>,
-//   pub status_register_ptr: Rc<RefCell<StatusRegister>>,
-//   pub data_memory_ptr: DataMemoryPtr,
-//   pub io_ptr: IoPtr,
-// }
 
 pub fn init(register_data: Vec<(usize, u8)>) -> ExecutionData {
   let registers_ptr: Rc<RefCell<Registers>>;
@@ -31,12 +22,6 @@ pub fn init(register_data: Vec<(usize, u8)>) -> ExecutionData {
   let data_memory = create_data_memory_ptr(256);
   let io = Rc::new(RefCell::new(Io::new()));
 
-  // TestBed {
-  //   registers_ptr: registers_ptr,
-  //   status_register_ptr: status_register_ptr,
-  //   data_memory_ptr: data_memory,
-  //   io_ptr: io,
-  // }
   ExecutionData {
     registers: registers_ptr,
     status_register: status_register_ptr,
