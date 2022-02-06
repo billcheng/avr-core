@@ -42,6 +42,7 @@ use crate::avr::operations::lddyq::Lddyq;
 use crate::avr::operations::lddz::Lddz;
 use crate::avr::operations::lddz_dec::LddzDec;
 use crate::avr::operations::lddz_inc::LddzInc;
+use crate::avr::operations::lddzq::Lddzq;
 use crate::avr::operations::ldi::Ldi;
 use crate::avr::operations::lds::Lds;
 use crate::avr::operations::lds_avrc::LdsAvrc;
@@ -265,14 +266,14 @@ impl InstructionManager {
       return Box::new(LddzInc::new(opcode));
     }
 
-    let is_lddzinc = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_0010;
-    if is_lddzinc {
+    let is_lddzdec = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_0010;
+    if is_lddzdec {
       return Box::new(LddzDec::new(opcode));
     }
 
     let is_lddzq = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_0000;
     if is_lddzq {
-      return Box::new(LddzDec::new(opcode));
+      return Box::new(Lddzq::new(opcode));
     }
 
     let is_ldi = opcode & 0b1111_0000_0000_0000 == 0b1110_0000_0000_0000;
