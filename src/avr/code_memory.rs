@@ -1,8 +1,12 @@
 use crate::avr::read_only_memory::ReadOnlyMemory;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct CodeMemory {
   memory: Vec<u16>,
 }
+
+pub type CodeMemoryPtr = Rc<RefCell<CodeMemory>>;
 
 impl CodeMemory {
   pub fn new(size: usize) -> Self {

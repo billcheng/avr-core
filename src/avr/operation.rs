@@ -1,3 +1,4 @@
+use crate::avr::code_memory::CodeMemoryPtr;
 use crate::avr::data_memory::DataMemoryPtr;
 use crate::avr::io::IoPtr;
 use crate::avr::registers::Registers;
@@ -11,6 +12,7 @@ pub struct ExecutionData {
   pub pc: u32,
   pub data_memory: DataMemoryPtr,
   pub io: IoPtr,
+  pub code_memory: CodeMemoryPtr,
 }
 
 pub trait Operation {

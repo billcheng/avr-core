@@ -1,4 +1,5 @@
 use crate::avr::code_memory::CodeMemory;
+use crate::avr::code_memory::CodeMemoryPtr;
 use crate::avr::core_type::CoreType;
 use crate::avr::data_memory::create_data_memory_ptr;
 use crate::avr::data_memory::DataMemoryPtr;
@@ -14,7 +15,7 @@ use std::rc::Rc;
 
 pub struct Core {
   core_type: CoreType,
-  code_memory: Rc<RefCell<CodeMemory>>,
+  code_memory: CodeMemoryPtr,
   status_register: Rc<RefCell<StatusRegister>>,
   program_counter: u32,
   instruction: InstructionManager,
@@ -57,6 +58,7 @@ impl Core {
       pc: self.program_counter,
       data_memory: self.data_memory.clone(),
       io: self.io.clone(),
+      code_memory: self.code_memory.clone(),
     });
     self.program_counter = match result {
       None => self.program_counter + 1,
