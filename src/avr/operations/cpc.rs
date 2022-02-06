@@ -57,22 +57,19 @@ mod test {
 
   #[test]
   fn cp_r1_r2_nc_return_z() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0xcc), (2, 0xcc)]);
+    let testbed = init(vec![(1, 0xcc), (2, 0xcc)]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(false);
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 1);
     assert_eq!(status_register.get_sign(), 0);
     assert_eq!(status_register.get_overflow(), 0);
@@ -83,22 +80,19 @@ mod test {
 
   #[test]
   fn cp_r1_r2_c_return_nz() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0xcc), (2, 0xcc)]);
+    let testbed = init(vec![(1, 0xcc), (2, 0xcc)]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(true);
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 0);
     assert_eq!(status_register.get_sign(), 1);
     assert_eq!(status_register.get_overflow(), 0);
@@ -109,22 +103,19 @@ mod test {
 
   #[test]
   fn cp_r1_r2_nc_return_hc() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x00), (2, 0x04)]);
+    let testbed = init(vec![(1, 0x00), (2, 0x04)]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(false);
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 0);
     assert_eq!(status_register.get_sign(), 1);
     assert_eq!(status_register.get_overflow(), 0);
@@ -135,22 +126,19 @@ mod test {
 
   #[test]
   fn cp_r1_r2_c_return_z() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x05), (2, 0x04)]);
+    let testbed = init(vec![(1, 0x05), (2, 0x04)]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(true);
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 1);
     assert_eq!(status_register.get_sign(), 0);
     assert_eq!(status_register.get_overflow(), 0);
@@ -161,22 +149,19 @@ mod test {
 
   #[test]
   fn cp_r1_r2_nc_return_s() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0xff), (2, 0x01)]);
+    let testbed = init(vec![(1, 0xff), (2, 0x01)]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(false);
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 0);
     assert_eq!(status_register.get_sign(), 1);
     assert_eq!(status_register.get_overflow(), 0);
@@ -187,22 +172,19 @@ mod test {
 
   #[test]
   fn cp_r1_r2_nc_return_nc() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x3), (2, 0x01)]);
+    let testbed = init(vec![(1, 0x3), (2, 0x01)]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(false);
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 0);
     assert_eq!(status_register.get_sign(), 0);
     assert_eq!(status_register.get_overflow(), 0);
@@ -213,22 +195,19 @@ mod test {
 
   #[test]
   fn cp_r1_r2_nc_return_o() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x80), (2, 0x01)]);
+    let testbed = init(vec![(1, 0x80), (2, 0x01)]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(false);
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 0);
     assert_eq!(status_register.get_sign(), 1);
     assert_eq!(status_register.get_overflow(), 1);
@@ -239,22 +218,19 @@ mod test {
 
   #[test]
   fn cp_r1_r2_c_return_0() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0x80), (2, 0x00)]);
+    let testbed = init(vec![(1, 0x80), (2, 0x00)]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(true);
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 0);
     assert_eq!(status_register.get_sign(), 1);
     assert_eq!(status_register.get_overflow(), 1);

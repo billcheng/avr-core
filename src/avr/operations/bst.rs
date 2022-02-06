@@ -41,43 +41,39 @@ mod test {
 
   #[test]
   fn bst_r0_returns_t() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0b0000_1000)]);
+    let testbed = init(vec![(0, 0b0000_1000)]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_transfer(false);
     }
 
     let op = super::Bst::new(0b1111_1010_0000_0011);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
+      status_register: testbed.status_register.clone(),
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_transfer(), 1);
   }
 
   #[test]
   fn bst_r0_returns_nt() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0b0000_1000)]);
+    let testbed = init(vec![(0, 0b0000_1000)]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_transfer(false);
     }
 
     let op = super::Bst::new(0b1111_1010_0000_0111);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
+      status_register: testbed.status_register.clone(),
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_transfer(), 0);
   }
 }

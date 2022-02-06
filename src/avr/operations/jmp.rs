@@ -29,15 +29,12 @@ mod test {
 
   #[test]
   fn jmp_0x345678_returns_0x345678() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
 
     let op = super::Jmp::new(0b1001_010_1101_0_110_0, 0x5678);
     let result = op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr,
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
     assert_eq!(result, Some(0x345678));

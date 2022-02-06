@@ -31,22 +31,19 @@ mod test {
 
   #[test]
   fn in_rd0x17_io0x2f_returns_0x55() {
-    let (registers_ptr, status_register_ptr, data_memory, io_ptr) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut io = io_ptr.borrow_mut();
+      let mut io = testbed.io.borrow_mut();
       io.set(0x2f, 0x55);
     }
 
     let op = super::In::new(0b1011_0101_0111_1111);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
-      pc: 0x0000,
-      data_memory: data_memory,
-      io: io_ptr,
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get(0x17), 0x55);
   }
 }

@@ -54,19 +54,16 @@ mod test {
 
   #[test]
   fn call_0x345678_returns_0x345678() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_stack_pointer(9);
     }
 
     let op = super::Call::new(&CoreType::Bits16, 0b1001_010_1101_0_111_0, 0x5678);
     let result = op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr,
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
     assert_eq!(result, Some(0x345678));
@@ -74,64 +71,58 @@ mod test {
 
   #[test]
   fn call_16_bits_returns_stack_pointer_7() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_stack_pointer(9);
     }
 
     let op = super::Call::new(&CoreType::Bits16, 0b1001_010_1101_0_111_0, 0x5678);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
+      registers: testbed.registers.clone(),
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get_stack_pointer(), 7);
   }
 
   #[test]
   fn call_22_bits_returns_stack_pointer_6() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_stack_pointer(9);
     }
 
     let op = super::Call::new(&CoreType::Bits22, 0b1001_010_1101_0_111_0, 0x5678);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
+      registers: testbed.registers.clone(),
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get_stack_pointer(), 6);
   }
 
   #[test]
   fn call_0x345678_returns_stack_data() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_stack_pointer(9);
     }
 
     let op = super::Call::new(&CoreType::Bits22, 0b1001_010_1101_0_111_0, 0x5678);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
+      data_memory: testbed.data_memory.clone(),
       pc: 0x12345,
-      data_memory: data_memory.clone(),
-      io,
+      ..testbed
     });
 
-    let stack = data_memory.borrow();
+    let stack = testbed.data_memory.borrow();
     assert_eq!(stack.read(9), 0x47);
     assert_eq!(stack.read(8), 0x23);
     assert_eq!(stack.read(7), 0x01);

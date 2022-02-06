@@ -55,86 +55,71 @@ mod test {
 
   #[test]
   fn and_0xaa_0x55_returns_0x00() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xaa), (1, 0x55)]);
+    let testbed = init(vec![(0, 0xaa), (1, 0x55)]);
 
     let and = super::And::new(0b0010_0000_0000_0001);
     and.execute(ExecutionData {
-      status_register: status_register_ptr,
-      registers: registers_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io,
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get(0), 0x00);
   }
 
   #[test]
   fn and_0xaa_0x55_returns_zero() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xaa), (1, 0x55)]);
+    let testbed = init(vec![(0, 0xaa), (1, 0x55)]);
 
     let and = super::And::new(0b0010_0000_0000_0001);
     and.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr,
-      pc: 0x0000,
-      data_memory,
-      io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 1);
   }
 
   #[test]
   fn and_0xaa_0xff_returns_negative() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xaa), (1, 0xff)]);
+    let testbed = init(vec![(0, 0xaa), (1, 0xff)]);
 
     let and = super::And::new(0b0010_0000_0000_0001);
     and.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr,
-      pc: 0x0000,
-      data_memory,
-      io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_negative(), 1);
   }
 
   #[test]
   fn and_0xaa_0xff_returns_overflow() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xaa), (1, 0xff)]);
+    let testbed = init(vec![(0, 0xaa), (1, 0xff)]);
 
     let and = super::And::new(0b0010_0000_0000_0001);
     and.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr,
-      pc: 0x0000,
-      data_memory,
-      io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_overflow(), 0);
   }
 
   #[test]
   fn and_0xaa_0xff_returns_sign() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xaa), (1, 0xff)]);
+    let testbed = init(vec![(0, 0xaa), (1, 0xff)]);
 
     let and = super::And::new(0b0010_0000_0000_0001);
     and.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr,
-      pc: 0x0000,
-      data_memory,
-      io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_sign(), 1);
   }
 }

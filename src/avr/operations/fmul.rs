@@ -47,19 +47,17 @@ mod test {
 
   #[test]
   fn fmul_0x40_0x06_returns_0x0300() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(16, 0x40), (17, 0x06)]);
+    let testbed = init(vec![(16, 0x40), (17, 0x06)]);
 
     let op = super::Fmul::new(0b0000_0001_1000_0001);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0), 0x00);
     assert_eq!(registers.get(1), 0x03);
     assert_eq!(status_register.get_carry(), 0);
@@ -68,19 +66,17 @@ mod test {
 
   #[test]
   fn fmul_0x40_0x00_returns_0x0000() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(16, 0x40), (17, 0x00)]);
+    let testbed = init(vec![(16, 0x40), (17, 0x00)]);
 
     let op = super::Fmul::new(0b0000_0001_1000_0001);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0), 0x00);
     assert_eq!(registers.get(1), 0x00);
     assert_eq!(status_register.get_carry(), 0);
@@ -89,19 +85,17 @@ mod test {
 
   #[test]
   fn fmul_0xff_0xff_returns_0xfc02() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(16, 0xff), (17, 0xff)]);
+    let testbed = init(vec![(16, 0xff), (17, 0xff)]);
 
     let op = super::Fmul::new(0b0000_0001_1000_0001);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0), 0x02);
     assert_eq!(registers.get(1), 0xfc);
     assert_eq!(status_register.get_carry(), 1);
@@ -110,19 +104,17 @@ mod test {
 
   #[test]
   fn fmul_0x7e_0xff_returns_0xfb04() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(16, 0x7e), (17, 0xff)]);
+    let testbed = init(vec![(16, 0x7e), (17, 0xff)]);
 
     let op = super::Fmul::new(0b0000_0001_1000_0001);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0), 0x04);
     assert_eq!(registers.get(1), 0xfb);
     assert_eq!(status_register.get_carry(), 0);

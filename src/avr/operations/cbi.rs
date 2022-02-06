@@ -32,22 +32,19 @@ mod test {
 
   #[test]
   fn cbi_clear_io5_bit7() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut io = io.borrow_mut();
+      let mut io = testbed.io.borrow_mut();
       io.set(5, 0xff);
     }
 
     let op = super::Cbi::new(0b1001_1000_0010_1111);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr,
-      pc: 0x0000,
-      data_memory,
-      io: io.clone(),
+      io: testbed.io.clone(),
+      ..testbed
     });
 
-    let io = io.borrow();
+    let io = testbed.io.borrow();
     assert_eq!(io.get(5), 0b0111_1111);
   }
 }

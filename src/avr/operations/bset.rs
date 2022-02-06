@@ -29,43 +29,39 @@ mod test {
 
   #[test]
   fn bset_nc_returns_c() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(false);
     }
 
     let op = super::Bset::new(0b1001_0100_0000_1000);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
+      status_register: testbed.status_register.clone(),
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_carry(), 1);
   }
 
   #[test]
   fn bset_ni_returns_i() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_interrupt(false);
     }
 
     let op = super::Bset::new(0b1001_0100_0111_1000);
     op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
+      status_register: testbed.status_register.clone(),
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_interrupt(), 1);
   }
 }

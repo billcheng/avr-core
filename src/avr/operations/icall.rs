@@ -49,111 +49,95 @@ mod test {
 
   #[test]
   fn icall_0x1234_changes_pc_to_0x1234() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_stack_pointer(9);
       registers.set_z(0x1234);
     }
 
     let op = super::Icall::new(&super::CoreType::Bits16);
-    let result = op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr,
-      pc: 0x0000,
-      data_memory: data_memory,
-      io: io,
-    });
+    let result = op.execute(testbed);
 
     assert_eq!(result, Some(0x1234));
   }
 
   #[test]
   fn icall_0x1234_decrement_sp_by_2() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_stack_pointer(9);
       registers.set_z(0x1234);
     }
 
     let op = super::Icall::new(&super::CoreType::Bits16);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
-      pc: 0x0000,
-      data_memory: data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get_stack_pointer(), 7);
   }
 
   #[test]
   fn icall_0x1234_decrement_sp_by_3() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_stack_pointer(9);
       registers.set_z(0x1234);
     }
 
     let op = super::Icall::new(&super::CoreType::Bits22);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
-      pc: 0x0000,
-      data_memory: data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get_stack_pointer(), 6);
   }
 
   #[test]
   fn icall_0x1234_pushes_pc_2_bytes_to_stack() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_stack_pointer(9);
       registers.set_z(0x1234);
     }
 
     let op = super::Icall::new(&super::CoreType::Bits16);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
+      data_memory: testbed.data_memory.clone(),
       pc: 0x0123,
-      data_memory: data_memory.clone(),
-      io: io,
+      ..testbed
     });
 
-    let stack = data_memory.borrow();
+    let stack = testbed.data_memory.borrow();
     assert_eq!(stack.read(9), 0x24);
     assert_eq!(stack.read(8), 0x01);
   }
 
   #[test]
   fn icall_0x1234_pushes_pc_3_bytes_to_stack() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_stack_pointer(9);
       registers.set_z(0x1234);
     }
 
     let op = super::Icall::new(&super::CoreType::Bits22);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
+      data_memory: testbed.data_memory.clone(),
       pc: 0x123456,
-      data_memory: data_memory.clone(),
-      io: io,
+      ..testbed
     });
 
-    let stack = data_memory.borrow();
+    let stack = testbed.data_memory.borrow();
     assert_eq!(stack.read(9), 0x57);
     assert_eq!(stack.read(8), 0x34);
     assert_eq!(stack.read(7), 0x12);

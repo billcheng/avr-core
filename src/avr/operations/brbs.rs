@@ -39,19 +39,16 @@ mod test {
 
   #[test]
   fn brbs_c_0x0001_returns0x0001() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(true);
     }
 
     let op = super::Brbs::new(0b1111_0011_1111_1000);
     let result = op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr,
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
     assert_eq!(result, Some(1));
@@ -59,19 +56,16 @@ mod test {
 
   #[test]
   fn brbs_c_0x0001_returns0x0003() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(true);
     }
 
     let op = super::Brbs::new(0b1111_0000_0000_1000);
     let result = op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr,
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
     assert_eq!(result, Some(3));
@@ -79,19 +73,16 @@ mod test {
 
   #[test]
   fn brbs_nc_0x0001_returns_none() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut status_register = status_register_ptr.borrow_mut();
+      let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(false);
     }
 
     let op = super::Brbs::new(0b1111_0000_0000_1000);
     let result = op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr,
       pc: 0x0001,
-      data_memory,
-      io,
+      ..testbed
     });
 
     assert_eq!(result, None);

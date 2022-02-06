@@ -49,35 +49,29 @@ mod test {
 
   #[test]
   fn asr_0x80_returns_0b11000000() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x80)]);
+    let testbed = init(vec![(0, 0x80)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io,
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get(0), 0b11000000);
   }
 
   #[test]
   fn asr_0x01_returns_zero() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x00)]);
+    let testbed = init(vec![(0, 0x00)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 1);
     assert_eq!(status_register.get_carry(), 0);
     assert_eq!(status_register.get_negative(), 0);
@@ -87,69 +81,57 @@ mod test {
 
   #[test]
   fn asr_0x01_returns_carry() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x01)]);
+    let testbed = init(vec![(0, 0x01)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_carry(), 1);
   }
 
   #[test]
   fn asr_0x80_returns_negative() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x80)]);
+    let testbed = init(vec![(0, 0x80)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_negative(), 1);
   }
 
   #[test]
   fn asr_0x01_returns_overflow() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x01)]);
+    let testbed = init(vec![(0, 0x01)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_overflow(), 1);
   }
 
   #[test]
   fn asr_0x01_returns_sign() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x01)]);
+    let testbed = init(vec![(0, 0x01)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
     and.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io,
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_sign(), 1);
   }
 }

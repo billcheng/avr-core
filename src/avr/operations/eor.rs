@@ -49,19 +49,17 @@ mod test {
 
   #[test]
   fn eor_0xff_0x01_return_0xfe() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0xf, 0xff), (0xa, 0x01)]);
+    let testbed = init(vec![(0xf, 0xff), (0xa, 0x01)]);
 
     let op = super::Eor::new(0b0010_0100_1111_1010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0x0f), 0xfe);
     assert_eq!(status_register.get_zero(), 0);
     assert_eq!(status_register.get_negative(), 1);
@@ -71,19 +69,17 @@ mod test {
 
   #[test]
   fn eor_0xff_0xff_return_0x00() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0xf, 0xff), (0xa, 0xff)]);
+    let testbed = init(vec![(0xf, 0xff), (0xa, 0xff)]);
 
     let op = super::Eor::new(0b0010_0100_1111_1010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0x0f), 0x00);
     assert_eq!(status_register.get_zero(), 1);
     assert_eq!(status_register.get_negative(), 0);
@@ -93,19 +89,17 @@ mod test {
 
   #[test]
   fn eor_0x00_0x80_return_0x00() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0xf, 0x00), (0xa, 0x80)]);
+    let testbed = init(vec![(0xf, 0x00), (0xa, 0x80)]);
 
     let op = super::Eor::new(0b0010_0100_1111_1010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0x0f), 0x80);
     assert_eq!(status_register.get_zero(), 0);
     assert_eq!(status_register.get_negative(), 1);
@@ -115,19 +109,17 @@ mod test {
 
   #[test]
   fn eor_0xff_0x80_return_0x7f() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0xf, 0xff), (0xa, 0x80)]);
+    let testbed = init(vec![(0xf, 0xff), (0xa, 0x80)]);
 
     let op = super::Eor::new(0b0010_0100_1111_1010);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0x0f), 0x7f);
     assert_eq!(status_register.get_zero(), 0);
     assert_eq!(status_register.get_negative(), 0);

@@ -62,19 +62,17 @@ mod test {
 
   #[test]
   fn adc_0x01_x02_returns0x03_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x01), (1, 0x02)]);
+    let testbed = init(vec![(0, 0x01), (1, 0x02)]);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
     add.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io
+      status_register: testbed.status_register.clone(),
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0), 0x03);
     assert_eq!(status_register.get_carry(), 0);
     assert_eq!(status_register.get_half_carry(), 0);
@@ -86,19 +84,17 @@ mod test {
 
   #[test]
   fn add_0x39_x48_returns0x81_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0x39), (1, 0x48)]);
+    let testbed = init(vec![(0, 0x39), (1, 0x48)]);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
     add.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io
+      status_register: testbed.status_register.clone(),
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0), 0x81);
     assert_eq!(status_register.get_carry(), 0);
     assert_eq!(status_register.get_half_carry(), 1);
@@ -110,19 +106,17 @@ mod test {
 
   #[test]
   fn add_0xff_xff_returns0xfe_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff), (1, 0xff)]);
+    let testbed = init(vec![(0, 0xff), (1, 0xff)]);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
     add.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io
+      status_register: testbed.status_register.clone(),
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0), 0xfe);
     assert_eq!(status_register.get_carry(), 1);
     assert_eq!(status_register.get_half_carry(), 1);
@@ -134,19 +128,17 @@ mod test {
 
   #[test]
   fn add_0xff_0x01_returns0x00_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(0, 0xff), (1, 0x01)]);
+    let testbed = init(vec![(0, 0xff), (1, 0x01)]);
 
     let add = super::Add::new(0b0001_1100_0000_0001);
     add.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io
+      status_register: testbed.status_register.clone(),
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(0), 0x00);
     assert_eq!(status_register.get_carry(), 1);
     assert_eq!(status_register.get_half_carry(), 1);

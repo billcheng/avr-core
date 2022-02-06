@@ -40,25 +40,22 @@ mod test {
 
   #[test]
   fn lddyq_r5_0x0001_0x3f_returns_0xfe() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_y(1);
 
-      let mut mem = data_memory.borrow_mut();
+      let mut mem = testbed.data_memory.borrow_mut();
       mem.write(0x40, 0xfe)
     }
 
     let op = super::Lddyq::new(0b1010_1100_0101_1111);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
-      pc: 0x0000,
-      data_memory: data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get(5), 0xfe);
   }
 }

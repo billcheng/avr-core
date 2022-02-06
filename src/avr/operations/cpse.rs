@@ -56,32 +56,20 @@ mod test {
 
   #[test]
   fn cpse_not_equal_return_none() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0xcc), (2, 0xaa)]);
+    let testbed = init(vec![(1, 0xcc), (2, 0xaa)]);
 
     let op = super::Cpse::new(0b0001_0000_0001_0010, 0x0000, &Rc::new(Opcode::new()));
-    let result = op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
-    });
+    let result = op.execute(testbed);
 
     assert_eq!(result, None);
   }
 
   #[test]
   fn cpse_equal_return_pc_2() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(1, 0xcc), (2, 0xcc)]);
+    let testbed = init(vec![(1, 0xcc), (2, 0xcc)]);
 
     let op = super::Cpse::new(0b0001_0000_0001_0010, 0x0000, &Rc::new(Opcode::new()));
-    let result = op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io: io,
-    });
+    let result = op.execute(testbed);
 
     assert_eq!(result, Some(2));
   }

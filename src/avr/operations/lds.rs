@@ -36,22 +36,19 @@ mod test {
 
   #[test]
   fn lds_r31_0x0010() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut mem = data_memory.borrow_mut();
+      let mut mem = testbed.data_memory.borrow_mut();
       mem.write(0x10, 0xff)
     }
 
     let op = super::Lds::new(0b1001_0001_1111_0000, 0x0010);
     let result = op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
-      pc: 0x0000,
-      data_memory: data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get(31), 0xff);
     assert_eq!(result, Some(0x0002));
   }

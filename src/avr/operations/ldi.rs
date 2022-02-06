@@ -31,18 +31,15 @@ mod test {
 
   #[test]
   fn ldi_r10_0x55_returns_0x55() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
 
     let op = super::Ldi::new(0b1110_0101_1010_0101);
     op.execute(super::ExecutionData {
-      status_register: status_register_ptr,
-      registers: registers_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io,
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get(10), 0x55);
   }
 }

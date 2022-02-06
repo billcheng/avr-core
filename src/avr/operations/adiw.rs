@@ -57,19 +57,17 @@ mod test {
 
   #[test]
   fn adiw_r24_0x01_returns0x0200_with_status_registers() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0x01)]);
+    let testbed = init(vec![(24, 0xff), (25, 0x01)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr.clone(),
-      pc: 0x0000,
-      data_memory,
-      io
+      status_register: testbed.status_register.clone(),
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
-    let status_register = status_register_ptr.borrow();
+    let registers = testbed.registers.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(registers.get(24), 0x00);
     assert_eq!(registers.get(25), 0x02);
     assert_eq!(status_register.get_carry(), 0);
@@ -81,86 +79,71 @@ mod test {
 
   #[test]
   fn adiw_r24_0x01_returns_carry() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0xff)]);
+    let testbed = init(vec![(24, 0xff), (25, 0xff)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr,
-      pc: 0x0000,
-      data_memory,
-      io
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_carry(), 1);
   }
 
   #[test]
   fn adiw_r24_0x01_returns_zero() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0xff)]);
+    let testbed = init(vec![(24, 0xff), (25, 0xff)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr,
-      pc: 0x0000,
-      data_memory,
-      io
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_zero(), 1);
   }
 
   #[test]
   fn adiw_r24_0x01_returns_negative() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0xef)]);
+    let testbed = init(vec![(24, 0xff), (25, 0xef)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr,
-      pc: 0x0000,
-      data_memory,
-      io
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_negative(), 1);
   }
 
   #[test]
   fn adiw_r24_0x01_returns_overflow() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0x7f)]);
+    let testbed = init(vec![(24, 0xff), (25, 0x7f)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr,
-      pc: 0x0000,
-      data_memory,
-      io
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_overflow(), 1);
   }
 
   #[test]
   fn adiw_r24_0x01_returns_sign() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(24, 0xff), (25, 0xef)]);
+    let testbed = init(vec![(24, 0xff), (25, 0xef)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
     adiw.execute(ExecutionData {
-      status_register: status_register_ptr.clone(),
-      registers: registers_ptr,
-      pc: 0x0000,
-      data_memory,
-      io
+      status_register: testbed.status_register.clone(),
+      ..testbed
     });
 
-    let status_register = status_register_ptr.borrow();
+    let status_register = testbed.status_register.borrow();
     assert_eq!(status_register.get_sign(), 1);
   }
 }

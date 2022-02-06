@@ -38,27 +38,25 @@ mod test {
 
   #[test]
   fn lac_rd_0xfe_mem_0xff_return_0xff_0x01() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![(7, 0xfe)]);
+    let testbed = init(vec![(7, 0xfe)]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_z(9);
 
-      let mut mem = data_memory.borrow_mut();
+      let mut mem = testbed.data_memory.borrow_mut();
       mem.write(9, 0xff)
     }
 
     let op = super::Lac::new(0b1001_0010_0111_0110);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
-      pc: 0x0000,
-      data_memory: data_memory.clone(),
-      io: io,
+      registers: testbed.registers.clone(),
+      data_memory: testbed.data_memory.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get(7), 0xff);
-    let mem = data_memory.borrow();
+    let mem = testbed.data_memory.borrow();
     assert_eq!(mem.read(9), 0x01);
   }
 }

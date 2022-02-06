@@ -26,20 +26,14 @@ mod test {
 
   #[test]
   fn ijmp_0x1234_changes_pc_to_0x1234() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut registers = registers_ptr.borrow_mut();
+      let mut registers = testbed.registers.borrow_mut();
       registers.set_z(0x1234);
     }
 
     let op = super::Ijmp::new();
-    let result = op.execute(super::ExecutionData {
-      registers: registers_ptr,
-      status_register: status_register_ptr,
-      pc: 0x0000,
-      data_memory: data_memory,
-      io: io,
-    });
+    let result = op.execute(testbed);
 
     assert_eq!(result, Some(0x1234));
   }

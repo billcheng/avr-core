@@ -36,22 +36,19 @@ mod test {
 
   #[test]
   fn ldsavrc_r31_0x7f() {
-    let (registers_ptr, status_register_ptr, data_memory, io) = init(vec![]);
+    let testbed = init(vec![]);
     {
-      let mut mem = data_memory.borrow_mut();
+      let mut mem = testbed.data_memory.borrow_mut();
       mem.write(0x7f, 0xff)
     }
 
     let op = super::LdsAvrc::new(0b1010_0111_1111_1111);
     op.execute(super::ExecutionData {
-      registers: registers_ptr.clone(),
-      status_register: status_register_ptr,
-      pc: 0x0000,
-      data_memory: data_memory,
-      io: io,
+      registers: testbed.registers.clone(),
+      ..testbed
     });
 
-    let registers = registers_ptr.borrow();
+    let registers = testbed.registers.borrow();
     assert_eq!(registers.get(31), 0xff);
   }
 }
