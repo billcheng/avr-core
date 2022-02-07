@@ -44,3 +44,4 @@ pub mod lddzq;
 pub mod ldi;
 pub mod lds;
 pub mod lds_avrc;
+pub mod lpm;
