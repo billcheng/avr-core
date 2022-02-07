@@ -1,3 +1,4 @@
+use crate::avr::operations::lpm_rd_inc::LpmRdInc;
 use crate::avr::core_type::CoreType;
 use crate::avr::operation::Instruction;
 use crate::avr::operations::adc::Adc;
@@ -301,6 +302,11 @@ impl InstructionDecoder {
     let is_lpm_rd = opcode & 0b1111_1110_0000_1111 == 0b1001_0000_0000_0100;
     if is_lpm_rd {
       return Box::new(LpmRd::new(opcode));
+    }
+
+    let is_lpm_rd_inc = opcode & 0b1111_1110_0000_1111 == 0b1001_0000_0000_0101;
+    if is_lpm_rd_inc {
+      return Box::new(LpmRdInc::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
