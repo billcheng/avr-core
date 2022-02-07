@@ -49,3 +49,4 @@ pub mod lpm_rd;
 pub mod lpm_rd_inc;
 pub mod lsr;
 pub mod mov;
+pub mod movw;
