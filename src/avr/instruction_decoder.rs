@@ -1,4 +1,3 @@
-use crate::avr::instructions::lpm_rd_inc::LpmRdInc;
 use crate::avr::core_type::CoreType;
 use crate::avr::instruction::Instruction;
 use crate::avr::instructions::adc::Adc;
@@ -49,6 +48,8 @@ use crate::avr::instructions::lds::Lds;
 use crate::avr::instructions::lds_avrc::LdsAvrc;
 use crate::avr::instructions::lpm::Lpm;
 use crate::avr::instructions::lpm_rd::LpmRd;
+use crate::avr::instructions::lpm_rd_inc::LpmRdInc;
+use crate::avr::instructions::lsr::Lsr;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -307,6 +308,11 @@ impl InstructionDecoder {
     let is_lpm_rd_inc = opcode & 0b1111_1110_0000_1111 == 0b1001_0000_0000_0101;
     if is_lpm_rd_inc {
       return Box::new(LpmRdInc::new(opcode));
+    }
+
+    let is_lsr = opcode & 0b1111_1110_0000_1111 == 0b1001_0100_0000_0110;
+    if is_lsr {
+      return Box::new(Lsr::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
