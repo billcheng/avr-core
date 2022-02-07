@@ -52,3 +52,4 @@ pub mod mov;
 pub mod movw;
 pub mod mul;
 pub mod muls;
+pub mod mulsu;
