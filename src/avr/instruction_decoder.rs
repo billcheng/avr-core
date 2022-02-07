@@ -55,6 +55,7 @@ use crate::avr::instructions::movw::Movw;
 use crate::avr::instructions::mul::Mul;
 use crate::avr::instructions::muls::Muls;
 use crate::avr::instructions::mulsu::Mulsu;
+use crate::avr::instructions::neg::Neg;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -343,6 +344,11 @@ impl InstructionDecoder {
     let is_mulsu = opcode & 0b1111_1111_1000_1000 == 0b0000_0011_0000_0000;
     if is_mulsu {
       return Box::new(Mulsu::new(opcode));
+    }
+
+    let is_neg = opcode & 0b1111_1110_0000_1111 == 0b1001_0100_0000_0001;
+    if is_neg {
+      return Box::new(Neg::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
