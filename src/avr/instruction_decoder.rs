@@ -1,3 +1,4 @@
+use crate::avr::instructions::muls::Muls;
 use crate::avr::core_type::CoreType;
 use crate::avr::instruction::Instruction;
 use crate::avr::instructions::adc::Adc;
@@ -331,6 +332,11 @@ impl InstructionDecoder {
     let is_mul = opcode & 0b1111_1100_0000_0000 == 0b1001_1100_0000_0000;
     if is_mul {
       return Box::new(Mul::new(opcode));
+    }
+
+    let is_muls = opcode & 0b1111_1111_0000_0000 == 0b0000_0010_0000_0000;
+    if is_muls {
+      return Box::new(Muls::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);

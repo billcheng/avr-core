@@ -51,3 +51,4 @@ pub mod lsr;
 pub mod mov;
 pub mod movw;
 pub mod mul;
+pub mod muls;
