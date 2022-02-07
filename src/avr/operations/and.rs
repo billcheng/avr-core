@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 
 pub struct And {
   r: usize,
@@ -21,8 +21,8 @@ impl And {
   }
 }
 
-impl Operation for And {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for And {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d);
@@ -49,8 +49,7 @@ impl Operation for And {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
-  use crate::avr::operations::and::ExecutionData;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -58,7 +57,7 @@ mod test {
     let testbed = init(vec![(0, 0xaa), (1, 0x55)]);
 
     let and = super::And::new(0b0010_0000_0000_0001);
-    and.execute(ExecutionData {
+    and.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -72,7 +71,7 @@ mod test {
     let testbed = init(vec![(0, 0xaa), (1, 0x55)]);
 
     let and = super::And::new(0b0010_0000_0000_0001);
-    and.execute(ExecutionData {
+    and.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -86,7 +85,7 @@ mod test {
     let testbed = init(vec![(0, 0xaa), (1, 0xff)]);
 
     let and = super::And::new(0b0010_0000_0000_0001);
-    and.execute(ExecutionData {
+    and.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -100,7 +99,7 @@ mod test {
     let testbed = init(vec![(0, 0xaa), (1, 0xff)]);
 
     let and = super::And::new(0b0010_0000_0000_0001);
-    and.execute(ExecutionData {
+    and.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -114,7 +113,7 @@ mod test {
     let testbed = init(vec![(0, 0xaa), (1, 0xff)]);
 
     let and = super::And::new(0b0010_0000_0000_0001);
-    and.execute(ExecutionData {
+    and.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });

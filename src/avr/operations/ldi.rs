@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 
 pub struct Ldi {
   d: usize,
@@ -15,8 +15,8 @@ impl Ldi {
   }
 }
 
-impl Operation for Ldi {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Ldi {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     registers.set(self.d, self.k);
 
@@ -26,7 +26,7 @@ impl Operation for Ldi {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -34,7 +34,7 @@ mod test {
     let testbed = init(vec![]);
 
     let op = super::Ldi::new(0b1110_0101_1010_0101);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });

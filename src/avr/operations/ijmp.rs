@@ -1,18 +1,16 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 
-pub struct Ijmp {
-}
+pub struct Ijmp {}
 
 impl Ijmp {
   pub fn new() -> Self {
-    Self {
-    }
+    Self {}
   }
 }
 
-impl Operation for Ijmp {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Ijmp {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let registers = execution_data.registers.borrow();
 
     Some(registers.get_z() as u32)
@@ -21,7 +19,7 @@ impl Operation for Ijmp {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]

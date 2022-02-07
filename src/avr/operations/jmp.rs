@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 
 pub struct Jmp {
   k: u32,
@@ -16,15 +16,15 @@ impl Jmp {
   }
 }
 
-impl Operation for Jmp {
-  fn execute(&self, _execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Jmp {
+  fn execute(&self, _execution_data: InstructionData) -> Option<u32> {
     Some(self.k)
   }
 }
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -32,7 +32,7 @@ mod test {
     let testbed = init(vec![]);
 
     let op = super::Jmp::new(0b1001_010_1101_0_110_0, 0x5678);
-    let result = op.execute(super::ExecutionData {
+    let result = op.execute(super::InstructionData {
       pc: 0x0001,
       ..testbed
     });

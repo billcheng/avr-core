@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 
 pub struct Bclr {
   s: usize,
@@ -13,8 +13,8 @@ impl Bclr {
   }
 }
 
-impl Operation for Bclr {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Bclr {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut status_register = execution_data.status_register.borrow_mut();
     status_register.set(self.s, false);
 
@@ -24,7 +24,7 @@ impl Operation for Bclr {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -36,7 +36,7 @@ mod test {
     }
 
     let op = super::Bclr::new(0b1001_0100_1000_1000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -54,7 +54,7 @@ mod test {
     }
 
     let op = super::Bclr::new(0b1001_0100_1001_1000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -72,7 +72,7 @@ mod test {
     }
 
     let op = super::Bclr::new(0b1001_0100_1010_1000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -90,7 +90,7 @@ mod test {
     }
 
     let op = super::Bclr::new(0b1001_0100_1011_1000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -108,7 +108,7 @@ mod test {
     }
 
     let op = super::Bclr::new(0b1001_0100_1100_1000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -126,7 +126,7 @@ mod test {
     }
 
     let op = super::Bclr::new(0b1001_0100_1101_1000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -144,7 +144,7 @@ mod test {
     }
 
     let op = super::Bclr::new(0b1001_0100_1110_1000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -162,7 +162,7 @@ mod test {
     }
 
     let op = super::Bclr::new(0b1001_0100_1111_1000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });

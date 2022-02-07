@@ -1,6 +1,6 @@
 use crate::avr::core_type::CoreType;
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Call {
@@ -23,8 +23,8 @@ impl Call {
   }
 }
 
-impl Operation for Call {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Call {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let stack_data = execution_data.pc + 2;
 
     let mut registers = execution_data.registers.borrow_mut();
@@ -47,8 +47,8 @@ impl Operation for Call {
 
 #[cfg(test)]
 mod test {
+  use super::Instruction;
   use crate::avr::core_type::CoreType;
-  use crate::avr::operation::Operation;
   use crate::avr::random_access_memory::RandomAccessMemory;
   use crate::avr::test::test_init::init;
 
@@ -61,7 +61,7 @@ mod test {
     }
 
     let op = super::Call::new(&CoreType::Bits16, 0b1001_010_1101_0_111_0, 0x5678);
-    let result = op.execute(super::ExecutionData {
+    let result = op.execute(super::InstructionData {
       pc: 0x0001,
       ..testbed
     });
@@ -78,7 +78,7 @@ mod test {
     }
 
     let op = super::Call::new(&CoreType::Bits16, 0b1001_010_1101_0_111_0, 0x5678);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       pc: 0x0001,
       ..testbed
@@ -97,7 +97,7 @@ mod test {
     }
 
     let op = super::Call::new(&CoreType::Bits22, 0b1001_010_1101_0_111_0, 0x5678);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       pc: 0x0001,
       ..testbed
@@ -116,7 +116,7 @@ mod test {
     }
 
     let op = super::Call::new(&CoreType::Bits22, 0b1001_010_1101_0_111_0, 0x5678);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       data_memory: testbed.data_memory.clone(),
       pc: 0x12345,
       ..testbed

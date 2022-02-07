@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 
 pub struct Cbi {
   a: usize,
@@ -15,8 +15,8 @@ impl Cbi {
   }
 }
 
-impl Operation for Cbi {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Cbi {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut io = execution_data.io.borrow_mut();
 
     io.clear_bit(self.a, self.b);
@@ -27,7 +27,7 @@ impl Operation for Cbi {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -39,7 +39,7 @@ mod test {
     }
 
     let op = super::Cbi::new(0b1001_1000_0010_1111);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       io: testbed.io.clone(),
       ..testbed
     });

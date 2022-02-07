@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 
 pub struct Cpc {
   r: usize,
@@ -15,8 +15,8 @@ impl Cpc {
   }
 }
 
-impl Operation for Cpc {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Cpc {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let registers = execution_data.registers.borrow();
     let mut status_register = execution_data.status_register.borrow_mut();
 
@@ -52,7 +52,7 @@ impl Operation for Cpc {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -64,7 +64,7 @@ mod test {
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -87,7 +87,7 @@ mod test {
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -110,7 +110,7 @@ mod test {
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -133,7 +133,7 @@ mod test {
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -156,7 +156,7 @@ mod test {
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -179,7 +179,7 @@ mod test {
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -202,7 +202,7 @@ mod test {
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -225,7 +225,7 @@ mod test {
     }
 
     let op = super::Cpc::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });

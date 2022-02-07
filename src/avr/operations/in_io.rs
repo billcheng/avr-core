@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 
 pub struct In {
   d: usize,
@@ -14,8 +14,8 @@ impl In {
   }
 }
 
-impl Operation for In {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for In {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let io = execution_data.io.borrow();
     let mut registers = execution_data.registers.borrow_mut();
     registers.set(self.d, io.get(self.a));
@@ -26,7 +26,7 @@ impl Operation for In {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -38,7 +38,7 @@ mod test {
     }
 
     let op = super::In::new(0b1011_0101_0111_1111);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });

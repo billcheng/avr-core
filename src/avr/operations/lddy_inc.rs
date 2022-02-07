@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct LddyInc {
@@ -14,8 +14,8 @@ impl LddyInc {
   }
 }
 
-impl Operation for LddyInc {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for LddyInc {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     let y = registers.get_y();
 
@@ -31,7 +31,7 @@ impl Operation for LddyInc {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::random_access_memory::RandomAccessMemory;
   use crate::avr::test::test_init::init;
 
@@ -47,7 +47,7 @@ mod test {
     }
 
     let op = super::LddyInc::new(0b1001_0000_0101_1001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });

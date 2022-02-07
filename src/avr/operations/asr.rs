@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 
 pub struct Asr {
   d: usize,
@@ -13,8 +13,8 @@ impl Asr {
   }
 }
 
-impl Operation for Asr {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Asr {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     let rd = registers.get(self.d);
 
@@ -44,7 +44,7 @@ impl Operation for Asr {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -52,7 +52,7 @@ mod test {
     let testbed = init(vec![(0, 0x80)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(super::ExecutionData {
+    and.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -66,7 +66,7 @@ mod test {
     let testbed = init(vec![(0, 0x00)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(super::ExecutionData {
+    and.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -84,7 +84,7 @@ mod test {
     let testbed = init(vec![(0, 0x01)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(super::ExecutionData {
+    and.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -98,7 +98,7 @@ mod test {
     let testbed = init(vec![(0, 0x80)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(super::ExecutionData {
+    and.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -112,7 +112,7 @@ mod test {
     let testbed = init(vec![(0, 0x01)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(super::ExecutionData {
+    and.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -126,7 +126,7 @@ mod test {
     let testbed = init(vec![(0, 0x01)]);
 
     let and = super::Asr::new(0b1001_0100_0000_0101);
-    and.execute(super::ExecutionData {
+    and.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });

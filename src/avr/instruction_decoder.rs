@@ -1,5 +1,5 @@
 use crate::avr::core_type::CoreType;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
 use crate::avr::operations::adc::Adc;
 use crate::avr::operations::add::Add;
 use crate::avr::operations::adiw::Adiw;
@@ -49,18 +49,18 @@ use crate::avr::operations::lds_avrc::LdsAvrc;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
-pub struct InstructionManager {
+pub struct InstructionDecoder {
   opcode: Rc<Opcode>,
 }
 
-impl InstructionManager {
+impl InstructionDecoder {
   pub fn new() -> Self {
     Self {
       opcode: Rc::new(Opcode::new()),
     }
   }
 
-  pub fn get(&self, core_type: &CoreType, opcode: u16, next_opcode: u16) -> Box<dyn Operation> {
+  pub fn get(&self, core_type: &CoreType, opcode: u16, next_opcode: u16) -> Box<dyn Instruction> {
     let is_adc = opcode & 0b1111_1100_0000_0000 == 0b0001_1100_0000_0000;
     if is_adc {
       return Box::new(Adc::new(opcode));

@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 
 pub struct Brbc {
   k: i8,
@@ -18,8 +18,8 @@ impl Brbc {
   }
 }
 
-impl Operation for Brbc {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Brbc {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let status_register = execution_data.status_register.borrow();
 
     let flag = status_register.get(self.s);
@@ -34,7 +34,7 @@ impl Operation for Brbc {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -46,7 +46,7 @@ mod test {
     }
 
     let op = super::Brbc::new(0b1111_0111_1111_1000);
-    let result = op.execute(super::ExecutionData {
+    let result = op.execute(super::InstructionData {
       pc: 0x0001,
       ..testbed
     });
@@ -63,7 +63,7 @@ mod test {
     }
 
     let op = super::Brbc::new(0b1111_0100_0000_1000);
-    let result = op.execute(super::ExecutionData {
+    let result = op.execute(super::InstructionData {
       pc: 0x0001,
       ..testbed
     });
@@ -80,7 +80,7 @@ mod test {
     }
 
     let op = super::Brbc::new(0b1111_0100_0000_1000);
-    let result = op.execute(super::ExecutionData {
+    let result = op.execute(super::InstructionData {
       pc: 0x0001,
       ..testbed
     });

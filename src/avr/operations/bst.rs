@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 
 pub struct Bst {
   d: usize,
@@ -18,8 +18,8 @@ impl Bst {
   }
 }
 
-impl Operation for Bst {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Bst {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let registers = execution_data.registers.borrow();
 
     let rd = registers.get(self.d);
@@ -36,7 +36,7 @@ impl Operation for Bst {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -48,7 +48,7 @@ mod test {
     }
 
     let op = super::Bst::new(0b1111_1010_0000_0011);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       pc: 0x0001,
       ..testbed
@@ -67,7 +67,7 @@ mod test {
     }
 
     let op = super::Bst::new(0b1111_1010_0000_0111);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       pc: 0x0001,
       ..testbed

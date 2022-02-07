@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 
 pub struct Fmulsu {
   d: usize,
@@ -15,8 +15,8 @@ impl Fmulsu {
   }
 }
 
-impl Operation for Fmulsu {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Fmulsu {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d) as i8;
@@ -42,7 +42,7 @@ impl Operation for Fmulsu {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -50,7 +50,7 @@ mod test {
     let testbed = init(vec![(16, 0x40), (17, 0x06)]);
 
     let op = super::Fmulsu::new(0b0000_0011_1000_1001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed
@@ -69,7 +69,7 @@ mod test {
     let testbed = init(vec![(16, 0x40), (17, 0x00)]);
 
     let op = super::Fmulsu::new(0b0000_0011_1000_1001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed
@@ -88,7 +88,7 @@ mod test {
     let testbed = init(vec![(16, 0xff), (17, 0xff)]);
 
     let op = super::Fmulsu::new(0b0000_0011_1000_1001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed
@@ -107,7 +107,7 @@ mod test {
     let testbed = init(vec![(16, 0x7e), (17, 0xff)]);
 
     let op = super::Fmulsu::new(0b0000_0011_1000_0001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed
@@ -126,7 +126,7 @@ mod test {
     let testbed = init(vec![(16, 0xff), (17, 0x7e)]);
 
     let op = super::Fmulsu::new(0b0000_0011_1000_0001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed

@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 
 pub struct Dec {
   d: usize,
@@ -13,8 +13,8 @@ impl Dec {
   }
 }
 
-impl Operation for Dec {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Dec {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d) as i16;
@@ -42,7 +42,7 @@ impl Operation for Dec {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -50,7 +50,7 @@ mod test {
     let testbed = init(vec![(22, 0x01)]);
 
     let op = super::Dec::new(0b1001_0101_0110_1010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed
@@ -70,7 +70,7 @@ mod test {
     let testbed = init(vec![(22, 0x02)]);
 
     let op = super::Dec::new(0b1001_0101_0110_1010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed
@@ -90,7 +90,7 @@ mod test {
     let testbed = init(vec![(22, 0x00)]);
 
     let op = super::Dec::new(0b1001_0101_0110_1010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed
@@ -110,7 +110,7 @@ mod test {
     let testbed = init(vec![(22, 0x80)]);
 
     let op = super::Dec::new(0b1001_0101_0110_1010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed

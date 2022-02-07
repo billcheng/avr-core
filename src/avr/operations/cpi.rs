@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 
 pub struct Cpi {
   k: u8,
@@ -15,8 +15,8 @@ impl Cpi {
   }
 }
 
-impl Operation for Cpi {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Cpi {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let registers = execution_data.registers.borrow();
 
     let rd = registers.get(self.d) as i16;
@@ -51,7 +51,7 @@ impl Operation for Cpi {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -59,7 +59,7 @@ mod test {
     let testbed = init(vec![(1, 0xcc)]);
 
     let op = super::Cpi::new(0b0011_1100_0001_1100);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -78,7 +78,7 @@ mod test {
     let testbed = init(vec![(1, 0x00)]);
 
     let op = super::Cpi::new(0b0011_0000_0001_0100);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -97,7 +97,7 @@ mod test {
     let testbed = init(vec![(1, 0xff)]);
 
     let op = super::Cpi::new(0b0011_0000_0001_0001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -116,7 +116,7 @@ mod test {
     let testbed = init(vec![(1, 0x3)]);
 
     let op = super::Cpi::new(0b0011_0000_0001_0001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -135,7 +135,7 @@ mod test {
     let testbed = init(vec![(1, 0x80)]);
 
     let op = super::Cpi::new(0b0011_0000_0001_0001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });

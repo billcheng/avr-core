@@ -1,12 +1,12 @@
+use crate::avr::operation::InstructionData;
 use crate::avr::code_memory::CodeMemory;
 use crate::avr::code_memory::CodeMemoryPtr;
 use crate::avr::core_type::CoreType;
 use crate::avr::data_memory::create_data_memory_ptr;
 use crate::avr::data_memory::DataMemoryPtr;
-use crate::avr::instruction_manager::InstructionManager;
+use crate::avr::instruction_decoder::InstructionDecoder;
 use crate::avr::io::Io;
 use crate::avr::io::IoPtr;
-use crate::avr::operation::ExecutionData;
 use crate::avr::read_only_memory::ReadOnlyMemory;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -18,7 +18,7 @@ pub struct Core {
   code_memory: CodeMemoryPtr,
   status_register: Rc<RefCell<StatusRegister>>,
   program_counter: u32,
-  instruction: InstructionManager,
+  instruction_decoder: InstructionDecoder,
   registers: Rc<RefCell<Registers>>,
   data_memory: DataMemoryPtr,
   io: IoPtr,
@@ -35,7 +35,7 @@ impl Core {
       program_counter: 0,
       code_memory,
       status_register: Rc::new(RefCell::new(StatusRegister::new())),
-      instruction: InstructionManager::new(),
+      instruction_decoder: InstructionDecoder::new(),
       registers: Rc::new(RefCell::new(Registers::new())),
       data_memory,
       io,
@@ -51,8 +51,8 @@ impl Core {
     let code_memory = self.code_memory.borrow();
     let opcode = code_memory.read(self.program_counter);
     let next_opcode = code_memory.read(self.program_counter + 1);
-    let operation = self.instruction.get(&self.core_type, opcode, next_opcode);
-    let result = operation.execute(ExecutionData {
+    let instruction = self.instruction_decoder.get(&self.core_type, opcode, next_opcode);
+    let result = instruction.execute(InstructionData {
       status_register: self.status_register.clone(),
       registers: self.registers.clone(),
       pc: self.program_counter,

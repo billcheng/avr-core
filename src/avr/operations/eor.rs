@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 
 pub struct Eor {
   d: usize,
@@ -15,8 +15,8 @@ impl Eor {
   }
 }
 
-impl Operation for Eor {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Eor {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d);
@@ -44,7 +44,7 @@ impl Operation for Eor {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -52,7 +52,7 @@ mod test {
     let testbed = init(vec![(0xf, 0xff), (0xa, 0x01)]);
 
     let op = super::Eor::new(0b0010_0100_1111_1010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed
@@ -72,7 +72,7 @@ mod test {
     let testbed = init(vec![(0xf, 0xff), (0xa, 0xff)]);
 
     let op = super::Eor::new(0b0010_0100_1111_1010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed
@@ -92,7 +92,7 @@ mod test {
     let testbed = init(vec![(0xf, 0x00), (0xa, 0x80)]);
 
     let op = super::Eor::new(0b0010_0100_1111_1010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed
@@ -112,7 +112,7 @@ mod test {
     let testbed = init(vec![(0xf, 0xff), (0xa, 0x80)]);
 
     let op = super::Eor::new(0b0010_0100_1111_1010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed

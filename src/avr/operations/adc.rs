@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 
 pub struct Adc {
   r: usize,
@@ -21,8 +21,8 @@ impl Adc {
   }
 }
 
-impl Operation for Adc {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Adc {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     let mut status_register = execution_data.status_register.borrow_mut();
 
@@ -59,8 +59,7 @@ impl Operation for Adc {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
-  use crate::avr::operations::adc::ExecutionData;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -68,7 +67,7 @@ mod test {
     let testbed = init(vec![(0, 0x01), (1, 0x02)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(ExecutionData {
+    adc.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       registers: testbed.registers.clone(),
       ..testbed
@@ -90,7 +89,7 @@ mod test {
     let testbed = init(vec![(0, 0x39), (1, 0x48)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(ExecutionData {
+    adc.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       registers: testbed.registers.clone(),
       ..testbed
@@ -112,7 +111,7 @@ mod test {
     let testbed = init(vec![(0, 0xff), (1, 0xff)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(ExecutionData {
+    adc.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       registers: testbed.registers.clone(),
       ..testbed
@@ -134,7 +133,7 @@ mod test {
     let testbed = init(vec![(0, 0xff), (1, 0x01)]);
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(ExecutionData {
+    adc.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       registers: testbed.registers.clone(),
       ..testbed
@@ -160,7 +159,7 @@ mod test {
     }
 
     let adc = super::Adc::new(0b0001_1100_0000_0001);
-    adc.execute(ExecutionData {
+    adc.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       registers: testbed.registers.clone(),
       ..testbed

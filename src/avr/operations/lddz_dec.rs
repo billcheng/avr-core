@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct LddzDec {
@@ -14,8 +14,8 @@ impl LddzDec {
   }
 }
 
-impl Operation for LddzDec {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for LddzDec {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     let z = (registers.get_z() as i32 - 1) as u16;
 
@@ -31,7 +31,7 @@ impl Operation for LddzDec {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::random_access_memory::RandomAccessMemory;
   use crate::avr::test::test_init::init;
 
@@ -47,7 +47,7 @@ mod test {
     }
 
     let op = super::LddzDec::new(0b1001_0000_0101_1010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });

@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Lac {
@@ -14,8 +14,8 @@ impl Lac {
   }
 }
 
-impl Operation for Lac {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Lac {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     let rd = registers.get(self.d);
     let z = registers.get_z();
@@ -32,7 +32,7 @@ impl Operation for Lac {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::random_access_memory::RandomAccessMemory;
   use crate::avr::test::test_init::init;
 
@@ -48,7 +48,7 @@ mod test {
     }
 
     let op = super::Lac::new(0b1001_0010_0111_0110);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       data_memory: testbed.data_memory.clone(),
       ..testbed

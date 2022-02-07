@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 
 pub struct Cp {
   r: usize,
@@ -15,8 +15,8 @@ impl Cp {
   }
 }
 
-impl Operation for Cp {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Cp {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let registers = execution_data.registers.borrow();
 
     let rd = registers.get(self.d) as i16;
@@ -51,7 +51,7 @@ impl Operation for Cp {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -59,7 +59,7 @@ mod test {
     let testbed = init(vec![(1, 0xcc), (2, 0xcc)]);
 
     let op = super::Cp::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -78,7 +78,7 @@ mod test {
     let testbed = init(vec![(1, 0x00), (2, 0x04)]);
 
     let op = super::Cp::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -97,7 +97,7 @@ mod test {
     let testbed = init(vec![(1, 0xff), (2, 0x01)]);
 
     let op = super::Cp::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -116,7 +116,7 @@ mod test {
     let testbed = init(vec![(1, 0x3), (2, 0x01)]);
 
     let op = super::Cp::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -135,7 +135,7 @@ mod test {
     let testbed = init(vec![(1, 0x80), (2, 0x01)]);
 
     let op = super::Cp::new(0b0001_0100_0001_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });

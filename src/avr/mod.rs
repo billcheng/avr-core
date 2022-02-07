@@ -2,7 +2,7 @@ pub mod code_memory;
 pub mod core;
 pub mod core_type;
 pub mod data_memory;
-pub mod instruction_manager;
+pub mod instruction_decoder;
 pub mod operation;
 pub mod operations;
 pub mod random_access_memory;

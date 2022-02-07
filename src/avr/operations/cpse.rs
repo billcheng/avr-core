@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 use crate::avr::util::opcode_size::Opcode;
 use crate::avr::util::opcode_size::OpcodeSize;
 use std::rc::Rc;
@@ -25,8 +25,8 @@ impl Cpse {
   }
 }
 
-impl Operation for Cpse {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Cpse {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let registers = execution_data.registers.borrow();
 
     let rd = registers.get(self.d);
@@ -49,7 +49,7 @@ impl Operation for Cpse {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::operations::cpse::Rc;
   use crate::avr::test::test_init::init;
   use crate::avr::util::opcode_size::Opcode;

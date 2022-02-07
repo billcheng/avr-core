@@ -6,7 +6,7 @@ use crate::avr::status_register::StatusRegister;
 use core::cell::RefCell;
 use std::rc::Rc;
 
-pub struct ExecutionData {
+pub struct InstructionData {
   pub status_register: Rc<RefCell<StatusRegister>>,
   pub registers: Rc<RefCell<Registers>>,
   pub pc: u32,
@@ -15,6 +15,6 @@ pub struct ExecutionData {
   pub code_memory: CodeMemoryPtr,
 }
 
-pub trait Operation {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32>;
+pub trait Instruction {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32>;
 }

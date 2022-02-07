@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 
 pub struct Adiw {
   d: usize,
@@ -20,8 +20,8 @@ impl Adiw {
   }
 }
 
-impl Operation for Adiw {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Adiw {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d) as u16 | ((registers.get(self.d + 1) as u16) << 8);
@@ -51,8 +51,7 @@ impl Operation for Adiw {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
-  use crate::avr::operations::adiw::ExecutionData;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -60,7 +59,7 @@ mod test {
     let testbed = init(vec![(24, 0xff), (25, 0x01)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(ExecutionData {
+    adiw.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       registers: testbed.registers.clone(),
       ..testbed
@@ -82,7 +81,7 @@ mod test {
     let testbed = init(vec![(24, 0xff), (25, 0xff)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(ExecutionData {
+    adiw.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -96,7 +95,7 @@ mod test {
     let testbed = init(vec![(24, 0xff), (25, 0xff)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(ExecutionData {
+    adiw.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -110,7 +109,7 @@ mod test {
     let testbed = init(vec![(24, 0xff), (25, 0xef)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(ExecutionData {
+    adiw.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -124,7 +123,7 @@ mod test {
     let testbed = init(vec![(24, 0xff), (25, 0x7f)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(ExecutionData {
+    adiw.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -138,7 +137,7 @@ mod test {
     let testbed = init(vec![(24, 0xff), (25, 0xef)]);
 
     let adiw = super::Adiw::new(0b1001_0110_0000_0001);
-    adiw.execute(ExecutionData {
+    adiw.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });

@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 
 pub struct Com {
   d: usize,
@@ -13,8 +13,8 @@ impl Com {
   }
 }
 
-impl Operation for Com {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Com {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d);
@@ -42,7 +42,7 @@ impl Operation for Com {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -54,7 +54,7 @@ mod test {
     }
 
     let op = super::Com::new(0b1001_0100_0001_0000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -72,7 +72,7 @@ mod test {
     }
 
     let op = super::Com::new(0b1001_0100_0001_0000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -91,7 +91,7 @@ mod test {
     }
 
     let op = super::Com::new(0b1001_0100_0001_0000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -111,7 +111,7 @@ mod test {
     }
 
     let op = super::Com::new(0b1001_0100_0001_0000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -131,7 +131,7 @@ mod test {
     }
 
     let op = super::Com::new(0b1001_0100_0001_0000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });

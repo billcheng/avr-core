@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct LdsAvrc {
@@ -16,8 +16,8 @@ impl LdsAvrc {
   }
 }
 
-impl Operation for LdsAvrc {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for LdsAvrc {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let data_memory = execution_data.data_memory.borrow();
     let ds = data_memory.read(self.k as u32);
 
@@ -30,7 +30,7 @@ impl Operation for LdsAvrc {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::random_access_memory::RandomAccessMemory;
   use crate::avr::test::test_init::init;
 
@@ -43,7 +43,7 @@ mod test {
     }
 
     let op = super::LdsAvrc::new(0b1010_0111_1111_1111);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });

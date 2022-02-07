@@ -1,5 +1,5 @@
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::InstructionData;
+use crate::avr::operation::Instruction;
 
 pub struct Bld {
   d: usize,
@@ -18,8 +18,8 @@ impl Bld {
   }
 }
 
-impl Operation for Bld {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Bld {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     let status_register = execution_data.status_register.borrow();
 
@@ -41,7 +41,7 @@ impl Operation for Bld {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::test::test_init::init;
 
   #[test]
@@ -53,7 +53,7 @@ mod test {
     }
 
     let op = super::Bld::new(0b1111_1000_0000_0000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -71,7 +71,7 @@ mod test {
     }
 
     let op = super::Bld::new(0b1111_1000_0000_0001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -89,7 +89,7 @@ mod test {
     }
 
     let op = super::Bld::new(0b1111_1000_0000_0010);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -107,7 +107,7 @@ mod test {
     }
 
     let op = super::Bld::new(0b1111_1000_0000_0011);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -124,7 +124,7 @@ mod test {
       status_register.set_transfer(false);
     }
     let op = super::Bld::new(0b1111_1000_0000_0111);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -142,7 +142,7 @@ mod test {
     }
 
     let op = super::Bld::new(0b1111_1000_0000_0000);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -160,7 +160,7 @@ mod test {
     }
 
     let op = super::Bld::new(0b1111_1000_0000_0001);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -178,7 +178,7 @@ mod test {
     }
 
     let op = super::Bld::new(0b1111_1000_0000_0111);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });

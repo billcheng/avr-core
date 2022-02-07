@@ -1,6 +1,6 @@
 use crate::avr::core_type::CoreType;
-use crate::avr::operation::ExecutionData;
-use crate::avr::operation::Operation;
+use crate::avr::operation::Instruction;
+use crate::avr::operation::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Icall {
@@ -18,8 +18,8 @@ impl Icall {
   }
 }
 
-impl Operation for Icall {
-  fn execute(&self, execution_data: ExecutionData) -> Option<u32> {
+impl Instruction for Icall {
+  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let stack_data = execution_data.pc + 1;
 
     let mut stack = execution_data.data_memory.borrow_mut();
@@ -43,7 +43,7 @@ impl Operation for Icall {
 
 #[cfg(test)]
 mod test {
-  use crate::avr::operation::Operation;
+  use super::Instruction;
   use crate::avr::random_access_memory::RandomAccessMemory;
   use crate::avr::test::test_init::init;
 
@@ -72,7 +72,7 @@ mod test {
     }
 
     let op = super::Icall::new(&super::CoreType::Bits16);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -91,7 +91,7 @@ mod test {
     }
 
     let op = super::Icall::new(&super::CoreType::Bits22);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });
@@ -110,7 +110,7 @@ mod test {
     }
 
     let op = super::Icall::new(&super::CoreType::Bits16);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       data_memory: testbed.data_memory.clone(),
       pc: 0x0123,
       ..testbed
@@ -131,7 +131,7 @@ mod test {
     }
 
     let op = super::Icall::new(&super::CoreType::Bits22);
-    op.execute(super::ExecutionData {
+    op.execute(super::InstructionData {
       data_memory: testbed.data_memory.clone(),
       pc: 0x123456,
       ..testbed
