@@ -1,4 +1,4 @@
-use crate::avr::operation::InstructionData;
+use crate::avr::instruction::InstructionData;
 use crate::avr::code_memory::CodeMemory;
 use crate::avr::code_memory::CodeMemoryPtr;
 use crate::avr::core_type::CoreType;
