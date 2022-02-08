@@ -63,6 +63,8 @@ use crate::avr::instructions::out_io::Out;
 use crate::avr::instructions::pop::Pop;
 use crate::avr::instructions::push::Push;
 use crate::avr::instructions::rcall::Rcall;
+use crate::avr::instructions::ret16::Ret16;
+use crate::avr::instructions::ret22::Ret22;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -391,6 +393,14 @@ impl InstructionDecoder {
     let is_rcall = opcode & 0b1111_0000_0000_0000 == 0b1101_0000_0000_0000;
     if is_rcall {
       return Box::new(Rcall::new(&core_type, opcode));
+    }
+
+    let is_ret = opcode == 0x9508;
+    if is_ret {
+      return match core_type {
+        CoreType::Bits16 => Box::new(Ret16::new()),
+        CoreType::Bits22 => Box::new(Ret22::new()),
+      };
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
