@@ -66,4 +66,28 @@ mod test {
     assert_eq!(stack.read(0xfe), 0x05);
     assert_eq!(registers.get_stack_pointer(), 0xfd);
   }
+
+  #[test]
+  fn rcall_neg1000() {
+    let testbed = init(vec![]);
+    {
+      let mut registers = testbed.registers.borrow_mut();
+      registers.set_stack_pointer(0xff);
+    }
+
+    let op = super::Rcall::new(0b1101_1100_0001_1000);
+    let result = op.execute(super::InstructionData {
+      registers: testbed.registers.clone(),
+      pc: 2500,
+      data_memory: testbed.data_memory.clone(),
+      ..testbed
+    });
+
+    let stack = testbed.data_memory.borrow();
+    let registers = testbed.registers.borrow();
+    assert_eq!(result, Some(1501));
+    assert_eq!(stack.read(0xff), 0xc5);
+    assert_eq!(stack.read(0xfe), 0x09);
+    assert_eq!(registers.get_stack_pointer(), 0xfd);
+  }
 }
