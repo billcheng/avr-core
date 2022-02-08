@@ -25,7 +25,8 @@ use crate::avr::instructions::eor::Eor;
 use crate::avr::instructions::fmul::Fmul;
 use crate::avr::instructions::fmuls::Fmuls;
 use crate::avr::instructions::fmulsu::Fmulsu;
-use crate::avr::instructions::icall::Icall;
+use crate::avr::instructions::icall16::Icall16;
+use crate::avr::instructions::icall22::Icall22;
 use crate::avr::instructions::ijmp::Ijmp;
 use crate::avr::instructions::in_io::In;
 use crate::avr::instructions::inc::Inc;
@@ -207,7 +208,10 @@ impl InstructionDecoder {
 
     let is_icall = opcode == 0b1001_0101_0000_1001;
     if is_icall {
-      return Box::new(Icall::new(core_type));
+      return match core_type {
+        CoreType::Bits16 => Box::new(Icall16::new()),
+        CoreType::Bits22 => Box::new(Icall22::new()),
+      };
     }
 
     let is_ijmp = opcode == 0b1001_0100_0000_1001;
