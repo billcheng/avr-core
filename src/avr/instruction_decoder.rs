@@ -62,7 +62,8 @@ use crate::avr::instructions::ori::Ori;
 use crate::avr::instructions::out_io::Out;
 use crate::avr::instructions::pop::Pop;
 use crate::avr::instructions::push::Push;
-use crate::avr::instructions::rcall::Rcall;
+use crate::avr::instructions::rcall16::Rcall16;
+use crate::avr::instructions::rcall22::Rcall22;
 use crate::avr::instructions::ret16::Ret16;
 use crate::avr::instructions::ret22::Ret22;
 use crate::avr::util::opcode_size::Opcode;
@@ -392,7 +393,10 @@ impl InstructionDecoder {
 
     let is_rcall = opcode & 0b1111_0000_0000_0000 == 0b1101_0000_0000_0000;
     if is_rcall {
-      return Box::new(Rcall::new(&core_type, opcode));
+      return match core_type {
+        CoreType::Bits16 => Box::new(Rcall16::new(opcode)),
+        CoreType::Bits22 => Box::new(Rcall22::new(opcode)),
+      };
     }
 
     let is_ret = opcode == 0x9508;

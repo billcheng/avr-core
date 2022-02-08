@@ -60,6 +60,7 @@ pub mod ori;
 pub mod out_io;
 pub mod pop;
 pub mod push;
-pub mod rcall;
+pub mod rcall16;
+pub mod rcall22;
 pub mod ret16;
 pub mod ret22;
