@@ -390,7 +390,7 @@ impl InstructionDecoder {
 
     let is_rcall = opcode & 0b1111_0000_0000_0000 == 0b1101_0000_0000_0000;
     if is_rcall {
-      return Box::new(Rcall::new(opcode));
+      return Box::new(Rcall::new(&core_type, opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
