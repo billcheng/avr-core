@@ -12,7 +12,8 @@ use crate::avr::instructions::brbc::Brbc;
 use crate::avr::instructions::brbs::Brbs;
 use crate::avr::instructions::bset::Bset;
 use crate::avr::instructions::bst::Bst;
-use crate::avr::instructions::call::Call;
+use crate::avr::instructions::call16::Call16;
+use crate::avr::instructions::call22::Call22;
 use crate::avr::instructions::cbi::Cbi;
 use crate::avr::instructions::com::Com;
 use crate::avr::instructions::cp::Cp;
@@ -143,7 +144,10 @@ impl InstructionDecoder {
 
     let is_call = opcode & 0b1111_1110_0000_1110 == 0b1001_010_0000_1110;
     if is_call {
-      return Box::new(Call::new(core_type, opcode, next_opcode));
+      return match core_type {
+        CoreType::Bits16 => Box::new(Call16::new(opcode, next_opcode)),
+        CoreType::Bits22 => Box::new(Call22::new(opcode, next_opcode)),
+      };
     }
 
     let is_cbi = opcode & 0b1111_1111_0000_0000 == 0b1001_1000_0000_0000;
