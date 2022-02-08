@@ -1,4 +1,4 @@
-use crate::avr::instructions::rjmp::Rjmp;
+use crate::avr::instructions::ror::Ror;
 use crate::avr::core_type::CoreType;
 use crate::avr::instruction::Instruction;
 use crate::avr::instructions::adc::Adc;
@@ -71,6 +71,7 @@ use crate::avr::instructions::ret16::Ret16;
 use crate::avr::instructions::ret22::Ret22;
 use crate::avr::instructions::reti16::Reti16;
 use crate::avr::instructions::reti22::Reti22;
+use crate::avr::instructions::rjmp::Rjmp;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -429,6 +430,11 @@ impl InstructionDecoder {
     let is_rjmp = opcode & 0b1111_0000_0000_0000 == 0b1100_0000_0000_0000;
     if is_rjmp {
       return Box::new(Rjmp::new(opcode));
+    }
+
+    let is_ror = opcode & 0b1111_1110_0000_1111 == 0b1001_0100_0000_0111;
+    if is_ror {
+      return Box::new(Ror::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
