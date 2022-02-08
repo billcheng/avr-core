@@ -66,3 +66,6 @@ pub mod rcall16;
 pub mod rcall22;
 pub mod ret16;
 pub mod ret22;
+pub mod reti16;
+pub mod reti22;
+pub mod rjmp;
