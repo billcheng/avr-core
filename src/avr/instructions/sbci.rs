@@ -1,36 +1,35 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
-pub struct Sbc {
+pub struct Sbci {
   d: usize,
-  r: usize,
+  k: usize,
 }
 
-impl Sbc {
+impl Sbci {
   pub fn new(opcode: u16) -> Self {
-    let d = ((opcode & 0b0000_0001_1111_0000) >> 4) as usize;
-    let r = (opcode & 0b0000_0000_0000_1111 | ((opcode & 0b0000_0010_0000_0000) >> 5)) as usize;
+    let d = 16 + ((opcode & 0b0000_0000_1111_0000) >> 4) as usize;
+    let k = (opcode & 0b0000_0000_0000_1111 | ((opcode & 0b0000_1111_0000_0000) >> 4)) as usize;
 
-    Self { d, r }
+    Self { d, k }
   }
 }
 
-impl Instruction for Sbc {
+impl Instruction for Sbci {
   fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     let mut status_register = execution_data.status_register.borrow_mut();
 
     let rd = registers.get(self.d);
-    let rr = registers.get(self.r);
     let c = status_register.get_carry();
 
-    let result = (rd as i16 - rr as i16 - c as i16) as u8;
+    let result = (rd as i16 - self.k as i16 - c as i16) as u8;
 
     let rd3 = (rd & 0b000_1000) != 0;
-    let rr3 = (rr & 0b000_1000) != 0;
+    let rr3 = (self.k & 0b000_1000) != 0;
     let r3 = (result & 0b000_1000) != 0;
     let rd7 = (rd & 0b1000_0000) != 0;
-    let rr7 = (rr & 0b1000_0000) != 0;
+    let rr7 = (self.k & 0b1000_0000) != 0;
     let r7 = (result & 0b1000_0000) != 0;
 
     let half_carry = !rd3 & rr3 | rr3 & r3 | r3 & !rd3;
@@ -58,10 +57,10 @@ mod test {
   use crate::avr::test::test_init::init;
 
   #[test]
-  fn sbc_r30_r31_0x0f_0x1_nc() {
-    let testbed = init(vec![(30, 0x0f), (31, 0x1)]);
+  fn sbci_r30_0x0f_0x1_nc() {
+    let testbed = init(vec![(30, 0x0f)]);
 
-    let op = super::Sbc::new(0b0000_1011_1110_1111);
+    let op = super::Sbci::new(0b0100_0000_1110_0001);
     op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
@@ -80,14 +79,14 @@ mod test {
   }
 
   #[test]
-  fn sbc_r30_r31_0x0f_0x1_c() {
-    let testbed = init(vec![(30, 0x0f), (31, 0x1)]);
+  fn sbc_r30_0x0f_0x1_c() {
+    let testbed = init(vec![(30, 0x0f)]);
     {
       let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(true);
     }
 
-    let op = super::Sbc::new(0b0000_1011_1110_1111);
+    let op = super::Sbci::new(0b0100_0000_1110_0001);
     op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
@@ -106,10 +105,10 @@ mod test {
   }
 
   #[test]
-  fn sbc_r30_r31_0x10_0xf_nc() {
-    let testbed = init(vec![(30, 0x10), (31, 0xf)]);
+  fn sbc_r30_0x10_0xf_nc() {
+    let testbed = init(vec![(30, 0x10)]);
 
-    let op = super::Sbc::new(0b0000_1011_1110_1111);
+    let op = super::Sbci::new(0b0100_0000_1110_1111);
     op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
@@ -128,14 +127,14 @@ mod test {
   }
 
   #[test]
-  fn sbc_r30_r31_0x10_0xf_c_nz() {
-    let testbed = init(vec![(30, 0x10), (31, 0xf)]);
+  fn sbc_r30_0x10_0xf_c_nz() {
+    let testbed = init(vec![(30, 0x10)]);
     {
       let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(true);
     }
 
-    let op = super::Sbc::new(0b0000_1011_1110_1111);
+    let op = super::Sbci::new(0b0100_0000_1110_1111);
     op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
@@ -154,15 +153,15 @@ mod test {
   }
 
   #[test]
-  fn sbc_r30_r31_0x10_0xf_c_z() {
-    let testbed = init(vec![(30, 0x10), (31, 0xf)]);
+  fn sbc_r30_0x10_0xf_c_z() {
+    let testbed = init(vec![(30, 0x10)]);
     {
       let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_carry(true);
       status_register.set_zero(true);
     }
 
-    let op = super::Sbc::new(0b0000_1011_1110_1111);
+    let op = super::Sbci::new(0b0100_0000_1110_1111);
     op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
@@ -181,14 +180,14 @@ mod test {
   }
 
   #[test]
-  fn sbc_r30_r31_0x10_0x10_nc_z() {
-    let testbed = init(vec![(30, 0x10), (31, 0x10)]);
+  fn sbc_r30_0x10_0x10_nc_z() {
+    let testbed = init(vec![(30, 0x10)]);
     {
       let mut status_register = testbed.status_register.borrow_mut();
       status_register.set_zero(true);
     }
 
-    let op = super::Sbc::new(0b0000_1011_1110_1111);
+    let op = super::Sbci::new(0b0100_0001_1110_0000);
     op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
@@ -207,10 +206,10 @@ mod test {
   }
 
   #[test]
-  fn sbc_r30_r31_0x10_0x10_nc_nz() {
-    let testbed = init(vec![(30, 0x10), (31, 0x10)]);
+  fn sbc_r30_0x10_0x10_nc_nz() {
+    let testbed = init(vec![(30, 0x10)]);
 
-    let op = super::Sbc::new(0b0000_1011_1110_1111);
+    let op = super::Sbci::new(0b0100_0001_1110_0000);
     op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
@@ -229,10 +228,10 @@ mod test {
   }
 
   #[test]
-  fn sbc_r30_r31_0x10_0x11_nc_nz() {
-    let testbed = init(vec![(30, 0x10), (31, 0x11)]);
+  fn sbc_r30_0x10_0x11_nc_nz() {
+    let testbed = init(vec![(30, 0x10)]);
 
-    let op = super::Sbc::new(0b0000_1011_1110_1111);
+    let op = super::Sbci::new(0b0100_0001_1110_0001);
     op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
@@ -251,10 +250,10 @@ mod test {
   }
 
   #[test]
-  fn sbc_r30_r31_0x80_0x01_nc() {
-    let testbed = init(vec![(30, 0x80), (31, 0x01)]);
+  fn sbc_r30_0x80_0x01_nc() {
+    let testbed = init(vec![(30, 0x80)]);
 
-    let op = super::Sbc::new(0b0000_1011_1110_1111);
+    let op = super::Sbci::new(0b1000_0000_1110_0001);
     op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),

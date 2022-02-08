@@ -73,6 +73,7 @@ use crate::avr::instructions::reti22::Reti22;
 use crate::avr::instructions::rjmp::Rjmp;
 use crate::avr::instructions::ror::Ror;
 use crate::avr::instructions::sbc::Sbc;
+use crate::avr::instructions::sbci::Sbci;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -441,6 +442,11 @@ impl InstructionDecoder {
     let is_sbc = opcode & 0b1111_1100_0000_0000 == 0b0000_1000_0000_0000;
     if is_sbc {
       return Box::new(Sbc::new(opcode));
+    }
+
+    let is_sbci = opcode & 0b1111_0000_0000_0000 == 0b0100_0000_0000_0000;
+    if is_sbci {
+      return Box::new(Sbci::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
