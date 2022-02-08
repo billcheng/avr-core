@@ -70,3 +70,4 @@ pub mod reti16;
 pub mod reti22;
 pub mod rjmp;
 pub mod ror;
+pub mod sbc;
