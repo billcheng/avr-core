@@ -60,6 +60,7 @@ use crate::avr::instructions::nop::Nop;
 use crate::avr::instructions::or::Or;
 use crate::avr::instructions::ori::Ori;
 use crate::avr::instructions::out_io::Out;
+use crate::avr::instructions::pop::Pop;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -373,6 +374,11 @@ impl InstructionDecoder {
     let is_out = opcode & 0b1111_1000_0000_0000 == 0b1011_1000_0000_0000;
     if is_out {
       return Box::new(Out::new(opcode));
+    }
+
+    let is_pop = opcode & 0b1111_1110_0000_1111 == 0b1001_0000_0000_1111;
+    if is_pop {
+      return Box::new(Pop::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);

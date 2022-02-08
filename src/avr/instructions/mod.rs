@@ -58,3 +58,4 @@ pub mod nop;
 pub mod or;
 pub mod ori;
 pub mod out_io;
+pub mod pop;
