@@ -58,8 +58,8 @@ mod test {
   fn sbiw_r24_0x01_returns0x00fe_with_status_registers() {
     let testbed = init(vec![(24, 0xff), (25, 0x00)]);
 
-    let adiw = super::Sbiw::new(0b1001_0111_0000_0001);
-    adiw.execute(super::InstructionData {
+    let op = super::Sbiw::new(0b1001_0111_0000_0001);
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       registers: testbed.registers.clone(),
       ..testbed
@@ -80,8 +80,8 @@ mod test {
   fn sbiw_r24_0x01_returns_carry() {
     let testbed = init(vec![(24, 0x00), (25, 0x00)]);
 
-    let adiw = super::Sbiw::new(0b1001_0111_0000_0001);
-    adiw.execute(super::InstructionData {
+    let op = super::Sbiw::new(0b1001_0111_0000_0001);
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -94,8 +94,8 @@ mod test {
   fn sbiw_r24_0x01_returns_zero() {
     let testbed = init(vec![(24, 0x01), (25, 0x00)]);
 
-    let adiw = super::Sbiw::new(0b1001_0111_0000_0001);
-    adiw.execute(super::InstructionData {
+    let op = super::Sbiw::new(0b1001_0111_0000_0001);
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -108,8 +108,8 @@ mod test {
   fn sbiw_r24_0x01_returns_negative() {
     let testbed = init(vec![(24, 0xff), (25, 0xff)]);
 
-    let adiw = super::Sbiw::new(0b1001_0111_0000_0001);
-    adiw.execute(super::InstructionData {
+    let op = super::Sbiw::new(0b1001_0111_0000_0001);
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -122,8 +122,8 @@ mod test {
   fn sbiw_r24_0x01_returns_overflow() {
     let testbed = init(vec![(24, 0x00), (25, 0x80)]);
 
-    let adiw = super::Sbiw::new(0b1001_0111_0000_0001);
-    adiw.execute(super::InstructionData {
+    let op = super::Sbiw::new(0b1001_0111_0000_0001);
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
@@ -136,8 +136,8 @@ mod test {
   fn sbiw_r24_0x01_returns_sign() {
     let testbed = init(vec![(24, 0xff), (25, 0xef)]);
 
-    let adiw = super::Sbiw::new(0b1001_0111_0000_0001);
-    adiw.execute(super::InstructionData {
+    let op = super::Sbiw::new(0b1001_0111_0000_0001);
+    op.execute(super::InstructionData {
       status_register: testbed.status_register.clone(),
       ..testbed
     });
