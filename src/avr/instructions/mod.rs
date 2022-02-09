@@ -75,3 +75,4 @@ pub mod sbci;
 pub mod sbi;
 pub mod sbic;
 pub mod sbis;
+pub mod sbiw;
