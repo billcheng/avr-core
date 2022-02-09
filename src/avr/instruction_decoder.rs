@@ -1,4 +1,3 @@
-use crate::avr::instructions::sty_dec::StyDec;
 use crate::avr::core_type::CoreType;
 use crate::avr::instruction::Instruction;
 use crate::avr::instructions::adc::Adc;
@@ -85,8 +84,12 @@ use crate::avr::instructions::sbrs::Sbrs;
 use crate::avr::instructions::stx::Stx;
 use crate::avr::instructions::stx_dec::StxDec;
 use crate::avr::instructions::stx_inc::StxInc;
+use crate::avr::instructions::sty_dec::StyDec;
 use crate::avr::instructions::sty_inc::StyInc;
 use crate::avr::instructions::styq::Styq;
+use crate::avr::instructions::stz_dec::StzDec;
+use crate::avr::instructions::stz_inc::StzInc;
+use crate::avr::instructions::stzq::Stzq;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -525,6 +528,21 @@ impl InstructionDecoder {
     let is_sty_dec = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_1010;
     if is_sty_dec {
       return Box::new(StyDec::new(opcode));
+    }
+
+    let is_stzq = opcode & 0b1101_0010_0000_1000 == 0b1000_0010_0000_0000;
+    if is_stzq {
+      return Box::new(Stzq::new(opcode));
+    }
+
+    let is_stz_inc = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_0001;
+    if is_stz_inc {
+      return Box::new(StzInc::new(opcode));
+    }
+
+    let is_stz_dec = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_0010;
+    if is_stz_dec {
+      return Box::new(StzDec::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
