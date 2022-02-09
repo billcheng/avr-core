@@ -92,3 +92,4 @@ pub mod sts;
 pub mod sts_avrc;
 pub mod sub;
 pub mod subi;
+pub mod swap;

@@ -94,6 +94,7 @@ use crate::avr::instructions::stz_inc::StzInc;
 use crate::avr::instructions::stzq::Stzq;
 use crate::avr::instructions::sub::Sub;
 use crate::avr::instructions::subi::Subi;
+use crate::avr::instructions::swap::Swap;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -567,6 +568,11 @@ impl InstructionDecoder {
     let is_subi = opcode & 0b1111_0000_0000_0000 == 0b0101_0000_0000_0000;
     if is_subi {
       return Box::new(Subi::new(opcode));
+    }
+
+    let is_swap = opcode & 0b1111_1110_0000_1111 == 0b1001_0100_0000_0010;
+    if is_swap {
+      return Box::new(Swap::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
