@@ -81,6 +81,8 @@ use crate::avr::instructions::sbiw::Sbiw;
 use crate::avr::instructions::sbr::Sbr;
 use crate::avr::instructions::sbrc::Sbrc;
 use crate::avr::instructions::sbrs::Sbrs;
+use crate::avr::instructions::sts::Sts;
+use crate::avr::instructions::sts_avrc::StsAvrc;
 use crate::avr::instructions::stx::Stx;
 use crate::avr::instructions::stx_dec::StxDec;
 use crate::avr::instructions::stx_inc::StxInc;
@@ -90,6 +92,8 @@ use crate::avr::instructions::styq::Styq;
 use crate::avr::instructions::stz_dec::StzDec;
 use crate::avr::instructions::stz_inc::StzInc;
 use crate::avr::instructions::stzq::Stzq;
+use crate::avr::instructions::sub::Sub;
+use crate::avr::instructions::subi::Subi;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -543,6 +547,26 @@ impl InstructionDecoder {
     let is_stz_dec = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_0010;
     if is_stz_dec {
       return Box::new(StzDec::new(opcode));
+    }
+
+    let is_sts = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_0000;
+    if is_sts {
+      return Box::new(Sts::new(opcode, next_opcode));
+    }
+
+    let is_sts_avrc = opcode & 0b1111_1000_0000_0000 == 0b1010_1000_0000_0000;
+    if is_sts_avrc {
+      return Box::new(StsAvrc::new(opcode));
+    }
+
+    let is_sub = opcode & 0b1111_1100_0000_0000 == 0b0001_1000_0000_0000;
+    if is_sub {
+      return Box::new(Sub::new(opcode));
+    }
+
+    let is_subi = opcode & 0b1111_0000_0000_0000 == 0b0101_0000_0000_0000;
+    if is_subi {
+      return Box::new(Subi::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
