@@ -1,3 +1,4 @@
+use crate::avr::instructions::sty_dec::StyDec;
 use crate::avr::core_type::CoreType;
 use crate::avr::instruction::Instruction;
 use crate::avr::instructions::adc::Adc;
@@ -519,6 +520,11 @@ impl InstructionDecoder {
     let is_sty_inc = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_1001;
     if is_sty_inc {
       return Box::new(StyInc::new(opcode));
+    }
+
+    let is_sty_dec = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_1010;
+    if is_sty_dec {
+      return Box::new(StyDec::new(opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);
