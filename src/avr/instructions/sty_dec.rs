@@ -2,30 +2,27 @@ use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
-pub struct Styq {
+pub struct StyDec {
   r: usize,
-  q: usize,
 }
 
-impl Styq {
+impl StyDec {
   pub fn new(opcode: u16) -> Self {
     let r = ((opcode & 0b0000_0001_1111_0000) >> 4) as usize;
-    let q = (opcode & 0b0000_0000_0000_0111
-      | ((opcode & 0b0000_1100_0000_0000) >> 7)
-      | ((opcode & 0b0010_0000_0000_0000) >> 8)) as usize;
 
-    Self { r, q }
+    Self { r }
   }
 }
 
-impl Instruction for Styq {
+impl Instruction for StyDec {
   fn execute(&self, execution_data: InstructionData) -> Option<u32> {
-    let registers = execution_data.registers.borrow();
-    let y = registers.get_y();
+    let mut registers = execution_data.registers.borrow_mut();
     let rr = registers.get(self.r);
+    let y = (registers.get_y() as i32 - 1);
 
     let mut data_memory = execution_data.data_memory.borrow_mut();
-    data_memory.write(y as u32 + self.q as u32, rr);
+    data_memory.write(y as u32, rr);
+    registers.set_y(y as u16);
 
     None
   }
@@ -34,24 +31,27 @@ impl Instruction for Styq {
 #[cfg(test)]
 mod test {
   use super::Instruction;
-  use crate::avr::random_access_memory::RandomAccessMemory;
+  use super::RandomAccessMemory;
   use crate::avr::test::test_init::init;
 
   #[test]
-  fn std_y50_q63_r31() {
-    let testbed = init(vec![(31, 0x55)]);
+  fn stydec_0x00ff_r31() {
+    let testbed = init(vec![(31, 0xaa)]);
     {
       let mut registers = testbed.registers.borrow_mut();
-      registers.set_y(50);
+      registers.set_y(0x00ff);
     }
 
-    let op = super::Styq::new(0b1010_1111_1111_1111);
+    let op = super::StyDec::new(0b1001_0011_1111_1110);
     op.execute(super::InstructionData {
       data_memory: testbed.data_memory.clone(),
+      registers: testbed.registers.clone(),
       ..testbed
     });
 
     let data_memory = testbed.data_memory.borrow();
-    assert_eq!(data_memory.read(50+63), 0x55);
+    let registers = testbed.registers.borrow();
+    assert_eq!(data_memory.read(0x00fe), 0xaa);
+    assert_eq!(registers.get_y(), 0x00fe);
   }
 }

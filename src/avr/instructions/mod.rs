@@ -83,3 +83,5 @@ pub mod stx;
 pub mod stx_inc;
 pub mod stx_dec;
 pub mod styq;
+pub mod sty_inc;
+pub mod sty_dec;
