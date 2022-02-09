@@ -18,7 +18,7 @@ impl Instruction for StyDec {
   fn execute(&self, execution_data: InstructionData) -> Option<u32> {
     let mut registers = execution_data.registers.borrow_mut();
     let rr = registers.get(self.r);
-    let y = (registers.get_y() as i32 - 1);
+    let y = registers.get_y() as i32 - 1;
 
     let mut data_memory = execution_data.data_memory.borrow_mut();
     data_memory.write(y as u32, rr);

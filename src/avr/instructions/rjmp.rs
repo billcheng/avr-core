@@ -1,6 +1,5 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
-use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Rjmp {
   k: i16,
@@ -31,7 +30,6 @@ impl Instruction for Rjmp {
 #[cfg(test)]
 mod test {
   use super::Instruction;
-  use crate::avr::random_access_memory::RandomAccessMemory;
   use crate::avr::test::test_init::init;
 
   #[test]

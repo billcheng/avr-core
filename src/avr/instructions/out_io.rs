@@ -8,7 +8,7 @@ pub struct Out {
 
 impl Out {
   pub fn new(opcode: u16) -> Self {
-    let r = ((opcode & 0b0000_0001_1111_0000) >> 4);
+    let r = (opcode & 0b0000_0001_1111_0000) >> 4;
     let a = (((opcode & 0b0000_0110_0000_0000) >> 5) as u8) | ((opcode & 0x0f) as u8);
 
     Self {

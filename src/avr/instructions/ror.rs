@@ -1,6 +1,5 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
-use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Ror {
   d: usize,
