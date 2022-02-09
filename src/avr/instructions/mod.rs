@@ -81,3 +81,4 @@ pub mod sbrc;
 pub mod sbrs;
 pub mod stx;
 pub mod stx_inc;
+pub mod stx_dec;
