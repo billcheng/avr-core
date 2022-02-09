@@ -79,6 +79,7 @@ use crate::avr::instructions::sbic::Sbic;
 use crate::avr::instructions::sbis::Sbis;
 use crate::avr::instructions::sbiw::Sbiw;
 use crate::avr::instructions::sbr::Sbr;
+use crate::avr::instructions::sbrc::Sbrc;
 use crate::avr::util::opcode_size::Opcode;
 use std::rc::Rc;
 
@@ -477,6 +478,11 @@ impl InstructionDecoder {
     let is_sbr = opcode & 0b1111_0000_0000_0000 == 0b0110_0000_0000_0000;
     if is_sbr {
       return Box::new(Sbr::new(opcode));
+    }
+
+    let is_sbrc = opcode & 0b1111_1110_0000_1000 == 0b1111_1100_0000_1000;
+    if is_sbrc {
+      return Box::new(Sbrc::new(opcode, next_opcode, &self.opcode));
     }
 
     panic!("Unknown opcode: 0x{:04x}", opcode);

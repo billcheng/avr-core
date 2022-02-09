@@ -77,3 +77,4 @@ pub mod sbic;
 pub mod sbis;
 pub mod sbiw;
 pub mod sbr;
+pub mod sbrc;
