@@ -4,6 +4,7 @@ use crate::avr::instructions::and::And;
 impl Disassembler for And {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

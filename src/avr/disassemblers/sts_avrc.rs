@@ -4,6 +4,7 @@ use crate::avr::instructions::sts_avrc::StsAvrc;
 impl Disassembler for StsAvrc {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

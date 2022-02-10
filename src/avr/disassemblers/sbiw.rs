@@ -4,6 +4,7 @@ use crate::avr::instructions::sbiw::Sbiw;
 impl Disassembler for Sbiw {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

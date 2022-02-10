@@ -4,6 +4,7 @@ use crate::avr::instructions::ori::Ori;
 impl Disassembler for Ori {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

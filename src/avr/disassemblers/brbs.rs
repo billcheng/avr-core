@@ -4,6 +4,7 @@ use crate::avr::instructions::brbs::Brbs;
 impl Disassembler for Brbs {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

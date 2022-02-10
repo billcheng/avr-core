@@ -4,6 +4,7 @@ use crate::avr::instructions::lac::Lac;
 impl Disassembler for Lac {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

@@ -4,6 +4,7 @@ use crate::avr::instructions::eicall::Eicall;
 impl Disassembler for Eicall {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

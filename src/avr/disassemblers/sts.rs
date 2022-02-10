@@ -4,6 +4,7 @@ use crate::avr::instructions::sts::Sts;
 impl Disassembler for Sts {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

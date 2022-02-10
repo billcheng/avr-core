@@ -4,6 +4,7 @@ use crate::avr::instructions::sty_dec::StyDec;
 impl Disassembler for StyDec {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

@@ -1,3 +1,3 @@
 pub trait Disassembler {
-  fn disassemble(&self) -> (String, Option<String>, Option<String>);
+  fn disassemble(&self, address: u16) -> (String, Option<String>, Option<String>);
 }

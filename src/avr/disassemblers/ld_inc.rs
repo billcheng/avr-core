@@ -4,6 +4,7 @@ use crate::avr::instructions::ld_inc::LdInc;
 impl Disassembler for LdInc {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

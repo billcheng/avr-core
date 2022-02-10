@@ -4,6 +4,7 @@ use crate::avr::instructions::muls::Muls;
 impl Disassembler for Muls {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

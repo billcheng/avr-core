@@ -4,6 +4,7 @@ use crate::avr::instructions::xch::Xch;
 impl Disassembler for Xch {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

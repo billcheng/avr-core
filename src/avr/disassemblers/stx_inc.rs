@@ -4,6 +4,7 @@ use crate::avr::instructions::stx_inc::StxInc;
 impl Disassembler for StxInc {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

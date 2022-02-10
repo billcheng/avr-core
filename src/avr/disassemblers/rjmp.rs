@@ -4,6 +4,7 @@ use crate::avr::instructions::rjmp::Rjmp;
 impl Disassembler for Rjmp {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

@@ -4,6 +4,7 @@ use crate::avr::instructions::bst::Bst;
 impl Disassembler for Bst {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

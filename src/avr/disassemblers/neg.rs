@@ -4,15 +4,12 @@ use crate::avr::instructions::neg::Neg;
 impl Disassembler for Neg {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,
     Option<std::string::String>,
   ) {
-    (
-      String::from("NEG"),
-      Some(format!("R{}", self.d)),
-      None,
-    )
+    (String::from("NEG"), Some(format!("R{}", self.d)), None)
   }
 }

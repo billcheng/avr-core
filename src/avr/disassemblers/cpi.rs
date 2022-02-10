@@ -4,6 +4,7 @@ use crate::avr::instructions::cpi::Cpi;
 impl Disassembler for Cpi {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

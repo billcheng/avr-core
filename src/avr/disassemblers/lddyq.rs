@@ -4,6 +4,7 @@ use crate::avr::instructions::lddyq::Lddyq;
 impl Disassembler for Lddyq {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

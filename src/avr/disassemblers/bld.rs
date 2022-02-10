@@ -4,6 +4,7 @@ use crate::avr::instructions::bld::Bld;
 impl Disassembler for Bld {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

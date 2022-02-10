@@ -4,6 +4,7 @@ use crate::avr::instructions::mulsu::Mulsu;
 impl Disassembler for Mulsu {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

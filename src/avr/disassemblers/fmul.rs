@@ -4,6 +4,7 @@ use crate::avr::instructions::fmul::Fmul;
 impl Disassembler for Fmul {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

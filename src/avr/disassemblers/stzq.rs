@@ -4,6 +4,7 @@ use crate::avr::instructions::stzq::Stzq;
 impl Disassembler for Stzq {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

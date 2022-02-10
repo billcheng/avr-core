@@ -4,6 +4,7 @@ use crate::avr::instructions::out_io::Out;
 impl Disassembler for Out {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

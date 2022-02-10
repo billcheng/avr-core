@@ -4,6 +4,7 @@ use crate::avr::instructions::lds::Lds;
 impl Disassembler for Lds {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

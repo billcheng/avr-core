@@ -4,6 +4,7 @@ use crate::avr::instructions::movw::Movw;
 impl Disassembler for Movw {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

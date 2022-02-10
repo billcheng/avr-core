@@ -4,6 +4,7 @@ use crate::avr::instructions::swap::Swap;
 impl Disassembler for Swap {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

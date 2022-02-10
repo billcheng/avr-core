@@ -4,6 +4,7 @@ use crate::avr::instructions::bset::Bset;
 impl Disassembler for Bset {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

@@ -4,6 +4,7 @@ use crate::avr::instructions::asr::Asr;
 impl Disassembler for Asr {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

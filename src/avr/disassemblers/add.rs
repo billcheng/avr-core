@@ -4,6 +4,7 @@ use crate::avr::instructions::add::Add;
 impl Disassembler for Add {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,

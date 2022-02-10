@@ -4,6 +4,7 @@ use crate::avr::instructions::sbrs::Sbrs;
 impl Disassembler for Sbrs {
   fn disassemble(
     &self,
+    _address: u16,
   ) -> (
     std::string::String,
     Option<std::string::String>,
