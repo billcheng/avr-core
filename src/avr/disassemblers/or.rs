@@ -4,7 +4,7 @@ use crate::avr::instructions::or::Or;
 impl Disassembler for Or {
   fn disassemble(
     &self,
-    _address: u16,
+    _address: u32,
   ) -> (
     std::string::String,
     Option<std::string::String>,
@@ -12,8 +12,8 @@ impl Disassembler for Or {
   ) {
     (
       String::from("OR"),
-      format!("R{}", self.d),
-      format!("R{}", self.r),
+      Some(format!("R{}", self.d)),
+      Some(format!("R{}", self.r)),
     )
   }
 }

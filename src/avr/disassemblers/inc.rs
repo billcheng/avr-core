@@ -4,7 +4,7 @@ use crate::avr::instructions::inc::Inc;
 impl Disassembler for Inc {
   fn disassemble(
     &self,
-    _address: u16,
+    _address: u32,
   ) -> (
     std::string::String,
     Option<std::string::String>,

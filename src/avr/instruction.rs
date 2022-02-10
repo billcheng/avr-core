@@ -1,5 +1,6 @@
 use crate::avr::code_memory::CodeMemoryPtr;
 use crate::avr::data_memory::DataMemoryPtr;
+use crate::avr::disassembler::Disassembler;
 use crate::avr::io::IoPtr;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
@@ -15,6 +16,6 @@ pub struct InstructionData {
   pub code_memory: CodeMemoryPtr,
 }
 
-pub trait Instruction {
+pub trait Instruction: Disassembler {
   fn execute(&self, execution_data: InstructionData) -> Option<u32>;
 }

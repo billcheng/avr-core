@@ -4,12 +4,16 @@ use crate::avr::instructions::rjmp::Rjmp;
 impl Disassembler for Rjmp {
   fn disassemble(
     &self,
-    _address: u16,
+    address: u32,
   ) -> (
     std::string::String,
     Option<std::string::String>,
     Option<std::string::String>,
   ) {
-    (String::from("RJMP"), format!("{}", self.k), None)
+    (
+      String::from("RJMP"),
+      Some(format!("{}", address as i64 + self.k as i64 + 1)),
+      None,
+    )
   }
 }

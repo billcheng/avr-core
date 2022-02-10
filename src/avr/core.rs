@@ -1,9 +1,11 @@
-use crate::avr::instruction::InstructionData;
 use crate::avr::code_memory::CodeMemory;
 use crate::avr::code_memory::CodeMemoryPtr;
 use crate::avr::core_type::CoreType;
 use crate::avr::data_memory::create_data_memory_ptr;
 use crate::avr::data_memory::DataMemoryPtr;
+use crate::avr::disassembler::Disassembler;
+use crate::avr::instruction::Instruction;
+use crate::avr::instruction::InstructionData;
 use crate::avr::instruction_decoder::InstructionDecoder;
 use crate::avr::io::Io;
 use crate::avr::io::IoPtr;
@@ -12,6 +14,8 @@ use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
 use std::cell::RefCell;
 use std::rc::Rc;
+
+trait Inst: Instruction + Disassembler {}
 
 pub struct Core {
   core_type: CoreType,
@@ -51,7 +55,9 @@ impl Core {
     let code_memory = self.code_memory.borrow();
     let opcode = code_memory.read(self.program_counter);
     let next_opcode = code_memory.read(self.program_counter + 1);
-    let instruction = self.instruction_decoder.get(&self.core_type, opcode, next_opcode);
+    let instruction = self
+      .instruction_decoder
+      .get(&self.core_type, opcode, next_opcode);
     let result = instruction.execute(InstructionData {
       status_register: self.status_register.clone(),
       registers: self.registers.clone(),
@@ -64,5 +70,15 @@ impl Core {
       None => self.program_counter + 1,
       Some(next_pc) => next_pc,
     };
+  }
+
+  pub fn disassemble(&self, address: u32) -> (String, Option<String>, Option<String>) {
+    let code_memory = self.code_memory.borrow();
+    let opcode = code_memory.read(address);
+    let next_opcode = code_memory.read(address + 1);
+    let instruction = self
+      .instruction_decoder
+      .get(&self.core_type, opcode, next_opcode);
+    instruction.disassemble(address)
   }
 }

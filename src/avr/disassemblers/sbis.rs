@@ -4,7 +4,7 @@ use crate::avr::instructions::sbis::Sbis;
 impl Disassembler for Sbis {
   fn disassemble(
     &self,
-    _address: u16,
+    _address: u32,
   ) -> (
     std::string::String,
     Option<std::string::String>,
@@ -12,8 +12,8 @@ impl Disassembler for Sbis {
   ) {
     (
       String::from("SBIS"),
-      format!("{}", self.a),
-      format!("{}", self.b),
+      Some(format!("{}", self.a)),
+      Some(format!("{}", self.b)),
     )
   }
 }

@@ -4,7 +4,7 @@ use crate::avr::instructions::lddz_dec::LddzDec;
 impl Disassembler for LddzDec {
   fn disassemble(
     &self,
-    _address: u16,
+    _address: u32,
   ) -> (
     std::string::String,
     Option<std::string::String>,

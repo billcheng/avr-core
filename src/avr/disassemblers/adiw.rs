@@ -4,7 +4,7 @@ use crate::avr::instructions::adiw::Adiw;
 impl Disassembler for Adiw {
   fn disassemble(
     &self,
-    _address: u16,
+    _address: u32,
   ) -> (
     std::string::String,
     Option<std::string::String>,

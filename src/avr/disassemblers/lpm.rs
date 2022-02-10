@@ -1,7 +1,7 @@
 use crate::avr::disassembler::Disassembler;
-use crate::avr::instructions::brbc::Brbc;
+use crate::avr::instructions::lpm::Lpm;
 
-impl Disassembler for Brbc {
+impl Disassembler for Lpm {
   fn disassemble(
     &self,
     _address: u32,
@@ -11,9 +11,9 @@ impl Disassembler for Brbc {
     Option<std::string::String>,
   ) {
     (
-      String::from("BRBC"),
-      Some(format!("{}", self.s)),
-      Some(format!("{}", self.k)),
+      String::from("LPM"),
+      Some(String::from("R0")),
+      Some(String::from("Z")),
     )
   }
 }

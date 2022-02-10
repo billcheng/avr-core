@@ -4,7 +4,7 @@ use crate::avr::instructions::rcall16::Rcall16;
 impl Disassembler for Rcall16 {
   fn disassemble(
     &self,
-    address: u16,
+    address: u32,
   ) -> (
     std::string::String,
     Option<std::string::String>,
@@ -12,7 +12,7 @@ impl Disassembler for Rcall16 {
   ) {
     (
       String::from("RCALL"),
-      format!("{}", (address as i32 + self.k as + i32 + 1) as u16),
+      Some(format!("{}", (address as i64 + self.k as i64 + 1) as u32)),
       None,
     )
   }
