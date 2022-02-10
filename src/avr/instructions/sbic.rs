@@ -4,9 +4,9 @@ use crate::avr::util::opcode_size::Opcode;
 use crate::avr::util::opcode_size::OpcodeSize;
 
 pub struct Sbic {
-  a: usize,
-  b: usize,
-  opcode_size: usize,
+  pub(in crate::avr) a: usize,
+  pub(in crate::avr) b: usize,
+  pub(in crate::avr) opcode_size: usize,
 }
 
 impl Sbic {

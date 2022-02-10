@@ -2,7 +2,7 @@ use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 
 pub struct Bset {
-  s: usize,
+  pub(in crate::avr) s: usize,
 }
 
 impl Bset {

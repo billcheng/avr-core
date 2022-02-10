@@ -2,8 +2,8 @@ use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
 pub struct Adiw {
-  d: usize,
-  k: u8,
+  pub(in crate::avr) d: usize,
+  pub(in crate::avr) k: u8,
 }
 
 impl Adiw {

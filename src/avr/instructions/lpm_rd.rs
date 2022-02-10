@@ -3,7 +3,7 @@ use crate::avr::instruction::InstructionData;
 use crate::avr::read_only_memory::ReadOnlyMemory;
 
 pub struct LpmRd {
-  d: usize,
+  pub(in crate::avr) d: usize,
 }
 
 impl LpmRd {

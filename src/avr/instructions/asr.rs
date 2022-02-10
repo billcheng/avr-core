@@ -2,7 +2,7 @@ use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
 pub struct Asr {
-  d: usize,
+  pub(in crate::avr) d: usize,
 }
 
 impl Asr {

@@ -11,6 +11,8 @@ pub mod registers;
 pub mod status_register;
 pub mod io;
 pub mod util;
+pub mod disassembler;
+pub mod disassemblers;
 
 #[cfg(test)]
 pub mod test;

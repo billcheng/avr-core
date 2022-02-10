@@ -5,10 +5,10 @@ use crate::avr::util::opcode_size::OpcodeSize;
 use std::rc::Rc;
 
 pub struct Cpse {
-  r: usize,
-  d: usize,
-  next_opcode: u16,
-  opcode_util: Rc<Opcode>,
+  pub(in crate::avr) r: usize,
+  pub(in crate::avr) d: usize,
+  pub(in crate::avr) next_opcode: u16,
+  pub(in crate::avr) opcode_util: Rc<Opcode>,
 }
 
 impl Cpse {

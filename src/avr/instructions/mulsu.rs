@@ -2,8 +2,8 @@ use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
 pub struct Mulsu {
-  d: usize,
-  r: usize,
+  pub(in crate::avr) d: usize,
+  pub(in crate::avr) r: usize,
 }
 
 impl Mulsu {

@@ -3,7 +3,7 @@ use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Rcall16 {
-  k: i16,
+  pub(in crate::avr) k: i16,
 }
 
 impl Rcall16 {

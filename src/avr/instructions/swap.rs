@@ -2,7 +2,7 @@ use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
 pub struct Swap {
-  d: usize,
+  pub(in crate::avr) d: usize,
 }
 
 impl Swap {

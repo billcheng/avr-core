@@ -3,8 +3,8 @@ use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Styq {
-  r: usize,
-  q: usize,
+  pub(in crate::avr) r: usize,
+  pub(in crate::avr) q: usize,
 }
 
 impl Styq {

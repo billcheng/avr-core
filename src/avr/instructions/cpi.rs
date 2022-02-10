@@ -2,8 +2,8 @@ use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 
 pub struct Cpi {
-  k: u8,
-  d: usize,
+  pub(in crate::avr) k: u8,
+  pub(in crate::avr) d: usize,
 }
 
 impl Cpi {

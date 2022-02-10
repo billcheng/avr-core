@@ -2,16 +2,16 @@ use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
 pub struct Subi {
-  r: usize,
-  k: usize,
+  pub(in crate::avr) d: usize,
+  pub(in crate::avr) k: usize,
 }
 
 impl Subi {
   pub fn new(opcode: u16) -> Self {
-    let r = 16 + ((opcode & 0b0000_0000_1111_0000) >> 4) as usize;
+    let d = 16 + ((opcode & 0b0000_0000_1111_0000) >> 4) as usize;
     let k = (opcode & 0b0000_0000_0000_1111 | ((opcode & 0b0000_1111_0000_0000) >> 4)) as usize;
 
-    Self { r, k }
+    Self { d, k }
   }
 }
 
@@ -20,7 +20,7 @@ impl Instruction for Subi {
     let mut registers = execution_data.registers.borrow_mut();
     let mut status_register = execution_data.status_register.borrow_mut();
 
-    let rd = registers.get(self.r);
+    let rd = registers.get(self.d);
     let result = (rd as i16 - self.k as i16) as u8;
 
     let rd3 = (rd & 0b000_1000) != 0;
@@ -37,7 +37,7 @@ impl Instruction for Subi {
     let zero = result == 0;
     let carry = !rd7 & rr7 | rr7 & r7 | r7 & !rd7;
 
-    registers.set(self.r, result);
+    registers.set(self.d, result);
     status_register.set_half_carry(half_carry);
     status_register.set_overflow(overflow);
     status_register.set_negative(negative);

@@ -3,7 +3,7 @@ use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct StzInc {
-  r: usize,
+  pub(in crate::avr) r: usize,
 }
 
 impl StzInc {

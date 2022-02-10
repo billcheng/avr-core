@@ -2,8 +2,8 @@ use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
 pub struct Or {
-  r: usize,
-  d: usize,
+  pub(in crate::avr) r: usize,
+  pub(in crate::avr) d: usize,
 }
 
 impl Or {

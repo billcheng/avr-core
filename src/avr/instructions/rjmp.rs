@@ -2,7 +2,7 @@ use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
 pub struct Rjmp {
-  k: i16,
+  pub(in crate::avr) k: i16,
 }
 
 impl Rjmp {

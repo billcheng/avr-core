@@ -2,8 +2,8 @@ use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 
 pub struct Andi {
-  d: usize,
-  k: u8,
+  pub(in crate::avr) d: usize,
+  pub(in crate::avr) k: u8,
 }
 
 impl Andi {

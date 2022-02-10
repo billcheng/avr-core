@@ -2,8 +2,8 @@ use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
 pub struct Sbci {
-  d: usize,
-  k: usize,
+  pub(in crate::avr) d: usize,
+  pub(in crate::avr) k: usize,
 }
 
 impl Sbci {

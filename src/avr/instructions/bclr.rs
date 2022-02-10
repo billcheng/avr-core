@@ -2,7 +2,7 @@ use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 
 pub struct Bclr {
-  s: usize,
+  pub(in crate::avr) s: usize,
 }
 
 impl Bclr {

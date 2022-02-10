@@ -2,7 +2,7 @@ use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 
 pub struct Jmp {
-  k: u32,
+  pub(in crate::avr) k: u32,
 }
 
 impl Jmp {

@@ -3,7 +3,7 @@ use crate::avr::instruction::Instruction;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Lddy {
-  d: usize,
+  pub(in crate::avr) d: usize,
 }
 
 impl Lddy {

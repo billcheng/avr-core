@@ -3,8 +3,8 @@ use crate::avr::instruction::Instruction;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct LdsAvrc {
-  d: usize,
-  k: usize,
+  pub(in crate::avr) d: usize,
+  pub(in crate::avr) k: usize,
 }
 
 impl LdsAvrc {
