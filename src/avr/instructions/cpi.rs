@@ -8,7 +8,7 @@ pub struct Cpi {
 
 impl Cpi {
   pub fn new(opcode: u16) -> Self {
-    let d = ((opcode & 0b0000_0000_1111_0000) >> 4) as usize;
+    let d = 16 + ((opcode & 0b0000_0000_1111_0000) >> 4) as usize;
     let k = ((opcode & 0b0000_0000_0000_1111) | ((opcode & 0b0000_1111_0000_0000) >> 4)) as u8;
 
     Self { d, k }
