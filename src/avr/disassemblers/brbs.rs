@@ -4,7 +4,7 @@ use crate::avr::instructions::brbs::Brbs;
 impl Disassembler for Brbs {
   fn disassemble(
     &self,
-    _address: u32,
+    address: u32,
   ) -> (
     std::string::String,
     Option<std::string::String>,
@@ -13,7 +13,7 @@ impl Disassembler for Brbs {
     (
       String::from("BRBS"),
       Some(format!("{}", self.s)),
-      Some(format!("{}", self.k)),
+      Some(format!("{}", (address as i64 + self.k as i64 + 1) as u32)),
     )
   }
 }
