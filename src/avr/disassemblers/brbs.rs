@@ -22,8 +22,8 @@ impl Disassembler for Brbs {
         7 => "BRIE",
         _ => unreachable!(),
       }),
-      Some(format!("{}", self.s)),
       Some(format!("{}", (address as i64 + self.k as i64 + 1) as u32)),
+      None
     )
   }
 }
