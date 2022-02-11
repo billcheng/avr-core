@@ -20,6 +20,7 @@ use crate::avr::instructions::cp::Cp;
 use crate::avr::instructions::cpc::Cpc;
 use crate::avr::instructions::cpi::Cpi;
 use crate::avr::instructions::cpse::Cpse;
+use crate::avr::instructions::data::Data;
 use crate::avr::instructions::dec::Dec;
 use crate::avr::instructions::eor::Eor;
 use crate::avr::instructions::fmul::Fmul;
@@ -587,6 +588,6 @@ impl InstructionDecoder {
       return Box::new(Xch::new(opcode));
     }
 
-    panic!("Unknown opcode: 0x{:04x}", opcode);
+    return Box::new(Data::new(opcode));
   }
 }

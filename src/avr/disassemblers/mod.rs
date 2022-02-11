@@ -97,3 +97,4 @@ pub mod subi;
 pub mod swap;
 pub mod wdr;
 pub mod xch;
+pub mod data;
