@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::avr::code_memory::CodeMemory;
 use crate::avr::code_memory::CodeMemoryPtr;
 use crate::avr::core_type::CoreType;
@@ -12,6 +13,8 @@ use crate::avr::io::IoPtr;
 use crate::avr::read_only_memory::ReadOnlyMemory;
 use crate::avr::registers::Registers;
 use crate::avr::status_register::StatusRegister;
+use crate::avr::util::opcode_size::Opcode;
+use crate::avr::util::opcode_size::OpcodeSize;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -26,6 +29,7 @@ pub struct Core {
   registers: Rc<RefCell<Registers>>,
   data_memory: DataMemoryPtr,
   io: IoPtr,
+  opcode_util: Rc<Opcode>,
 }
 
 impl Core {
@@ -33,16 +37,18 @@ impl Core {
     let code_memory = Rc::new(RefCell::new(CodeMemory::new(code_size)));
     let data_memory = create_data_memory_ptr(data_size);
     let io = Rc::new(RefCell::new(Io::new()));
+    let opcode_util = Rc::new(Opcode::new());
 
     Self {
       core_type,
       program_counter: 0,
       code_memory,
       status_register: Rc::new(RefCell::new(StatusRegister::new())),
-      instruction_decoder: InstructionDecoder::new(),
+      instruction_decoder: InstructionDecoder::new(&opcode_util),
       registers: Rc::new(RefCell::new(Registers::new())),
       data_memory,
       io,
+      opcode_util,
     }
   }
 
@@ -80,5 +86,11 @@ impl Core {
       .instruction_decoder
       .get(&self.core_type, opcode, next_opcode);
     instruction.disassemble(address)
+  }
+
+  pub fn get_instruction_size(&self, address: u32) -> usize {
+    let code_memory = self.code_memory.borrow();
+    let opcode = code_memory.read(address);
+    self.opcode_util.get_size(opcode)
   }
 }

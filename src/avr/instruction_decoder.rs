@@ -106,9 +106,9 @@ pub struct InstructionDecoder {
 }
 
 impl InstructionDecoder {
-  pub fn new() -> Self {
+  pub fn new(opcode_util: &Rc<Opcode>) -> Self {
     Self {
-      opcode: Rc::new(Opcode::new()),
+      opcode: opcode_util.clone()
     }
   }
 

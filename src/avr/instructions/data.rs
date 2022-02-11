@@ -12,7 +12,7 @@ impl Data {
 }
 
 impl Instruction for Data {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, _execution_data: InstructionData) -> Option<u32> {
     panic!("Data instruction not implemented");
   }
 }
