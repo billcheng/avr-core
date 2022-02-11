@@ -8,7 +8,7 @@ pub struct Andi {
 
 impl Andi {
   pub fn new(opcode: u16) -> Self {
-    let d = 16 + (opcode & 0b0000_0000_1111_0000) >> 4;
+    let d = 16 + ((opcode & 0b0000_0000_1111_0000) >> 4);
     let k = (((opcode & 0b0000_1111_0000_0000) >> 4 | opcode & 0b0000_0000_0000_1111) & 0xff) as u8;
 
     Self { d: d as usize, k }
