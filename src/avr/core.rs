@@ -45,7 +45,7 @@ impl Core {
       code_memory,
       status_register: Rc::new(RefCell::new(StatusRegister::new())),
       instruction_decoder: InstructionDecoder::new(&opcode_util),
-      registers: Rc::new(RefCell::new(Registers::new())),
+      registers: Rc::new(RefCell::new(Registers::new(data_size as u32))),
       data_memory,
       io,
       opcode_util,
@@ -92,5 +92,19 @@ impl Core {
     let code_memory = self.code_memory.borrow();
     let opcode = code_memory.read(address);
     self.opcode_util.get_size(opcode)
+  }
+
+  pub fn get_program_counter(&self) -> u32 {
+    self.program_counter
+  }
+
+  pub fn get_registers(&self) -> Registers {
+    let registers = self.registers.borrow();
+    registers.clone()
+  }
+
+  pub fn get_status_register(&self) -> StatusRegister {
+    let status_register = self.status_register.borrow();
+    status_register.clone()
   }
 }

@@ -46,8 +46,8 @@ mod test {
   use crate::avr::test::test_init::init;
 
   #[test]
-  fn andi_r0_0x55_returns_0x00() {
-    let testbed = init(vec![(0, 0xaa)]);
+  fn andi_r16_0x55_returns_0x00() {
+    let testbed = init(vec![(16, 0xaa)]);
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
     and.execute(super::InstructionData {
@@ -60,8 +60,8 @@ mod test {
   }
 
   #[test]
-  fn andi_r0_0x55_returns_zero() {
-    let testbed = init(vec![(0, 0xaa)]);
+  fn andi_r16_0x55_returns_zero() {
+    let testbed = init(vec![(16, 0xaa)]);
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
     and.execute(super::InstructionData {
@@ -74,8 +74,8 @@ mod test {
   }
 
   #[test]
-  fn andi_r0_0x55_returns_negative() {
-    let testbed = init(vec![(0, 0xaa)]);
+  fn andi_r16_0x55_returns_negative() {
+    let testbed = init(vec![(16, 0xaa)]);
 
     let and = super::Andi::new(0b0111_1111_0000_1111);
     and.execute(super::InstructionData {
@@ -88,8 +88,8 @@ mod test {
   }
 
   #[test]
-  fn andi_r0_0x55_returns_overflow() {
-    let testbed = init(vec![(0, 0xaa)]);
+  fn andi_r16_0x55_returns_overflow() {
+    let testbed = init(vec![(16, 0xaa)]);
 
     let and = super::Andi::new(0b0111_0101_0000_0101);
     and.execute(super::InstructionData {
@@ -102,8 +102,8 @@ mod test {
   }
 
   #[test]
-  fn andi_r0_0xff_returns_sign() {
-    let testbed = init(vec![(0, 0xaa)]);
+  fn andi_r16_0xff_returns_sign() {
+    let testbed = init(vec![(16, 0xaa)]);
 
     let and = super::Andi::new(0b0111_1111_0000_1111);
     and.execute(super::InstructionData {

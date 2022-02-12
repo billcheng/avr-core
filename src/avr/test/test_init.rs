@@ -11,7 +11,7 @@ pub fn init(register_data: Vec<(usize, u8)>) -> InstructionData {
   let registers_ptr: Rc<RefCell<Registers>>;
   let status_register_ptr: Rc<RefCell<StatusRegister>>;
 
-  let mut registers = Registers::new();
+  let mut registers = Registers::new(1);
   for (index, value) in register_data {
     registers.set(index, value);
   }

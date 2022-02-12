@@ -1,14 +1,17 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Registers {
   reg: Vec<u8>,
   stack_pointer: u32,
 }
 
 impl Registers {
-  pub fn new() -> Self {
+  pub fn new(stack_pointer: u32) -> Self {
     Self {
       reg: vec![0; 32],
-      stack_pointer: 0,
+      stack_pointer: match stack_pointer > 0 {
+        true => stack_pointer - 1,
+        false => 0,
+      },
     }
   }
 

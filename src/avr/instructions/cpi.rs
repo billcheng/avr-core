@@ -55,8 +55,8 @@ mod test {
   use crate::avr::test::test_init::init;
 
   #[test]
-  fn cpi_r1_0xcc_return_z() {
-    let testbed = init(vec![(1, 0xcc)]);
+  fn cpi_r17_0xcc_return_z() {
+    let testbed = init(vec![(17, 0xcc)]);
 
     let op = super::Cpi::new(0b0011_1100_0001_1100);
     op.execute(super::InstructionData {
@@ -74,8 +74,8 @@ mod test {
   }
 
   #[test]
-  fn cp_r1_0x04_return_hc() {
-    let testbed = init(vec![(1, 0x00)]);
+  fn cp_r17_0x04_return_hc() {
+    let testbed = init(vec![(17, 0x00)]);
 
     let op = super::Cpi::new(0b0011_0000_0001_0100);
     op.execute(super::InstructionData {
@@ -93,8 +93,8 @@ mod test {
   }
 
   #[test]
-  fn cp_r1_0x01_return_s() {
-    let testbed = init(vec![(1, 0xff)]);
+  fn cp_r17_0x01_return_s() {
+    let testbed = init(vec![(17, 0xff)]);
 
     let op = super::Cpi::new(0b0011_0000_0001_0001);
     op.execute(super::InstructionData {
@@ -112,8 +112,8 @@ mod test {
   }
 
   #[test]
-  fn cp_r1_0x01_return_nc() {
-    let testbed = init(vec![(1, 0x3)]);
+  fn cp_r17_0x01_return_nc() {
+    let testbed = init(vec![(17, 0x3)]);
 
     let op = super::Cpi::new(0b0011_0000_0001_0001);
     op.execute(super::InstructionData {
@@ -131,8 +131,8 @@ mod test {
   }
 
   #[test]
-  fn cp_r1_0x01_return_o() {
-    let testbed = init(vec![(1, 0x80)]);
+  fn cp_r17_0x01_return_o() {
+    let testbed = init(vec![(17, 0x80)]);
 
     let op = super::Cpi::new(0b0011_0000_0001_0001);
     op.execute(super::InstructionData {

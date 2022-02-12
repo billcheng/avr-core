@@ -30,7 +30,7 @@ mod test {
   use crate::avr::test::test_init::init;
 
   #[test]
-  fn ldi_r10_0x55_returns_0x55() {
+  fn ldi_r26_0x55_returns_0x55() {
     let testbed = init(vec![]);
 
     let op = super::Ldi::new(0b1110_0101_1010_0101);
@@ -40,6 +40,6 @@ mod test {
     });
 
     let registers = testbed.registers.borrow();
-    assert_eq!(registers.get(10), 0x55);
+    assert_eq!(registers.get(26), 0x55);
   }
 }
