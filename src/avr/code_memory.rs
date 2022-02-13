@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use crate::avr::read_only_memory::ReadOnlyMemory;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -20,6 +22,10 @@ impl CodeMemory {
     for idx in 0..size {
       self.memory[idx] = data[idx];
     }
+  }
+
+  pub fn get_all(&self) -> Vec<u16> {
+    self.memory.clone()
   }
 }
 
