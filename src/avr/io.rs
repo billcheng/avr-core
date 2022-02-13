@@ -1,8 +1,11 @@
+#![allow(dead_code)]
+
 use std::cell::RefCell;
 use std::rc::Rc;
 
 pub type IoPtr = Rc<RefCell<Io>>;
 
+#[derive(Clone)]
 pub struct Io {
   data: Vec<u8>,
 }
@@ -28,5 +31,8 @@ impl Io {
   pub fn clear_bit(&mut self, index: usize, bit: usize) {
     let mask = 1 << bit;
     self.data[index] &= !mask;
+  }
+  pub fn get_all(&self) -> Vec<u8> {
+    self.data.clone()
   }
 }

@@ -1,4 +1,10 @@
 #![allow(dead_code)]
+
+use std::cell::RefCell;
+use std::rc::Rc;
+
+pub type StatusRegisterPtr = Rc<RefCell<StatusRegister>>;
+
 #[derive(Clone)]
 pub struct StatusRegister {
   carry: bool,
@@ -118,9 +124,14 @@ impl StatusRegister {
   }
 
   pub fn get_byte(&self) -> u8 {
-    self.get_carry() | self.get_zero() << 1 | self.get_negative() << 2 |
-      self.get_overflow() << 3 | self.get_sign() << 4 | self.get_half_carry() << 5 |
-      self.get_transfer() << 6 | self.get_interrupt() << 7
+    self.get_carry()
+      | self.get_zero() << 1
+      | self.get_negative() << 2
+      | self.get_overflow() << 3
+      | self.get_sign() << 4
+      | self.get_half_carry() << 5
+      | self.get_transfer() << 6
+      | self.get_interrupt() << 7
   }
 }
 

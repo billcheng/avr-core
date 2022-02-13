@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use crate::avr::random_access_memory::RandomAccessMemory;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -20,6 +22,10 @@ impl DataMemory {
     for idx in 0..size {
       self.memory[idx] = data[idx];
     }
+  }
+
+  pub fn get_all(&self) -> Vec<u8> {
+    self.memory.clone()
   }
 }
 

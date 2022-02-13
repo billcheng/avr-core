@@ -12,7 +12,9 @@ use crate::avr::io::Io;
 use crate::avr::io::IoPtr;
 use crate::avr::read_only_memory::ReadOnlyMemory;
 use crate::avr::registers::Registers;
+use crate::avr::registers::RegistersPtr;
 use crate::avr::status_register::StatusRegister;
+use crate::avr::status_register::StatusRegisterPtr;
 use crate::avr::util::opcode_size::Opcode;
 use crate::avr::util::opcode_size::OpcodeSize;
 use std::cell::RefCell;
@@ -23,13 +25,14 @@ trait Inst: Instruction + Disassembler {}
 pub struct Core {
   core_type: CoreType,
   code_memory: CodeMemoryPtr,
-  status_register: Rc<RefCell<StatusRegister>>,
+  status_register: StatusRegisterPtr,
   program_counter: u32,
   instruction_decoder: InstructionDecoder,
-  registers: Rc<RefCell<Registers>>,
+  registers: RegistersPtr,
   data_memory: DataMemoryPtr,
   io: IoPtr,
   opcode_util: Rc<Opcode>,
+  code_size: u32,
 }
 
 impl Core {
@@ -49,6 +52,7 @@ impl Core {
       data_memory,
       io,
       opcode_util,
+      code_size: code_size as u32,
     }
   }
 
@@ -60,7 +64,8 @@ impl Core {
   pub fn single_step(&mut self) {
     let code_memory = self.code_memory.borrow();
     let opcode = code_memory.read(self.program_counter);
-    let next_opcode = code_memory.read(self.program_counter + 1);
+    let next_pc = (self.program_counter + 1) % self.code_size;
+    let next_opcode = code_memory.read(next_pc);
     let instruction = self
       .instruction_decoder
       .get(&self.core_type, opcode, next_opcode);
@@ -73,15 +78,16 @@ impl Core {
       code_memory: self.code_memory.clone(),
     });
     self.program_counter = match result {
-      None => self.program_counter + 1,
-      Some(next_pc) => next_pc,
+      None => next_pc,
+      Some(absolute_pc) => absolute_pc,
     };
   }
 
   pub fn disassemble(&self, address: u32) -> (String, Option<String>, Option<String>) {
     let code_memory = self.code_memory.borrow();
     let opcode = code_memory.read(address);
-    let next_opcode = code_memory.read(address + 1);
+    let next_address = (address + 1) % self.code_size;
+    let next_opcode = code_memory.read(next_address);
     let instruction = self
       .instruction_decoder
       .get(&self.core_type, opcode, next_opcode);
@@ -98,13 +104,19 @@ impl Core {
     self.program_counter
   }
 
-  pub fn get_registers(&self) -> Registers {
-    let registers = self.registers.borrow();
-    registers.clone()
+  pub fn get_registers(&self) -> RegistersPtr {
+    self.registers.clone()
   }
 
-  pub fn get_status_register(&self) -> StatusRegister {
-    let status_register = self.status_register.borrow();
-    status_register.clone()
+  pub fn get_status_register(&self) -> StatusRegisterPtr {
+    self.status_register.clone()
+  }
+
+  pub fn get_io(&self) -> IoPtr {
+    self.io.clone()
+  }
+
+  pub fn get_data_memory(&self) -> DataMemoryPtr {
+    self.data_memory.clone()
   }
 }

@@ -20,7 +20,7 @@ impl Disassembler for Brbs {
         5 => "BRHS",
         6 => "BRTS",
         7 => "BRIE",
-        _ => unreachable!(),
+        _ => panic!("Invalid bit number for BRBS {}", self.s),
       }),
       Some(format!("{}", (address as i64 + self.k as i64 + 1) as u32)),
       None

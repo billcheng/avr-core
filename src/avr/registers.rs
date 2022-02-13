@@ -1,3 +1,10 @@
+#![allow(dead_code)]
+
+use std::cell::RefCell;
+use std::rc::Rc;
+
+pub type RegistersPtr = Rc<RefCell<Registers>>;
+
 #[derive(Debug, Clone)]
 pub struct Registers {
   reg: Vec<u8>,
@@ -67,5 +74,9 @@ impl Registers {
 
   pub fn set_z(&mut self, value: u16) {
     self.set_word(30, value);
+  }
+
+  pub fn get_all(&self) -> Vec<u8> {
+    self.reg.clone()
   }
 }

@@ -23,7 +23,7 @@ impl Disassembler for Bclr {
           5 => "H",
           6 => "T",
           7 => "I",
-          _ => unreachable!(),
+          _ => panic!("Invalid bit number for BCLR {}", self.s),
         }
       )),
       None,
