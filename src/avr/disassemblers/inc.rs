@@ -10,6 +10,6 @@ impl Disassembler for Inc {
     Option<std::string::String>,
     Option<std::string::String>,
   ) {
-    (String::from("IN"), Some(format!("R{}", self.d)), None)
+    (String::from("INC"), Some(format!("R{}", self.d)), None)
   }
 }
