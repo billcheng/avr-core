@@ -126,4 +126,8 @@ impl Core {
   pub fn get_code_memory(&self) -> CodeMemoryPtr {
     self.code_memory.clone()
   }
+
+  pub fn get_cycles(&self) -> u32 {
+    self.cycles
+  }
 }
