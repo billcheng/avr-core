@@ -9,9 +9,9 @@ pub struct Sbiw {
 
 impl Sbiw {
   pub fn new(opcode: u16) -> Self {
-    let d = 24 + (opcode & 0b0000_0000_0011_0000 >> 3);
+    let d = 24 + ((opcode & 0b0000_0000_0011_0000) >> 3);
     let decoded_k1 = opcode & 0b0000_0000_0000_1111;
-    let decoded_k2 = opcode & 0b0000_0000_1100_0000 >> 2;
+    let decoded_k2 = (opcode & 0b0000_0000_1100_0000) >> 2;
     let k = decoded_k1 | decoded_k2;
 
     Self {

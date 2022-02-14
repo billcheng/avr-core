@@ -9,9 +9,9 @@ pub struct Adiw {
 
 impl Adiw {
   pub fn new(opcode: u16) -> Self {
-    let d = 24 + (opcode & 0b0000_0000_0011_0000 >> 3);
+    let d = 24 + ((opcode & 0b0000_0000_0011_0000) >> 3);
     let decoded_k1 = opcode & 0b0000_0000_0000_1111;
-    let decoded_k2 = opcode & 0b0000_0000_1100_0000 >> 2;
+    let decoded_k2 = (opcode & 0b0000_0000_1100_0000) >> 2;
     let k = decoded_k1 | decoded_k2;
 
     Self {
@@ -54,6 +54,21 @@ impl Instruction for Adiw {
 mod test {
   use super::Instruction;
   use crate::avr::test::test_init::init;
+
+  #[test]
+  fn adiw_r24_63_returns0x023e_with_status_registers() {
+    let testbed = init(vec![(24, 0xff), (25, 0x01)]);
+
+    let adiw = super::Adiw::new(0x96cf);
+    adiw.execute(super::InstructionData {
+      registers: testbed.registers.clone(),
+      ..testbed
+    });
+
+    let registers = testbed.registers.borrow();
+    assert_eq!(registers.get(24), 0x3e);
+    assert_eq!(registers.get(25), 0x02);
+  }
 
   #[test]
   fn adiw_r24_0x01_returns0x0200_with_status_registers() {

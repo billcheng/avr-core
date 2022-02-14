@@ -11,7 +11,7 @@ impl Disassembler for Adiw {
     Option<std::string::String>,
   ) {
     (
-      String::from("ADD"),
+      String::from("ADIW"),
       Some(format!("R{}:R{}", self.d + 1, self.d)),
       Some(format!("{}", self.k)),
     )

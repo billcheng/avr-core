@@ -11,7 +11,7 @@ pub struct StsAvrc {
 impl StsAvrc {
   pub fn new(opcode: u16) -> Self {
     let r = 16 + ((opcode & 0b0000_0000_1111_0000) >> 4) as usize;
-    let k = (opcode & 0x0f | (opcode & 0b0000_0111_0000_0000 >> 4)) as usize;
+    let k = (opcode & 0x0f | ((opcode & 0b0000_0111_0000_0000) >> 4)) as usize;
 
     Self { r, k }
   }
