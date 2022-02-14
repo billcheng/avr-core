@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -19,7 +20,7 @@ impl Lddyq {
 }
 
 impl Instruction for Lddyq {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let y = registers.get_y();
 
@@ -28,7 +29,7 @@ impl Instruction for Lddyq {
 
     registers.set(self.d, ds);
 
-    None
+    (2, None) // AVRrc = NA, AVRe = 2, AVRxm = 3, AVRxt = 2
   }
 }
 

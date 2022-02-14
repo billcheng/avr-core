@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -14,14 +15,14 @@ impl Swap {
 }
 
 impl Instruction for Swap {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let rd = registers.get(self.d);
 
     let result = ((rd & 0x0f) << 4) | ((rd & 0xf0) >> 4);
     registers.set(self.d, result);
 
-    None
+    (1, None)
   }
 }
 

@@ -1,5 +1,6 @@
-use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
+use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 
 pub struct Bclr {
   pub(in crate::avr) s: usize,
@@ -14,11 +15,11 @@ impl Bclr {
 }
 
 impl Instruction for Bclr {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut status_register = execution_data.status_register.borrow_mut();
     status_register.set(self.s, false);
 
-    None
+    (1, None)
   }
 }
 

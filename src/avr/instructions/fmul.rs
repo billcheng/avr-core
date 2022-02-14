@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 
@@ -16,7 +17,7 @@ impl Fmul {
 }
 
 impl Instruction for Fmul {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d) as u16;
@@ -36,7 +37,7 @@ impl Instruction for Fmul {
     status_register.set_carry(carry);
     status_register.set_zero(zero);
 
-    None
+    (2, None)
   }
 }
 

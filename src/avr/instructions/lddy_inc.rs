@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct LddyInc {
@@ -15,7 +16,7 @@ impl LddyInc {
 }
 
 impl Instruction for LddyInc {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let y = registers.get_y();
 
@@ -25,7 +26,7 @@ impl Instruction for LddyInc {
     registers.set(self.d, ds);
     registers.set_y((y as u32 + 1) as u16);
 
-    None
+    (2, None) // AVRrc = 2/2, AVRe = 2, AVRxm = 2, AVRxt = 2
   }
 }
 

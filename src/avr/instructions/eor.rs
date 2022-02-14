@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 
@@ -16,7 +17,7 @@ impl Eor {
 }
 
 impl Instruction for Eor {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d);
@@ -38,7 +39,7 @@ impl Instruction for Eor {
     status_register.set_zero(zero);
     status_register.set_sign(sign);
 
-    None
+    (1, None)
   }
 }
 

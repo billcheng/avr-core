@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -15,7 +16,7 @@ impl Lat {
 }
 
 impl Instruction for Lat {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let rd = registers.get(self.d);
     let z = registers.get_z();
@@ -26,7 +27,7 @@ impl Instruction for Lat {
     registers.set(self.d, ds);
     data_memory.write(z as u32, rd ^ ds);
 
-    None
+    (2, None) // AVRxm = 2, Others = NA
   }
 }
 

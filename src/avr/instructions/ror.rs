@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -14,7 +15,7 @@ impl Ror {
 }
 
 impl Instruction for Ror {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let rd = registers.get(self.d);
 
@@ -27,7 +28,7 @@ impl Instruction for Ror {
     registers.set(self.d, result);
     status_register.set_carry(new_carry);
 
-    None
+    (1, None)
   }
 }
 

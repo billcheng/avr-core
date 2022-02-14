@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Lds {
@@ -17,14 +18,14 @@ impl Lds {
 }
 
 impl Instruction for Lds {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let data_memory = execution_data.data_memory.borrow();
     let ds = data_memory.read(self.k as u32);
 
     let mut registers = execution_data.registers.borrow_mut();
     registers.set(self.d, ds);
 
-    Some(execution_data.pc + 2)
+    (3, Some(execution_data.pc + 2)) // AVRe=2, AVRxm=3, AVRxt=3, AVRrc=NA
   }
 }
 
@@ -43,7 +44,7 @@ mod test {
     }
 
     let op = super::Lds::new(0b1001_0001_1111_0000, 0x0010);
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });

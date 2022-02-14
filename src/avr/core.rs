@@ -33,6 +33,7 @@ pub struct Core {
   io: IoPtr,
   opcode_util: Rc<Opcode>,
   code_size: u32,
+  cycles: u32,
 }
 
 impl Core {
@@ -53,6 +54,7 @@ impl Core {
       io,
       opcode_util,
       code_size: code_size as u32,
+      cycles: 0,
     }
   }
 
@@ -69,7 +71,7 @@ impl Core {
     let instruction = self
       .instruction_decoder
       .get(&self.core_type, opcode, next_opcode);
-    let result = instruction.execute(InstructionData {
+    let (number_of_cycles, result) = instruction.execute(InstructionData {
       status_register: self.status_register.clone(),
       registers: self.registers.clone(),
       pc: self.program_counter,
@@ -77,6 +79,7 @@ impl Core {
       io: self.io.clone(),
       code_memory: self.code_memory.clone(),
     });
+    self.cycles += number_of_cycles;
     self.program_counter = match result {
       None => next_pc,
       Some(absolute_pc) => absolute_pc,

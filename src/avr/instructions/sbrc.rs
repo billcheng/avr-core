@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::util::opcode_size::Opcode;
@@ -23,13 +24,13 @@ impl Sbrc {
 }
 
 impl Instruction for Sbrc {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let registers = execution_data.registers.borrow();
     let rr = registers.get(self.r);
 
     match rr & (1 << self.b) == 0 {
-      true => Some((execution_data.pc as u64 + 1 + self.opcode_size as u64) as u32),
-      false => None,
+      true => (2, Some((execution_data.pc as u64 + 1 + self.opcode_size as u64) as u32)),
+      false => (1, None),
     }
   }
 }
@@ -45,7 +46,7 @@ mod test {
     let testbed = init(vec![(31, 0xff)]);
 
     let op = super::Sbrc::new(0b1111_1101_1111_0111, 0x00, &Opcode::new());
-    let result = op.execute(testbed);
+    let (_cycles, result) = op.execute(testbed);
 
     assert_eq!(result, None);
   }
@@ -55,7 +56,7 @@ mod test {
     let testbed = init(vec![(31, 0x7f)]);
 
     let op = super::Sbrc::new(0b1111_1101_1111_0111, 0x00, &Opcode::new());
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       pc: 0x0005,
       ..testbed
     });
@@ -68,7 +69,7 @@ mod test {
     let testbed = init(vec![(31, 0x7f)]);
 
     let op = super::Sbrc::new(0b1111_1101_1111_0111, 0b1001_0100_0000_1110, &Opcode::new());
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       pc: 0x0005,
       ..testbed
     });

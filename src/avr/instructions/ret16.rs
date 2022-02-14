@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -11,7 +12,7 @@ impl Ret16 {
 }
 
 impl Instruction for Ret16 {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let sp = registers.get_stack_pointer() as u64;
 
@@ -23,7 +24,7 @@ impl Instruction for Ret16 {
 
     registers.set_stack_pointer((sp + 2) as u32);
 
-    Some(pc as u32)
+    (4, Some(pc as u32)) // AVRe=4, AVRxm=4, AVRxt=4, AVRrc=6
   }
 }
 
@@ -46,7 +47,7 @@ mod test {
     }
 
     let op = super::Ret16::new();
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       ..testbed
     });

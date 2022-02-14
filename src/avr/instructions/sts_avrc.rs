@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct StsAvrc {
@@ -17,14 +18,14 @@ impl StsAvrc {
 }
 
 impl Instruction for StsAvrc {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let registers = execution_data.registers.borrow();
     let rr = registers.get(self.r);
 
     let mut data_memory = execution_data.data_memory.borrow_mut();
     data_memory.write(self.k as u32, rr);
 
-    None
+    (1, None)
   }
 }
 

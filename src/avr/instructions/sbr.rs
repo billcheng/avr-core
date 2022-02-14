@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -16,7 +17,7 @@ impl Sbr {
 }
 
 impl Instruction for Sbr {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d);
@@ -37,7 +38,7 @@ impl Instruction for Sbr {
     status_register.set_sign(sign);
     status_register.set_zero(zero);
 
-    None
+    (1, None)
   }
 }
 

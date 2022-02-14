@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::util::opcode_size::Opcode;
 use crate::avr::util::opcode_size::OpcodeSize;
 use std::rc::Rc;
@@ -26,23 +27,28 @@ impl Cpse {
 }
 
 impl Instruction for Cpse {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let registers = execution_data.registers.borrow();
 
     let rd = registers.get(self.d);
     let rr = registers.get(self.r);
 
     if rd != rr {
-      return None;
+      return (1, None);
     }
 
-    Some(
-      execution_data.pc
-        + match self.opcode_util.get_size(self.next_opcode) {
-          2 => 3,
-          1 => 2,
-          _ => panic!("Invalid opcode size"),
-        },
+    let next_opcode_size = self.opcode_util.get_size(self.next_opcode);
+
+    (
+      1 + next_opcode_size as u32,
+      Some(
+        execution_data.pc
+          + match next_opcode_size {
+            2 => 3,
+            1 => 2,
+            _ => panic!("Invalid opcode size"),
+          },
+      ),
     )
   }
 }
@@ -59,7 +65,7 @@ mod test {
     let testbed = init(vec![(1, 0xcc), (2, 0xaa)]);
 
     let op = super::Cpse::new(0b0001_0000_0001_0010, 0x0000, &Rc::new(Opcode::new()));
-    let result = op.execute(testbed);
+    let (_cycles, result) = op.execute(testbed);
 
     assert_eq!(result, None);
   }
@@ -69,7 +75,7 @@ mod test {
     let testbed = init(vec![(1, 0xcc), (2, 0xcc)]);
 
     let op = super::Cpse::new(0b0001_0000_0001_0010, 0x0000, &Rc::new(Opcode::new()));
-    let result = op.execute(testbed);
+    let (_cycles, result) = op.execute(testbed);
 
     assert_eq!(result, Some(2));
   }

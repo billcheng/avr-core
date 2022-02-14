@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -21,7 +22,7 @@ impl Sbiw {
 }
 
 impl Instruction for Sbiw {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d) as u16 | ((registers.get(self.d + 1) as u16) << 8);
@@ -45,7 +46,7 @@ impl Instruction for Sbiw {
     status_register.set_carry(carry);
     status_register.set_sign(sign);
 
-    None
+    (2, None) // AVRe=2, AVRxm=2, AVRxt=2, AVRrc=NA
   }
 }
 

@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -16,12 +17,12 @@ impl Sbi {
 }
 
 impl Instruction for Sbi {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut io = execution_data.io.borrow_mut();
     let io_a = io.get(self.a) | (1 << self.b);
     io.set(self.a, io_a);
 
-    None
+    (1, None) // AVRe=2, AVRxm=1, AVRxt=1, AVRrc=1
   }
 }
 

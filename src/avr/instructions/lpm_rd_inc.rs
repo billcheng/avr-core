@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::read_only_memory::ReadOnlyMemory;
@@ -14,7 +15,7 @@ impl LpmRdInc {
 }
 
 impl Instruction for LpmRdInc {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let z = registers.get_z();
     let addr = z >> 1;
@@ -31,7 +32,7 @@ impl Instruction for LpmRdInc {
     registers.set(self.d, code_data);
     registers.set_z(new_z as u16);
 
-    None
+    (3, None) // AVRe=3, AVRxm=3, AVRxt=3, AVRrc=NA
   }
 }
 

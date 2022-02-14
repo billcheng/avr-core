@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -13,7 +14,7 @@ impl Lsr {
 }
 
 impl Instruction for Lsr {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let rd = registers.get(self.d);
     let result = rd >> 1;
@@ -33,7 +34,7 @@ impl Instruction for Lsr {
     status_register.set_zero(zero);
     status_register.set_carry(carry);
 
-    None
+    (1, None)
   }
 }
 

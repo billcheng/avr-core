@@ -1,5 +1,6 @@
-use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
+use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 
 pub struct Inc {
   pub(in crate::avr) d: usize,
@@ -14,7 +15,7 @@ impl Inc {
 }
 
 impl Instruction for Inc {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d) as i16;
@@ -35,7 +36,7 @@ impl Instruction for Inc {
     status_register.set_zero(zero);
     status_register.set_sign(sign);
 
-    None
+    (1, None)
   }
 }
 

@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Ld {
@@ -15,7 +16,7 @@ impl Ld {
 }
 
 impl Instruction for Ld {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let x = registers.get_x();
 
@@ -24,7 +25,7 @@ impl Instruction for Ld {
 
     registers.set(self.d, ds);
 
-    None
+    (2, None) // AVRrc = 1/2, AVRxm = 2, AVRxm = 2, AVRxt = 2
   }
 }
 

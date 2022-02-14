@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -11,7 +12,7 @@ impl Icall22 {
 }
 
 impl Instruction for Icall22 {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let stack_data = execution_data.pc + 1;
 
     let mut stack = execution_data.data_memory.borrow_mut();
@@ -28,7 +29,7 @@ impl Instruction for Icall22 {
 
     registers.add_stack_pointer(-3);
 
-    Some(registers.get_z() as u32)
+    (3, Some(registers.get_z() as u32)) // AVRe = 4, AVRxm & AVRxt = 3
   }
 }
 

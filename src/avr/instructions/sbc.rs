@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -16,7 +17,7 @@ impl Sbc {
 }
 
 impl Instruction for Sbc {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let mut status_register = execution_data.status_register.borrow_mut();
 
@@ -48,7 +49,7 @@ impl Instruction for Sbc {
     status_register.set_zero(zero);
     status_register.set_carry(carry);
 
-    None
+    (1, None)
   }
 }
 

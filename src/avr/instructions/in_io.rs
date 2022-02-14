@@ -1,5 +1,6 @@
-use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
+use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 
 pub struct In {
   pub(in crate::avr) d: usize,
@@ -15,12 +16,12 @@ impl In {
 }
 
 impl Instruction for In {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let io = execution_data.io.borrow();
     let mut registers = execution_data.registers.borrow_mut();
     registers.set(self.d, io.get(self.a));
 
-    None
+    (1, None)
   }
 }
 

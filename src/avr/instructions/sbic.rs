@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::util::opcode_size::Opcode;
 use crate::avr::util::opcode_size::OpcodeSize;
 
@@ -23,13 +24,16 @@ impl Sbic {
 }
 
 impl Instruction for Sbic {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let io = execution_data.io.borrow_mut();
     let io_a = io.get(self.a);
 
     match io_a & (1 << self.b) == 0 {
-      true => Some((execution_data.pc as u64 + 1 + self.opcode_size as u64) as u32),
-      false => None,
+      true => (
+        2,
+        Some((execution_data.pc as u64 + 1 + self.opcode_size as u64) as u32),
+      ), // AVRe=2, AVRxm=3, AVRxt=2, AVRrc=2
+      false => (1, None), // AVRe=1, AVRxm=2, AVRxt=1, AVRrc=1
     }
   }
 }
@@ -49,7 +53,7 @@ mod test {
     }
 
     let op = super::Sbic::new(0b1001_1001_1111_1111, 0x00, &Opcode::new());
-    let result = op.execute(testbed);
+    let (_cycles, result) = op.execute(testbed);
 
     assert_eq!(result, None);
   }
@@ -63,7 +67,7 @@ mod test {
     }
 
     let op = super::Sbic::new(0b1001_1001_1111_1111, 0x00, &Opcode::new());
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       pc: 0x0005,
       ..testbed
     });
@@ -80,7 +84,7 @@ mod test {
     }
 
     let op = super::Sbic::new(0b1001_1001_1111_1111, 0b1001_0100_0000_1110, &Opcode::new());
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       pc: 0x0005,
       ..testbed
     });

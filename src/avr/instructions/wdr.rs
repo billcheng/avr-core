@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -12,8 +13,8 @@ impl Wdr {
 }
 
 impl Instruction for Wdr {
-  fn execute(&self, _execution_data: InstructionData) -> Option<u32> {
-    None
+  fn execute(&self, _execution_data: InstructionData) -> InstructionResult {
+    (1, None)
   }
 }
 
@@ -27,7 +28,7 @@ mod test {
     let testbed = init(vec![]);
 
     let op = super::Wdr::new();
-    let result = op.execute(testbed);
+    let (_cycles, result) = op.execute(testbed);
 
     assert_eq!(result, None);
   }

@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Call22 {
@@ -11,14 +12,12 @@ impl Call22 {
     let k1 = ((opcode & 0b0000_0001_1111_0000) >> 3) | opcode & 0b0000_0000_0000_0001;
     let k = ((k1 as u32) << 16) | (next_opcode as u32);
 
-    Self {
-      k,
-    }
+    Self { k }
   }
 }
 
 impl Instruction for Call22 {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let stack_data = execution_data.pc + 2;
 
     let mut registers = execution_data.registers.borrow_mut();
@@ -28,13 +27,13 @@ impl Instruction for Call22 {
       (registers.get_stack_pointer() as i32 - 1) as u32,
       ((stack_data >> 8) & 0xff) as u8,
     );
-      stack.write(
-        (registers.get_stack_pointer() as i32 - 2) as u32,
-        ((stack_data >> 16) & 0xff) as u8,
-      );
+    stack.write(
+      (registers.get_stack_pointer() as i32 - 2) as u32,
+      ((stack_data >> 16) & 0xff) as u8,
+    );
 
     registers.add_stack_pointer(-3);
-    Some(self.k)
+    (4, Some(self.k)) // AVRxt & AVRxm = 4, AVRe = 5
   }
 }
 

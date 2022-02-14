@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -15,7 +16,7 @@ impl StzInc {
 }
 
 impl Instruction for StzInc {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let rr = registers.get(self.r);
     let z = registers.get_z();
@@ -24,7 +25,7 @@ impl Instruction for StzInc {
     data_memory.write(z as u32, rr);
     registers.set_z((z as u32 + 1) as u16);
 
-    None
+    (1, None) // AVRe=2, AVRxm=1, AVRxt=1, AVRrc=1
   }
 }
 

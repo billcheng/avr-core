@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -19,7 +20,7 @@ impl Out {
 }
 
 impl Instruction for Out {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let registers = execution_data.registers.borrow();
 
     let rr = registers.get(self.r);
@@ -27,7 +28,7 @@ impl Instruction for Out {
     let mut io_registers = execution_data.io.borrow_mut();
     io_registers.set(self.a, rr);
 
-    None
+    (1, None)
   }
 }
 

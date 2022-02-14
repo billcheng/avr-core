@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Pop {
@@ -15,7 +16,7 @@ impl Pop {
 }
 
 impl Instruction for Pop {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let stack = execution_data.data_memory.borrow();
     let mut registers = execution_data.registers.borrow_mut();
 
@@ -25,7 +26,7 @@ impl Instruction for Pop {
     registers.set(self.d, result);
     registers.set_stack_pointer(sp);
 
-    None
+    (2, None) // AVRrc=3
   }
 }
 

@@ -1,5 +1,6 @@
-use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
+use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 
 pub struct Cpi {
   pub(in crate::avr) k: u8,
@@ -16,7 +17,7 @@ impl Cpi {
 }
 
 impl Instruction for Cpi {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let registers = execution_data.registers.borrow();
 
     let rd = registers.get(self.d) as i16;
@@ -45,7 +46,7 @@ impl Instruction for Cpi {
     status_register.set_zero(zero);
     status_register.set_carry(carry);
 
-    None
+    (1, None)
   }
 }
 

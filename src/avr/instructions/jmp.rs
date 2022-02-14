@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 
@@ -17,8 +18,8 @@ impl Jmp {
 }
 
 impl Instruction for Jmp {
-  fn execute(&self, _execution_data: InstructionData) -> Option<u32> {
-    Some(self.k)
+  fn execute(&self, _execution_data: InstructionData) -> InstructionResult {
+    (3, Some(self.k))
   }
 }
 
@@ -32,7 +33,7 @@ mod test {
     let testbed = init(vec![]);
 
     let op = super::Jmp::new(0b1001_010_1101_0_110_0, 0x5678);
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       pc: 0x0001,
       ..testbed
     });

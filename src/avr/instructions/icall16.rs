@@ -1,19 +1,18 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
-pub struct Icall16 {
-}
+pub struct Icall16 {}
 
 impl Icall16 {
   pub fn new() -> Self {
-    Self {
-    }
+    Self {}
   }
 }
 
 impl Instruction for Icall16 {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let stack_data = execution_data.pc + 1;
 
     let mut stack = execution_data.data_memory.borrow_mut();
@@ -25,7 +24,7 @@ impl Instruction for Icall16 {
     );
     registers.add_stack_pointer(-2);
 
-    Some(registers.get_z() as u32)
+    (2, Some(registers.get_z() as u32)) // AVRe & AVRrc = 3, AVRxm & AVRxt = 2
   }
 }
 
@@ -45,7 +44,7 @@ mod test {
     }
 
     let op = super::Icall16::new();
-    let result = op.execute(testbed);
+    let (_cycles, result) = op.execute(testbed);
 
     assert_eq!(result, Some(0x1234));
   }

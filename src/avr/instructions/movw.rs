@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -16,7 +17,7 @@ impl Movw {
 }
 
 impl Instruction for Movw {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rr = registers.get(self.r);
@@ -25,7 +26,7 @@ impl Instruction for Movw {
     registers.set(self.d, rr);
     registers.set(self.d + 1, rr_inc);
 
-    None
+    (1, None) // AVRrc = NA
   }
 }
 

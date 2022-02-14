@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Sts {
@@ -17,14 +18,14 @@ impl Sts {
 }
 
 impl Instruction for Sts {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let registers = execution_data.registers.borrow();
     let rr = registers.get(self.r);
 
     let mut data_memory = execution_data.data_memory.borrow_mut();
     data_memory.write(self.k as u32, rr);
 
-    Some(execution_data.pc + 2)
+    (2, Some(execution_data.pc + 2)) // AVRe=2, AVRxm=2, AVRxt=2, AVRrc=NA
   }
 }
 
@@ -39,7 +40,7 @@ mod test {
     let testbed = init(vec![(31, 0x55)]);
 
     let op = super::Sts::new(0b1001_0011_1111_0000, 0x0010);
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       data_memory: testbed.data_memory.clone(),
       ..testbed
     });

@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -19,7 +20,7 @@ impl Styq {
 }
 
 impl Instruction for Styq {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let registers = execution_data.registers.borrow();
     let y = registers.get_y();
     let rr = registers.get(self.r);
@@ -27,7 +28,7 @@ impl Instruction for Styq {
     let mut data_memory = execution_data.data_memory.borrow_mut();
     data_memory.write(y as u32 + self.q as u32, rr);
 
-    None
+    (2, None) // AVRe=2, AVRxm=2, AVRxt=1, AVRrc=NA
   }
 }
 

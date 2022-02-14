@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 
@@ -16,14 +17,14 @@ impl Mov {
 }
 
 impl Instruction for Mov {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rr = registers.get(self.r);
 
     registers.set(self.d, rr);
 
-    None
+    (1, None)
   }
 }
 

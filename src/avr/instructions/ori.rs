@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 
 pub struct Ori {
   pub(in crate::avr) k: u8,
@@ -11,15 +12,12 @@ impl Ori {
     let d = 16 + ((opcode & 0b0000_0000_1111_0000) >> 4);
     let k = (((opcode & 0b0000_1111_0000_0000) >> 4) as u8) | ((opcode & 0x0f) as u8);
 
-    Self {
-      k,
-      d: d as usize,
-    }
+    Self { k, d: d as usize }
   }
 }
 
 impl Instruction for Ori {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d);
@@ -40,7 +38,7 @@ impl Instruction for Ori {
     status_register.set_zero(zero);
     status_register.set_sign(sign);
 
-    None
+    (1, None)
   }
 }
 

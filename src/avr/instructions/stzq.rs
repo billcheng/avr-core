@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -19,7 +20,7 @@ impl Stzq {
 }
 
 impl Instruction for Stzq {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let registers = execution_data.registers.borrow();
     let z = registers.get_z();
     let rr = registers.get(self.r);
@@ -27,7 +28,7 @@ impl Instruction for Stzq {
     let mut data_memory = execution_data.data_memory.borrow_mut();
     data_memory.write(z as u32 + self.q as u32, rr);
 
-    None
+    (1, None) // AVRe=2, AVRxm=1, AVRxt=1, AVRrc=1
   }
 }
 

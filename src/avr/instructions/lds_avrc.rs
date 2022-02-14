@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -17,14 +18,14 @@ impl LdsAvrc {
 }
 
 impl Instruction for LdsAvrc {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let data_memory = execution_data.data_memory.borrow();
     let ds = data_memory.read(self.k as u32);
 
     let mut registers = execution_data.registers.borrow_mut();
     registers.set(self.d, ds);
 
-    None
+    (2, None) // AVRe = NA, AVRxm = NA, AVRxt=NA, AVRrc=2
   }
 }
 

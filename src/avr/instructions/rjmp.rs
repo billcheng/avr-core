@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 
 pub struct Rjmp {
   pub(in crate::avr) k: i16,
@@ -18,12 +19,12 @@ impl Rjmp {
 }
 
 impl Instruction for Rjmp {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let pc = execution_data.pc;
     let next_pc = pc as i64 + 1;
     let result = next_pc + self.k as i64;
 
-    Some(result as u32)
+    (2, Some(result as u32))
   }
 }
 
@@ -41,7 +42,7 @@ mod test {
     }
 
     let op = super::Rjmp::new(0b1101_0011_1110_1000);
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       pc: 1500,
       ..testbed
     });
@@ -58,7 +59,7 @@ mod test {
     }
 
     let op = super::Rjmp::new(0b1101_1100_0001_1000);
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       pc: 1500,
       ..testbed
     });

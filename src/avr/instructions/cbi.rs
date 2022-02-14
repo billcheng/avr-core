@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -16,12 +17,12 @@ impl Cbi {
 }
 
 impl Instruction for Cbi {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut io = execution_data.io.borrow_mut();
 
     io.clear_bit(self.a, self.b);
 
-    None
+    (1, None) // AVRe = 2, others = 1
   }
 }
 

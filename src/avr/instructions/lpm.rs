@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::read_only_memory::ReadOnlyMemory;
 
 pub struct Lpm {}
@@ -11,7 +12,7 @@ impl Lpm {
 }
 
 impl Instruction for Lpm {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let z = registers.get_z();
     let addr = z >> 1;
@@ -27,7 +28,7 @@ impl Instruction for Lpm {
 
     registers.set(0, code_data);
 
-    None
+    (3, None)
   }
 }
 

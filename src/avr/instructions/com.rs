@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 
 pub struct Com {
   pub(in crate::avr) d: usize,
@@ -14,7 +15,7 @@ impl Com {
 }
 
 impl Instruction for Com {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
 
     let rd = registers.get(self.d);
@@ -36,7 +37,7 @@ impl Instruction for Com {
     status_register.set_zero(zero);
     status_register.set_carry(carry);
 
-    None
+    (1, None)
   }
 }
 

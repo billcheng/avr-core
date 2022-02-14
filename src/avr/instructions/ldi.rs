@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 
 pub struct Ldi {
   pub(in crate::avr) d: usize,
@@ -16,11 +17,11 @@ impl Ldi {
 }
 
 impl Instruction for Ldi {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     registers.set(self.d, self.k);
 
-    None
+    (1, None)
   }
 }
 

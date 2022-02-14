@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -11,7 +12,7 @@ impl Reti22 {
 }
 
 impl Instruction for Reti22 {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let sp = registers.get_stack_pointer() as u64;
 
@@ -27,7 +28,7 @@ impl Instruction for Reti22 {
     let mut status_register = execution_data.status_register.borrow_mut();
     status_register.set_interrupt(true);
 
-    Some(pc)
+    (5, Some(pc)) // AVRe=5, AVRxm=5, AVRxt=5, AVRrc=NA
   }
 }
 
@@ -51,7 +52,7 @@ mod test {
     }
 
     let op = super::Reti22::new();
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       status_register: testbed.status_register.clone(),
       ..testbed

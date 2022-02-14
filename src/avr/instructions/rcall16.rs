@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -19,7 +20,7 @@ impl Rcall16 {
 }
 
 impl Instruction for Rcall16 {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let pc = execution_data.pc;
     let next_pc = pc as i64 + 1;
     let result = next_pc + self.k as i64;
@@ -33,7 +34,7 @@ impl Instruction for Rcall16 {
 
     registers.set_stack_pointer((sp - 2) as u32);
 
-    Some(result as u32)
+    (2, Some(result as u32)) // AVRe=3, AVRxm=2, AVRxt=2, AVRrc=3
   }
 }
 
@@ -52,7 +53,7 @@ mod test {
     }
 
     let op = super::Rcall16::new(0b1101_0011_1110_1000);
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       pc: 1500,
       data_memory: testbed.data_memory.clone(),
@@ -76,7 +77,7 @@ mod test {
     }
 
     let op = super::Rcall16::new(0b1101_1100_0001_1000);
-    let result = op.execute(super::InstructionData {
+    let (_cycles, result) = op.execute(super::InstructionData {
       registers: testbed.registers.clone(),
       pc: 1500,
       data_memory: testbed.data_memory.clone(),

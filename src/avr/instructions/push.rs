@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 use crate::avr::random_access_memory::RandomAccessMemory;
 
 pub struct Push {
@@ -15,7 +16,7 @@ impl Push {
 }
 
 impl Instruction for Push {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let sp = registers.get_stack_pointer();
 
@@ -24,7 +25,7 @@ impl Instruction for Push {
 
     registers.set_stack_pointer(((sp as i64) - 1) as u32);
 
-    None
+    (1, None) // AVRe=2, AVRxm=1, AVRxt=1, AVRrc=1
   }
 }
 

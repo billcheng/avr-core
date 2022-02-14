@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -15,7 +16,7 @@ impl StxDec {
 }
 
 impl Instruction for StxDec {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let rr = registers.get(self.r);
     let x = (registers.get_x() as i32 - 1) as u16;
@@ -24,7 +25,7 @@ impl Instruction for StxDec {
     data_memory.write(x as u32, rr);
     registers.set_x(x);
 
-    None
+    (2, None) // AVRe=2, AVRxm=2, AVRxt=1, AVRrc=2
   }
 }
 

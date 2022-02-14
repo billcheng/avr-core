@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 
 pub struct Asr {
   pub(in crate::avr) d: usize,
@@ -14,7 +15,7 @@ impl Asr {
 }
 
 impl Instruction for Asr {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let rd = registers.get(self.d);
 
@@ -38,7 +39,7 @@ impl Instruction for Asr {
     status_register.set_zero(zero);
     status_register.set_sign(sign);
 
-    None
+    (1, None)
   }
 }
 

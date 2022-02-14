@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::InstructionData;
 use crate::avr::instruction::Instruction;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -15,7 +16,7 @@ impl Lddz {
 }
 
 impl Instruction for Lddz {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let z = registers.get_z();
 
@@ -24,7 +25,7 @@ impl Instruction for Lddz {
 
     registers.set(self.d, ds);
 
-    None
+    (2, None) // AVRe = 2, AVRxm = 2, AVRxt = 2, AVRrc = 1/2
   }
 }
 

@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -15,7 +16,7 @@ impl Xch {
 }
 
 impl Instruction for Xch {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let z = registers.get_z();
     let rd = registers.get(self.d);
@@ -26,7 +27,7 @@ impl Instruction for Xch {
     registers.set(self.d, ds);
     data_memory.write(z as u32, rd);
 
-    None
+    (2, None)
   }
 }
 

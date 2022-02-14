@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 use crate::avr::random_access_memory::RandomAccessMemory;
@@ -15,7 +16,7 @@ impl LdDec {
 }
 
 impl Instruction for LdDec {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let x = (registers.get_x() as i32 - 1) as u16;
 
@@ -25,7 +26,7 @@ impl Instruction for LdDec {
     registers.set(self.d, ds);
     registers.set_x(x);
 
-    None
+    (2, None) // AVRxm = 3, AVRe = 2, AVRxt = 2, AVRrc 2/3
   }
 }
 

@@ -1,3 +1,4 @@
+use crate::avr::instruction::InstructionResult;
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
 
@@ -10,10 +11,10 @@ impl Ijmp {
 }
 
 impl Instruction for Ijmp {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let registers = execution_data.registers.borrow();
 
-    Some(registers.get_z() as u32)
+    (2, Some(registers.get_z() as u32))
   }
 }
 
@@ -31,7 +32,7 @@ mod test {
     }
 
     let op = super::Ijmp::new();
-    let result = op.execute(testbed);
+    let (_cycles, result) = op.execute(testbed);
 
     assert_eq!(result, Some(0x1234));
   }

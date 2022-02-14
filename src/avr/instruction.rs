@@ -16,6 +16,8 @@ pub struct InstructionData {
   pub code_memory: CodeMemoryPtr,
 }
 
+pub type InstructionResult = (u32, Option<u32>);
+
 pub trait Instruction: Disassembler {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32>;
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult;
 }

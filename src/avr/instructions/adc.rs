@@ -1,5 +1,6 @@
 use crate::avr::instruction::Instruction;
 use crate::avr::instruction::InstructionData;
+use crate::avr::instruction::InstructionResult;
 
 pub struct Adc {
   pub(in crate::avr) r: usize,
@@ -22,7 +23,7 @@ impl Adc {
 }
 
 impl Instruction for Adc {
-  fn execute(&self, execution_data: InstructionData) -> Option<u32> {
+  fn execute(&self, execution_data: InstructionData) -> InstructionResult {
     let mut registers = execution_data.registers.borrow_mut();
     let mut status_register = execution_data.status_register.borrow_mut();
 
@@ -53,7 +54,7 @@ impl Instruction for Adc {
     status_register.set_carry(carry);
     status_register.set_sign(sign);
 
-    None
+    (1, None)
   }
 }
 
