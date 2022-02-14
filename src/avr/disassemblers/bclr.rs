@@ -11,9 +11,8 @@ impl Disassembler for Bclr {
     Option<std::string::String>,
   ) {
     (
-      String::from("BCLR"),
-      Some(format!(
-        "{}",
+      format!(
+        "CL{}",
         match self.s {
           0 => "C",
           1 => "Z",
@@ -25,7 +24,8 @@ impl Disassembler for Bclr {
           7 => "I",
           _ => panic!("Invalid bit number for BCLR {}", self.s),
         }
-      )),
+      ),
+      None,
       None,
     )
   }

@@ -11,9 +11,8 @@ impl Disassembler for Bset {
     Option<std::string::String>,
   ) {
     (
-      String::from("BSET"),
-      Some(format!(
-        "{}",
+      format!(
+        "SE{}",
         match self.s {
           0 => "C",
           1 => "Z",
@@ -25,7 +24,8 @@ impl Disassembler for Bset {
           7 => "I",
           _ => panic!("Invalid bit number for BSET {}", self.s),
         }
-      )),
+      ),
+      None,
       None,
     )
   }
