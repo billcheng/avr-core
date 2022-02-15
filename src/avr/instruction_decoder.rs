@@ -559,7 +559,7 @@ impl InstructionDecoder {
       return Box::new(Sts::new(opcode, next_opcode));
     }
 
-    let is_sts_avrc = opcode & 0b1111_1000_0000_0000 == 0b1010_1000_0000_0000;
+    let is_sts_avrc = self.avr_type==AvrType::Avrrc && opcode & 0b1111_1000_0000_0000 == 0b1010_1000_0000_0000;
     if is_sts_avrc {
       return Box::new(StsAvrc::new(opcode));
     }
@@ -584,7 +584,7 @@ impl InstructionDecoder {
       return Box::new(Wdr::new());
     }
 
-    let is_xch = opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_0100;
+    let is_xch = self.avr_type==AvrType::Avrxm && opcode & 0b1111_1110_0000_1111 == 0b1001_0010_0000_0100;
     if is_xch {
       return Box::new(Xch::new(opcode));
     }
@@ -708,16 +708,17 @@ mod test {
     subi: (AvrType::Avre, 0x5000, 0x0000, "SUBI"),
     swap: (AvrType::Avre, 0x9402, 0x0000, "SWAP"),
     wdr: (AvrType::Avre, 0x95a8, 0x0000, "WDR"),
-    xch: (AvrType::Avre, 0x9204, 0x0000, "XCH"),
+    xch: (AvrType::Avrxm, 0x9204, 0x0000, "XCH"),
+    xch1: (AvrType::Avre, 0x9204, 0x0000, ".DATA"),
   }
 
-  // #[test]
-  // fn decode_cbi() {
-  //   let instruction_decoder = InstructionDecoder::new(&Rc::new(Opcode::new()), &CoreType::Bits16, &AvrType::Avrrc);
+  #[test]
+  fn decode_cbi() {
+    let instruction_decoder = InstructionDecoder::new(&Rc::new(Opcode::new()), &CoreType::Bits16, &AvrType::Avre);
 
-  //   let instruction = instruction_decoder.get(0x0200, 0x0000);
-  //   let (result, _, _) = instruction.disassemble(0);
+    let instruction = instruction_decoder.get(0xa800, 0x0000);
+    let (result, _, _) = instruction.disassemble(0);
 
-  //   assert_eq!(result, "LDS");
-  // }
+    assert_eq!(result, "LDS");
+  }
 }
