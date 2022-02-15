@@ -11,7 +11,7 @@ impl Disassembler for Sub {
     Option<std::string::String>,
   ) {
     (
-      String::from("ST"),
+      String::from("SUB"),
       Some(format!("R{}", self.d)),
       Some(format!("R{}", self.r)),
     )

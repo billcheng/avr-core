@@ -11,7 +11,7 @@ impl Disassembler for Swap {
     Option<std::string::String>,
   ) {
     (
-      String::from("ST"),
+      String::from("SWAP"),
       Some(format!("R{}", self.d)),
       None,
     )

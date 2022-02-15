@@ -1,3 +1,4 @@
+use crate::avr::avr_type::AvrType;
 use crate::avr::core_type::CoreType;
 use crate::avr::instruction::Instruction;
 use crate::avr::instructions::adc::Adc;
@@ -79,7 +80,6 @@ use crate::avr::instructions::sbi::Sbi;
 use crate::avr::instructions::sbic::Sbic;
 use crate::avr::instructions::sbis::Sbis;
 use crate::avr::instructions::sbiw::Sbiw;
-use crate::avr::instructions::sbr::Sbr;
 use crate::avr::instructions::sbrc::Sbrc;
 use crate::avr::instructions::sbrs::Sbrs;
 use crate::avr::instructions::sts::Sts;
@@ -103,16 +103,20 @@ use std::rc::Rc;
 
 pub struct InstructionDecoder {
   opcode: Rc<Opcode>,
+  core_type: CoreType,
+  avr_type: AvrType,
 }
 
 impl InstructionDecoder {
-  pub fn new(opcode_util: &Rc<Opcode>) -> Self {
+  pub fn new(opcode_util: &Rc<Opcode>, core_type: &CoreType, avr_type: &AvrType) -> Self {
     Self {
-      opcode: opcode_util.clone()
+      opcode: opcode_util.clone(),
+      core_type: (*core_type).clone(),
+      avr_type: (*avr_type).clone(),
     }
   }
 
-  pub fn get(&self, core_type: &CoreType, opcode: u16, next_opcode: u16) -> Box<dyn Instruction> {
+  pub fn get(&self, opcode: u16, next_opcode: u16) -> Box<dyn Instruction> {
     let is_adc = opcode & 0b1111_1100_0000_0000 == 0b0001_1100_0000_0000;
     if is_adc {
       return Box::new(Adc::new(opcode));
@@ -148,7 +152,7 @@ impl InstructionDecoder {
       return Box::new(Bclr::new(opcode));
     }
 
-    let is_bld = opcode & 0b1111_1111_1000_1111 == 0b1111_1000_0000_0000;
+    let is_bld = opcode & 0b1111_1110_0000_1000 == 0b1111_1000_0000_0000;
     if is_bld {
       return Box::new(Bld::new(opcode));
     }
@@ -173,9 +177,9 @@ impl InstructionDecoder {
       return Box::new(Bst::new(opcode));
     }
 
-    let is_call = opcode & 0b1111_1110_0000_1110 == 0b1001_010_0000_1110;
+    let is_call = opcode & 0b1111_1110_0000_1110 == 0b1001_0100_0000_1110;
     if is_call {
-      return match core_type {
+      return match self.core_type {
         CoreType::Bits16 => Box::new(Call16::new(opcode, next_opcode)),
         CoreType::Bits22 => Box::new(Call22::new(opcode, next_opcode)),
       };
@@ -238,7 +242,7 @@ impl InstructionDecoder {
 
     let is_icall = opcode == 0b1001_0101_0000_1001;
     if is_icall {
-      return match core_type {
+      return match self.core_type {
         CoreType::Bits16 => Box::new(Icall16::new()),
         CoreType::Bits22 => Box::new(Icall22::new()),
       };
@@ -319,17 +323,18 @@ impl InstructionDecoder {
       return Box::new(Lddz::new(opcode));
     }
 
-    let is_lddzinc = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_0001;
+    let is_lddzinc = opcode & 0b1111_1110_0000_1111 == 0b1001_0000_0000_0001;
     if is_lddzinc {
       return Box::new(LddzInc::new(opcode));
     }
 
-    let is_lddzdec = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_0010;
+    let is_lddzdec = opcode & 0b1111_1110_0000_1111 == 0b1001_0000_0000_0010;
     if is_lddzdec {
       return Box::new(LddzDec::new(opcode));
     }
 
-    let is_lddzq = opcode & 0b1111_1110_0000_1111 == 0b1000_0000_0000_0000;
+    let is_lddzq =
+      self.avr_type != AvrType::Avrrc && opcode & 0b1101_0010_0000_1000 == 0b1000_0000_0000_0000;
     if is_lddzq {
       return Box::new(Lddzq::new(opcode));
     }
@@ -344,7 +349,8 @@ impl InstructionDecoder {
       return Box::new(Lds::new(opcode, next_opcode));
     }
 
-    let is_ldsavrc = opcode & 0b1111_1000_0000_0000 == 0b1010_0000_0000_0000;
+    let is_ldsavrc =
+      self.avr_type == AvrType::Avrrc && opcode & 0b1111_1000_0000_0000 == 0b1010_0000_0000_0000;
     if is_ldsavrc {
       return Box::new(LdsAvrc::new(opcode));
     }
@@ -431,7 +437,7 @@ impl InstructionDecoder {
 
     let is_rcall = opcode & 0b1111_0000_0000_0000 == 0b1101_0000_0000_0000;
     if is_rcall {
-      return match core_type {
+      return match self.core_type {
         CoreType::Bits16 => Box::new(Rcall16::new(opcode)),
         CoreType::Bits22 => Box::new(Rcall22::new(opcode)),
       };
@@ -439,7 +445,7 @@ impl InstructionDecoder {
 
     let is_ret = opcode == 0x9508;
     if is_ret {
-      return match core_type {
+      return match self.core_type {
         CoreType::Bits16 => Box::new(Ret16::new()),
         CoreType::Bits22 => Box::new(Ret22::new()),
       };
@@ -447,7 +453,7 @@ impl InstructionDecoder {
 
     let is_reti = opcode == 0x9518;
     if is_reti {
-      return match core_type {
+      return match self.core_type {
         CoreType::Bits16 => Box::new(Reti16::new()),
         CoreType::Bits22 => Box::new(Reti22::new()),
       };
@@ -493,12 +499,7 @@ impl InstructionDecoder {
       return Box::new(Sbiw::new(opcode));
     }
 
-    let is_sbr = opcode & 0b1111_0000_0000_0000 == 0b0110_0000_0000_0000;
-    if is_sbr {
-      return Box::new(Sbr::new(opcode));
-    }
-
-    let is_sbrc = opcode & 0b1111_1110_0000_1000 == 0b1111_1100_0000_1000;
+    let is_sbrc = opcode & 0b1111_1110_0000_1000 == 0b1111_1100_0000_0000;
     if is_sbrc {
       return Box::new(Sbrc::new(opcode, next_opcode, &self.opcode));
     }
@@ -590,4 +591,133 @@ impl InstructionDecoder {
 
     return Box::new(Data::new(opcode));
   }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+
+  macro_rules! test_instructions {
+    ($($name:ident: $value:expr,)*) => {
+    $(
+        #[test]
+        fn $name() {
+            let (avr_type, opcode1, opcode2, expected) = $value;
+
+          let instruction_decoder = InstructionDecoder::new(&Rc::new(Opcode::new()), &CoreType::Bits16, &avr_type);
+
+          let instruction = instruction_decoder.get(opcode1, opcode2);
+          let (result, _, _) = instruction.disassemble(0);
+
+          assert_eq!(result, expected);
+        }
+    )*
+    }
+}
+
+  test_instructions! {
+    adc: (AvrType::Avre, 0x1f02, 0x0000, "ADC"),
+    add: (AvrType::Avre, 0x0f13, 0x0000, "ADD"),
+    adiw: (AvrType::Avre, 0x96cf, 0x0000, "ADIW"),
+    and: (AvrType::Avre, 0x2180, 0x0000, "AND"),
+    andi: (AvrType::Avre, 0x709f, 0x0000, "ANDI"),
+    asr: (AvrType::Avre, 0x9505, 0x0000, "ASR"),
+    bset: (AvrType::Avre, 0x9478, 0x0000, "SEI"),
+    bclr: (AvrType::Avre, 0x94f8, 0x0000, "CLI"),
+    bld: (AvrType::Avre, 0xf9f5, 0x0000, "BLD"),
+    brcc: (AvrType::Avre, 0xf420, 0x0000, "BRCC"),
+    bst: (AvrType::Avre, 0xfb01, 0x0000, "BST"),
+    call: (AvrType::Avre, 0x940f, 0x0000, "CALL"),
+    cbi: (AvrType::Avre, 0x9800, 0x0000, "CBI"),
+    com: (AvrType::Avre, 0x94f0, 0x0000, "COM"),
+    cp: (AvrType::Avre, 0x1408, 0x0000, "CP"),
+    cpc: (AvrType::Avre, 0x0418, 0x0000, "CPC"),
+    cpi: (AvrType::Avre, 0x3000, 0x0000, "CPI"),
+    cpse: (AvrType::Avre, 0x1000, 0x0000, "CPSE"),
+    dec: (AvrType::Avre, 0x940a, 0x0000, "DEC"),
+    eor: (AvrType::Avre, 0x2400, 0x0000, "EOR"),
+    fmul: (AvrType::Avre, 0x0308, 0x0000, "FMUL"),
+    fmuls: (AvrType::Avre, 0x0380, 0x0000, "FMULS"),
+    fmulsu: (AvrType::Avre, 0x0388, 0x0000, "FMULSU"),
+    icall: (AvrType::Avre, 0x9509, 0x0000, "ICALL"),
+    ijmp: (AvrType::Avre, 0x9409, 0x0000, "IJMP"),
+    in_io: (AvrType::Avre, 0xb000, 0x0000, "IN"),
+    inc: (AvrType::Avre, 0x9403, 0x0000, "INC"),
+    jmp: (AvrType::Avre, 0x940c, 0x0000, "JMP"),
+    lac: (AvrType::Avre, 0x9206, 0x0000, "LAC"),
+    las: (AvrType::Avre, 0x9205, 0x0000, "LAS"),
+    lat: (AvrType::Avre, 0x9207, 0x0000, "LAT"),
+    ld1: (AvrType::Avre, 0x900c, 0x0000, "LD"),
+    ld2: (AvrType::Avre, 0x900d, 0x0000, "LD"),
+    ld3: (AvrType::Avre, 0x900e, 0x0000, "LD"),
+    ld4: (AvrType::Avre, 0x8008, 0x0000, "LD"),
+    ld5: (AvrType::Avre, 0x9009, 0x0000, "LD"),
+    ld6: (AvrType::Avre, 0x900a, 0x0000, "LD"),
+    ld7: (AvrType::Avre, 0x800f, 0x0000, "LD"),
+    ld8: (AvrType::Avre, 0x8000, 0x0000, "LD"),
+    ld9: (AvrType::Avre, 0x9001, 0x0000, "LD"),
+    ld10: (AvrType::Avre, 0x9002, 0x0000, "LD"),
+    ld11: (AvrType::Avre, 0x8007, 0x0000, "LD"),
+    ldi: (AvrType::Avre, 0xe000, 0x0000, "LDI"),
+    lds: (AvrType::Avre, 0x9000, 0x0000, "LDS"),
+    lds_avrc: (AvrType::Avrrc, 0xa000, 0x0000, "LDS"),
+    lpm1: (AvrType::Avre, 0x95c8, 0x0000, "LPM"),
+    lpm2: (AvrType::Avre, 0x9004, 0x0000, "LPM"),
+    lpm3: (AvrType::Avre, 0x9005, 0x0000, "LPM"),
+    lsr: (AvrType::Avre, 0x9406, 0x0000, "LSR"),
+    mov: (AvrType::Avre, 0x2c00, 0x0000, "MOV"),
+    movw: (AvrType::Avre, 0x0100, 0x0000, "MOVW"),
+    mul: (AvrType::Avre, 0x9c00, 0x0000, "MUL"),
+    muls: (AvrType::Avre, 0x0200, 0x0000, "MULS"),
+    mulsu: (AvrType::Avre, 0x0300, 0x0000, "MULSU"),
+    neg: (AvrType::Avre, 0x9401, 0x0000, "NEG"),
+    nop: (AvrType::Avre, 0x0000, 0x0000, "NOP"),
+    or: (AvrType::Avre, 0x2800, 0x0000, "OR"),
+    ori: (AvrType::Avre, 0x6000, 0x0000, "ORI"),
+    out_io: (AvrType::Avre, 0xb800, 0x0000, "OUT"),
+    pop: (AvrType::Avre, 0x900f, 0x0000, "POP"),
+    push: (AvrType::Avre, 0x920f, 0x0000, "PUSH"),
+    rcall: (AvrType::Avre, 0xd000, 0x0000, "RCALL"),
+    ret: (AvrType::Avre, 0x9508, 0x0000, "RET"),
+    reti: (AvrType::Avre, 0x9518, 0x0000, "RETI"),
+    rjmp: (AvrType::Avre, 0xc000, 0x0000, "RJMP"),
+    ror: (AvrType::Avre, 0x9407, 0x0000, "ROR"),
+    sbc: (AvrType::Avre, 0x0800, 0x0000, "SBC"),
+    sbci: (AvrType::Avre, 0x4000, 0x0000, "SBCI"),
+    sbi: (AvrType::Avre, 0x9a00, 0x0000, "SBI"),
+    sbic: (AvrType::Avre, 0x9900, 0x0000, "SBIC"),
+    sbis: (AvrType::Avre, 0x9b00, 0x0000, "SBIS"),
+    sbiw: (AvrType::Avre, 0x9700, 0x0000, "SBIW"),
+    sbrc: (AvrType::Avre, 0xfc00, 0x0000, "SBRC"),
+    sbrs: (AvrType::Avre, 0xfe00, 0x0000, "SBRS"),
+    st1: (AvrType::Avre, 0x920c, 0x0000, "ST"),
+    st2: (AvrType::Avre, 0x920d, 0x0000, "ST"),
+    st3: (AvrType::Avre, 0x920e, 0x0000, "ST"),
+    st4: (AvrType::Avre, 0x8208, 0x0000, "ST"),
+    st5: (AvrType::Avre, 0x9209, 0x0000, "ST"),
+    st6: (AvrType::Avre, 0x920a, 0x0000, "ST"),
+    st7: (AvrType::Avre, 0x820f, 0x0000, "ST"),
+    st8: (AvrType::Avre, 0x8200, 0x0000, "ST"),
+    st9: (AvrType::Avre, 0x9201, 0x0000, "ST"),
+    st10: (AvrType::Avre, 0x9202, 0x0000, "ST"),
+    st11: (AvrType::Avre, 0x8202, 0x0000, "ST"),
+    st12: (AvrType::Avre, 0xa203, 0x0000, "ST"),
+    sts: (AvrType::Avre, 0x9200, 0x0000, "STS"),
+    sts_avrc: (AvrType::Avrrc, 0xa800, 0x0000, "STS"),
+    sub: (AvrType::Avre, 0x1800, 0x0000, "SUB"),
+    subi: (AvrType::Avre, 0x5000, 0x0000, "SUBI"),
+    swap: (AvrType::Avre, 0x9402, 0x0000, "SWAP"),
+    wdr: (AvrType::Avre, 0x95a8, 0x0000, "WDR"),
+    xch: (AvrType::Avre, 0x9204, 0x0000, "XCH"),
+  }
+
+  // #[test]
+  // fn decode_cbi() {
+  //   let instruction_decoder = InstructionDecoder::new(&Rc::new(Opcode::new()), &CoreType::Bits16, &AvrType::Avrrc);
+
+  //   let instruction = instruction_decoder.get(0x0200, 0x0000);
+  //   let (result, _, _) = instruction.disassemble(0);
+
+  //   assert_eq!(result, "LDS");
+  // }
 }

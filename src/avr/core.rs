@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+use crate::avr::avr_type::AvrType;
 use crate::avr::code_memory::CodeMemory;
 use crate::avr::code_memory::CodeMemoryPtr;
 use crate::avr::core_type::CoreType;
@@ -24,6 +25,7 @@ trait Inst: Instruction + Disassembler {}
 
 pub struct Core {
   core_type: CoreType,
+  avr_type: AvrType,
   code_memory: CodeMemoryPtr,
   status_register: StatusRegisterPtr,
   program_counter: u32,
@@ -37,18 +39,19 @@ pub struct Core {
 }
 
 impl Core {
-  pub fn new(core_type: CoreType, code_size: usize, data_size: usize) -> Self {
+  pub fn new(core_type: CoreType, avr_type: AvrType, code_size: usize, data_size: usize) -> Self {
     let code_memory = Rc::new(RefCell::new(CodeMemory::new(code_size)));
     let data_memory = create_data_memory_ptr(data_size);
     let io = Rc::new(RefCell::new(Io::new()));
     let opcode_util = Rc::new(Opcode::new());
 
     Self {
-      core_type,
+      core_type: core_type.clone(),
+      avr_type: avr_type.clone(),
       program_counter: 0,
       code_memory,
       status_register: Rc::new(RefCell::new(StatusRegister::new())),
-      instruction_decoder: InstructionDecoder::new(&opcode_util),
+      instruction_decoder: InstructionDecoder::new(&opcode_util, &core_type, &avr_type),
       registers: Rc::new(RefCell::new(Registers::new(data_size as u32))),
       data_memory,
       io,
@@ -68,9 +71,7 @@ impl Core {
     let opcode = code_memory.read(self.program_counter);
     let next_pc = (self.program_counter + 1) % self.code_size;
     let next_opcode = code_memory.read(next_pc);
-    let instruction = self
-      .instruction_decoder
-      .get(&self.core_type, opcode, next_opcode);
+    let instruction = self.instruction_decoder.get(opcode, next_opcode);
     let (number_of_cycles, result) = instruction.execute(InstructionData {
       status_register: self.status_register.clone(),
       registers: self.registers.clone(),
@@ -91,9 +92,7 @@ impl Core {
     let opcode = code_memory.read(address);
     let next_address = (address + 1) % self.code_size;
     let next_opcode = code_memory.read(next_address);
-    let instruction = self
-      .instruction_decoder
-      .get(&self.core_type, opcode, next_opcode);
+    let instruction = self.instruction_decoder.get(opcode, next_opcode);
     instruction.disassemble(address)
   }
 

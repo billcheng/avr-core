@@ -13,6 +13,7 @@ pub mod io;
 pub mod util;
 pub mod disassembler;
 pub mod disassemblers;
+pub mod avr_type;
 
 #[cfg(test)]
 pub mod test;
