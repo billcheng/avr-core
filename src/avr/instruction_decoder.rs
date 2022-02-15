@@ -712,13 +712,13 @@ mod test {
     xch1: (AvrType::Avre, 0x9204, 0x0000, ".DATA"),
   }
 
-  #[test]
-  fn decode_cbi() {
-    let instruction_decoder = InstructionDecoder::new(&Rc::new(Opcode::new()), &CoreType::Bits16, &AvrType::Avre);
+  // #[test]
+  // fn decode_cbi() {
+  //   let instruction_decoder = InstructionDecoder::new(&Rc::new(Opcode::new()), &CoreType::Bits16, &AvrType::Avre);
 
-    let instruction = instruction_decoder.get(0xa800, 0x0000);
-    let (result, _, _) = instruction.disassemble(0);
+  //   let instruction = instruction_decoder.get(0xa800, 0x0000);
+  //   let (result, _, _) = instruction.disassemble(0);
 
-    assert_eq!(result, "LDS");
-  }
+  //   assert_eq!(result, "LDS");
+  // }
 }
