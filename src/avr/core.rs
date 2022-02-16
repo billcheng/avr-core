@@ -129,4 +129,14 @@ impl Core {
   pub fn get_cycles(&self) -> u32 {
     self.cycles
   }
+
+  pub fn reset(&mut self) {
+    self.program_counter = 0;
+    self.cycles = 0;
+    self.status_register.borrow_mut().reset();
+    self
+      .registers
+      .borrow_mut()
+      .reset(self.data_memory.borrow().get_size());
+  }
 }

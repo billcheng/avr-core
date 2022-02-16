@@ -79,4 +79,12 @@ impl Registers {
   pub fn get_all(&self) -> Vec<u8> {
     self.reg.clone()
   }
+
+  pub fn reset(&mut self, size: usize) {
+    self.reg.fill(0);
+    self.stack_pointer = match size == 0 {
+      true => 0,
+      false => (size - 1) as u32,
+    };
+  }
 }

@@ -27,6 +27,10 @@ impl DataMemory {
   pub fn get_all(&self) -> Vec<u8> {
     self.memory.clone()
   }
+
+  pub fn get_size(&self) -> usize {
+    self.memory.len()
+  }
 }
 
 impl RandomAccessMemory for DataMemory {

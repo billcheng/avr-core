@@ -133,6 +133,17 @@ impl StatusRegister {
       | self.get_transfer() << 6
       | self.get_interrupt() << 7
   }
+
+  pub fn reset(&mut self) {
+    self.carry = false;
+    self.zero = false;
+    self.negative = false;
+    self.overflow = false;
+    self.sign = false;
+    self.half_carry = false;
+    self.transfer = false;
+    self.interrupt = false;
+  }
 }
 
 fn get_flag(flag: bool) -> u8 {
