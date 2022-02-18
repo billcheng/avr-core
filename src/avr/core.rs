@@ -139,4 +139,23 @@ impl Core {
       .borrow_mut()
       .reset(self.data_memory.borrow().get_size());
   }
+
+  pub fn set_register(&mut self, index: usize, value: u8) {
+    let mut registers = self.registers.borrow_mut();
+    registers.set_register(index, value);
+  }
+
+  pub fn set_program_counter(&mut self, value: u32) {
+    self.program_counter = value;
+  }
+
+  pub fn set_stack_pointer(&mut self, value: u32) {
+    let mut registers = self.registers.borrow_mut();
+    registers.set_stack_pointer(value);
+  }
+
+  pub fn set_status_register(&mut self, bit: usize, value: bool) {
+    let mut status_register = self.status_register.borrow_mut();
+    status_register.set(bit, value);
+  }
 }

@@ -87,4 +87,8 @@ impl Registers {
       false => (size - 1) as u32,
     };
   }
+
+  pub fn set_register(&mut self, index: usize, value: u8) {
+    self.reg[index] = value;
+  }
 }
